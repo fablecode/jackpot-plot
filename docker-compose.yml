@@ -1,0 +1,35 @@
+services:
+
+  # Logging 
+  seq:
+    image: datalust/seq:latest
+    ports:
+        - 6341:80
+    environment:
+        ACCEPT_EULA: "Y"
+    networks:
+      - jackpotplot_net
+
+  # Event Bus (RabbitMQ in this case)
+  event-bus:
+    image: rabbitmq:management
+    ports:
+      - "15672:15672"  # RabbitMQ Management UI
+      - "5672:5672"    # RabbitMQ AMQP protocol
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=jackpotplot
+    volumes:
+        - ./docker/configuration/rabbitmq/data/:/var/lib/rabbitmq/
+        - ./docker/configuration/rabbitmq/log/:/var/log/rabbitmq
+        - ./docker/configuration/rabbitmq/definitions.json:/opt/rabbitmq/definitions.json  # Custom RabbitMQ config
+        - ./docker/configuration/rabbitmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config  # Custom RabbitMQ config
+        # - ./docker/configuration/rabbitmq/rabbitmq-init.sh:/docker-entrypoint-initdb.d/rabbitmq-init.sh
+    networks:
+      - jackpotplot_net
+    # command: /bin/bash /docker-entrypoint-initdb.d/rabbitmq-init.sh
+
+
+networks:
+  jackpotplot_net:
+    driver: bridge
