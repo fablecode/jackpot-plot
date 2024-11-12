@@ -24,11 +24,8 @@ services:
         - ./docker/configuration/rabbitmq/log/:/var/log/rabbitmq
         - ./docker/configuration/rabbitmq/definitions.json:/opt/rabbitmq/definitions.json  # Custom RabbitMQ config
         - ./docker/configuration/rabbitmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config  # Custom RabbitMQ config
-        # - ./docker/configuration/rabbitmq/rabbitmq-init.sh:/docker-entrypoint-initdb.d/rabbitmq-init.sh
     networks:
       - jackpotplot_net
-    # command: /bin/bash /docker-entrypoint-initdb.d/rabbitmq-init.sh
-
 
 networks:
   jackpotplot_net:
