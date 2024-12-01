@@ -6,11 +6,16 @@
     <Nullable>enable</Nullable>
 	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
 	  <NoWarn>$(NoWarn);1591</NoWarn>
+	  <UserSecretsId>97766c5a-8d08-490f-a6c3-a67fa22902e5</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.11" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Infrastructure\JackpotPlot.Lottery.API.DatabaseMigration\JackpotPlot.Lottery.API.DatabaseMigration.csproj" />
   </ItemGroup>
 
 </Project>
