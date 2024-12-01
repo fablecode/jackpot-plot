@@ -30,7 +30,8 @@ services:
         - ./docker/configuration/rabbitmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config  # Custom RabbitMQ config
     networks:
       - jackpotplot_net
-
+  
+  # Lottery API Database
   lottery-db:
     image: postgres
     environment:
