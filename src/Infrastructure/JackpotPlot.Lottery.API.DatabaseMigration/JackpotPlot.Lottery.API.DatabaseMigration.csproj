@@ -9,13 +9,25 @@
   <ItemGroup>
     <None Remove="Scripts\Migrations\2024\2024-12-01 - 0.0.0.1\Script0001 - Add_Continents_Table.sql" />
     <None Remove="Scripts\Migrations\2024\2024-12-01 - 0.0.0.1\Script0002 - Add_Countries_Table.sql" />
+    <None Remove="Scripts\Migrations\2024\2024-12-01 - 0.0.0.1\Script0003 - Add_Lotteries_Table.sql" />
+    <None Remove="Scripts\Migrations\2024\2024-12-01 - 0.0.0.1\Script0004 - Add_Draws_Table.sql" />
+    <None Remove="Scripts\Migrations\2024\2024-12-01 - 0.0.0.1\Script0005 - Add_LotteryNumbers_Table.sql" />
+    <None Remove="Scripts\Migrations\2024\2024-12-01 - 0.0.0.1\Script0006 - Add_LotteryCountries_Table.sql" />
     <None Remove="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0001 - Insert_Continents.sql" />
     <None Remove="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0002 - Insert_Countries.sql" />
+    <None Remove="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0003 - Insert_Eurojackpot.sql" />
+    <None Remove="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0004 - Eurojackpot_Participating_Countries_And_Associate_them.sql" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Scripts\Migrations\2024\2024-12-01 - 0.0.0.1\Script0006 - Add_LotteryCountries_Table.sql" />
+    <EmbeddedResource Include="Scripts\Migrations\2024\2024-12-01 - 0.0.0.1\Script0005 - Add_LotteryNumbers_Table.sql" />
+    <EmbeddedResource Include="Scripts\Migrations\2024\2024-12-01 - 0.0.0.1\Script0004 - Add_Draws_Table.sql" />
+    <EmbeddedResource Include="Scripts\Migrations\2024\2024-12-01 - 0.0.0.1\Script0003 - Add_Lotteries_Table.sql" />
     <EmbeddedResource Include="Scripts\Migrations\2024\2024-12-01 - 0.0.0.1\Script0002 - Add_Countries_Table.sql" />
     <EmbeddedResource Include="Scripts\Migrations\2024\2024-12-01 - 0.0.0.1\Script0001 - Add_Continents_Table.sql" />
+    <EmbeddedResource Include="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0004 - Eurojackpot_Participating_Countries_And_Associate_them.sql" />
+    <EmbeddedResource Include="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0003 - Insert_Eurojackpot.sql" />
     <EmbeddedResource Include="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0002 - Insert_Countries.sql" />
     <EmbeddedResource Include="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0001 - Insert_Continents.sql" />
   </ItemGroup>
