@@ -2,6 +2,7 @@
 CREATE TABLE countries (
     id SERIAL PRIMARY KEY,            -- Unique identifier for each country
     name VARCHAR(150) NOT NULL,       -- Name of the country
+    country_code CHAR(2) NOT NULL, -- Add ISO 3166-1 alpha-2 country codes
     continent_id INT NOT NULL,        -- Foreign key to the continents table
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, -- Record creation timestamp
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, -- Record last update timestamp
