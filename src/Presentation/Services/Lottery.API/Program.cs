@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using JackpotPlot.Lottery.API.DatabaseMigration;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,6 +33,9 @@ builder.Services.AddSwaggerGen(options =>
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
+
+// Database Migration
+builder.Services.AddLotteryApiDatabaseMigrationServices(builder.Configuration.GetConnectionString("LotteryApiDatabase"));
 
 var app = builder.Build();
 
