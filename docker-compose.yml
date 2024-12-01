@@ -27,6 +27,15 @@ services:
     networks:
       - jackpotplot_net
 
+  lottery-db:
+    image: postgres
+    environment:
+        - POSTGRES_USER=lotteryuser
+        - POSTGRES_PASSWORD=lotterypassword
+        - POSTGRES_DB=lottery_db
+    volumes:
+        - lottery_db_data:/var/lib/postgresql/data
+
 networks:
   jackpotplot_net:
     driver: bridge
