@@ -20,9 +20,9 @@ public sealed class EurojackpotJobs
     {
         foreach(var result in _eurojackpotService.GetAllDrawHistoryResults())
         {
-            var message = new Message<EurojackpotResult>(EventTypes.UpdateDrawHistory, result);
+            var message = new Message<EurojackpotResult>(EventTypes.EurojackpotDraw, result);
 
-            var routingKey = string.Join('.', RoutingKeys.LotteryDbUpdate, EventTypes.UpdateDrawHistory);
+            var routingKey = string.Join('.', RoutingKeys.LotteryDbUpdate, EventTypes.EurojackpotDraw);
 
             await _queue.Publish(message, routingKey);
         }
