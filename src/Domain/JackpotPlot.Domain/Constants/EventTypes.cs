@@ -2,5 +2,5 @@
 
 public static class EventTypes
 {
-    public const string UpdateDrawHistory = "update-draw-history";
+    public const string EurojackpotDraw = "eurojackpot-draw";
 }
