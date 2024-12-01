@@ -36,6 +36,8 @@ services:
     volumes:
         - lottery_db_data:/var/lib/postgresql/data
 
-networks:
-  jackpotplot_net:
-    driver: bridge
+volumes:
+  lottery_db_data:
+  user_db_data:
+  prediction_db_data:
+  notification_db_data:
