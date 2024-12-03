@@ -2,6 +2,8 @@
 using FluentAssertions;
 using JackpotPlot.Infrastructure.Services;
 using JackpotPlot.Infrastructure.WebPages;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
 using NUnit.Framework;
 
 namespace JackpotPlot.Infrastructure.Integration.Tests.ServicesTests.EurojackpotServiceTests;
@@ -14,7 +16,7 @@ public class GetDrawDetailsTests
     [SetUp]
     public void SetUp()
     {
-        _sut = new EurojackpotService(new HtmlWebPage());
+        _sut = new EurojackpotService(Substitute.For<ILogger<EurojackpotService>>(), new HtmlWebPage());
     }
 
     [TestCaseSource(nameof(_extractDrawDateCases))]
