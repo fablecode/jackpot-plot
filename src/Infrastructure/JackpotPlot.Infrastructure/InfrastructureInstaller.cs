@@ -26,7 +26,7 @@ namespace JackpotPlot.Infrastructure
         }
         public static IServiceCollection AddMessagingServices(this IServiceCollection services)
         {
-            services.AddScoped(typeof(IQueue<>), typeof(RabbitMqQueue<>));
+            services.AddScoped(typeof(IQueueWriter<>), typeof(RabbitMqQueueWriter<>));
 
             return services;
         }

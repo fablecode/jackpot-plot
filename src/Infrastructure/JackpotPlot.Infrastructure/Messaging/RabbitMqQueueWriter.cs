@@ -8,12 +8,12 @@ using RabbitMQ.Client;
 
 namespace JackpotPlot.Infrastructure.Messaging;
 
-public class RabbitMqQueue<T>: IQueue<T>
+public class RabbitMqQueueWriter<T>: IQueueWriter<T>
 {
     private readonly IOptions<RabbitMqSettings> _rabbitMqConfig;
     private readonly ConnectionFactory _factory;
 
-    public RabbitMqQueue(IOptions<RabbitMqSettings> rabbitMqConfig)
+    public RabbitMqQueueWriter(IOptions<RabbitMqSettings> rabbitMqConfig)
     {
         _rabbitMqConfig = rabbitMqConfig;
         _factory = new ConnectionFactory() { HostName = rabbitMqConfig.Value.Host, Port = rabbitMqConfig.Value.Port, UserName = rabbitMqConfig.Value.Username, Password = rabbitMqConfig.Value.Password };
