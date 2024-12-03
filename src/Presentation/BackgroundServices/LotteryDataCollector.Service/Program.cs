@@ -43,6 +43,10 @@ namespace LotteryDataCollector.Service
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) => Host.CreateDefaultBuilder(args)
+            .ConfigureHostConfiguration(configurationBuilder =>
+            {
+                configurationBuilder.AddUserSecrets<Program>();
+            })
             .ConfigureServices((context, services) =>
             {
                 services.AddLogging();
