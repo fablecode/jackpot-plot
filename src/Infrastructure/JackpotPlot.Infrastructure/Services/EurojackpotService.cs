@@ -2,6 +2,7 @@
 using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Services;
 using JackpotPlot.Infrastructure.WebPages;
+using Microsoft.Extensions.Logging;
 using System.Data;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -10,10 +11,12 @@ namespace JackpotPlot.Infrastructure.Services;
 
 public class EurojackpotService : IEurojackpotService
 {
+    private readonly ILogger<EurojackpotService> _logger;
     private readonly IHtmlWebPage _htmlWebPage;
 
-    public EurojackpotService(IHtmlWebPage htmlWebPage)
+    public EurojackpotService(ILogger<EurojackpotService> logger, IHtmlWebPage htmlWebPage)
     {
+        _logger = logger;
         _htmlWebPage = htmlWebPage;
     }
     public IEnumerable<EurojackpotResult> GetAllDrawHistoryResults()
@@ -43,6 +46,8 @@ public class EurojackpotService : IEurojackpotService
 
         // Draw date
         draw.Date = ExtractDrawDateTime(drawUrl);
+
+        _logger.LogInformation("Retrieving eurojackpot draw details for {date}.", draw.Date);
 
         // Rollover
         var rolloverNode = drawHtmlDoc.DocumentNode.SelectSingleNode("//div[@class=\"bright-box results breakdown euro-jackpot\"]//div[@class='ribbon fx align--center']//span[1]");
