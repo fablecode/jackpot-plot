@@ -15,7 +15,7 @@ services:
       - jackpotplot_net
 
   # Event Bus (RabbitMQ in this case)
-  event-bus:
+  rabbitmq:
     image: rabbitmq:management
     ports:
       - "15672:15672"  # RabbitMQ Management UI
@@ -44,6 +44,21 @@ services:
       - jackpotplot_net
     volumes:
         - lottery_db_data:/var/lib/postgresql/data
+
+  # Lottery Service
+  lottery-service:
+      build: 
+          dockerfile: ./src/Presentation/BackgroundServices/LotteryDataCollector.Service/Dockerfile
+      environment: 
+          - RabbitMqSettings__Host=rabbitmq
+          - RabbitMqSettings__Port=5672
+          - RabbitMqSettings__Username=admin
+          - RabbitMqSettings__Password=jackpotplot
+          - RabbitMqSettings__Exchange=lottery-exchange
+      depends_on: 
+          - rabbitmq
+      networks:
+          - jackpotplot_net
 
 volumes:
   lottery_db_data:
