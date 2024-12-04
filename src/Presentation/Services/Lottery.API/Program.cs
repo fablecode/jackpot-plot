@@ -34,6 +34,9 @@ builder.Services.AddSwaggerGen(options =>
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
+// IOptions<> configuration
+builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection(nameof(RabbitMqSettings)));
+
 // Database Migration
 builder.Services.AddLotteryApiDatabaseMigrationServices(builder.Configuration.GetConnectionString("LotteryApiDatabase"));
 
