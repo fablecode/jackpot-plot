@@ -1,9 +1,6 @@
-﻿
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+﻿using JackpotPlot.Domain.Messaging;
 using System.Text.Json;
 using System.Threading.Channels;
-using JackpotPlot.Domain.Messaging;
 
 namespace Lottery.API.HostedServices;
 

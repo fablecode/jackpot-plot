@@ -5,7 +5,6 @@ using JackpotPlot.Infrastructure;
 using LotteryDataCollector.Service.Jobs.Eurojackpot;
 using NodaTime;
 using Serilog;
-using System;
 
 namespace LotteryDataCollector.Service
 {

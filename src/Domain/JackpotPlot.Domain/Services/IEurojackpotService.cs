@@ -1,5 +1,4 @@
-﻿using JackpotPlot.Domain.Domain;
-using JackpotPlot.Domain.Models;
+﻿using JackpotPlot.Domain.Models;
 
 namespace JackpotPlot.Domain.Services;
 
