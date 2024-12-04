@@ -1,6 +1,12 @@
-﻿using System.Reflection;
+﻿using JackpotPlot.Application;
+using JackpotPlot.Domain.Messaging;
+using JackpotPlot.Domain.Models;
+using JackpotPlot.Domain.Settings;
+using JackpotPlot.Infrastructure;
 using JackpotPlot.Lottery.API.DatabaseMigration;
+using Lottery.API.HostedServices;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
