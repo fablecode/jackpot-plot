@@ -40,6 +40,15 @@ builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection(na
 // Database Migration
 builder.Services.AddLotteryApiDatabaseMigrationServices(builder.Configuration.GetConnectionString("LotteryApiDatabase"));
 
+// Application Installer
+builder.Services.AddApplicationServices();
+
+// Infrastructure Installer
+builder.Services.AddInfrastructureServices();
+
+// Register the background service that will consume RabbitMQ messages
+builder.Services.AddHostedService<LotteryResultBackgroundService<Message<EurojackpotResult>>>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
