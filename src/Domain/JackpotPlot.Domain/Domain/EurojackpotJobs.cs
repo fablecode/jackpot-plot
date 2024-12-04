@@ -25,7 +25,7 @@ public sealed class EurojackpotJobs
         {
             var message = new Message<EurojackpotResult>(EventTypes.EurojackpotDraw, result);
 
-            var routingKey = string.Join('.', RoutingKeys.LotteryDbUpdate, EventTypes.EurojackpotDraw);
+            var routingKey = string.Join('.', RoutingKeys.LotteryResults, EventTypes.EurojackpotDraw);
 
             _logger.LogInformation("Publishing Eurojackpot draw result for {date}", result.Date);
             await _queueWriter.Publish(message, routingKey);

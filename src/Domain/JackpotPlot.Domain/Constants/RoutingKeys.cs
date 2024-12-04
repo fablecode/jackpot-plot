@@ -2,5 +2,5 @@
 
 public static class RoutingKeys
 {
-    public const string LotteryDbUpdate = "lottery.db.update";
+    public const string LotteryResults = "lottery.results";
 }
