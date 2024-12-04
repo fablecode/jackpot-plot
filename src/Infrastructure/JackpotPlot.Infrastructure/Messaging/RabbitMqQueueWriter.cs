@@ -1,10 +1,9 @@
-﻿using System.Text;
-using System.Text.Json;
-using JackpotPlot.Domain.Messaging;
+﻿using JackpotPlot.Domain.Messaging;
 using JackpotPlot.Domain.Settings;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
+using System.Text;
 
 namespace JackpotPlot.Infrastructure.Messaging;
 
@@ -16,7 +15,13 @@ public class RabbitMqQueueWriter<T>: IQueueWriter<T>
     public RabbitMqQueueWriter(IOptions<RabbitMqSettings> rabbitMqConfig)
     {
         _rabbitMqConfig = rabbitMqConfig;
-        _factory = new ConnectionFactory() { HostName = rabbitMqConfig.Value.Host, Port = rabbitMqConfig.Value.Port, UserName = rabbitMqConfig.Value.Username, Password = rabbitMqConfig.Value.Password };
+        _factory = new ConnectionFactory()
+        {
+            HostName = rabbitMqConfig.Value.Host, 
+            Port = rabbitMqConfig.Value.Port, 
+            UserName = rabbitMqConfig.Value.Username, 
+            Password = rabbitMqConfig.Value.Password
+        };
     }
     public async Task Publish(T message, string routingKey)
     {
