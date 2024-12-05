@@ -13,6 +13,7 @@
     <None Remove="Scripts\Migrations\2024\2024-12-01 - 0.0.0.1\Script0004 - Add_Draws_Table.sql" />
     <None Remove="Scripts\Migrations\2024\2024-12-01 - 0.0.0.1\Script0005 - Add_Draw_Results_Table.sql" />
     <None Remove="Scripts\Migrations\2024\2024-12-01 - 0.0.0.1\Script0006 - Add_LotteryCountries_Table.sql" />
+    <None Remove="Scripts\Migrations\2024\2024-12-05 - 0.0.0.1\Script0001 - Add_CheckDrawAndResults_StoreProcedure.sql" />
     <None Remove="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0001 - Insert_Continents.sql" />
     <None Remove="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0002 - Insert_Countries.sql" />
     <None Remove="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0003 - Insert_Eurojackpot.sql" />
@@ -26,6 +27,7 @@
     <EmbeddedResource Include="Scripts\Migrations\2024\2024-12-01 - 0.0.0.1\Script0003 - Add_Lotteries_Table.sql" />
     <EmbeddedResource Include="Scripts\Migrations\2024\2024-12-01 - 0.0.0.1\Script0002 - Add_Countries_Table.sql" />
     <EmbeddedResource Include="Scripts\Migrations\2024\2024-12-01 - 0.0.0.1\Script0001 - Add_Continents_Table.sql" />
+    <EmbeddedResource Include="Scripts\Migrations\2024\2024-12-05 - 0.0.0.1\Script0001 - Add_CheckDrawAndResults_StoreProcedure.sql" />
     <EmbeddedResource Include="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0004 - Eurojackpot_Participating_Countries_And_Associate_them.sql" />
     <EmbeddedResource Include="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0003 - Insert_Eurojackpot.sql" />
     <EmbeddedResource Include="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0002 - Insert_Countries.sql" />
@@ -34,7 +36,7 @@
 
   <ItemGroup>
     <PackageReference Include="dbup-postgresql" Version="5.0.40" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
     <PackageReference Include="Serilog" Version="4.1.0" />
   </ItemGroup>
 
