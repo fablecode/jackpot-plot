@@ -15,10 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Application\JackpotPlot.Application\JackpotPlot.Application.csproj" />
+    <ProjectReference Include="..\..\..\Application\JackpotPlot.Lottery.API.Application\JackpotPlot.Lottery.API.Application.csproj" />
     <ProjectReference Include="..\..\..\Domain\JackpotPlot.Domain\JackpotPlot.Domain.csproj" />
-    <ProjectReference Include="..\..\..\Infrastructure\JackpotPlot.Infrastructure\JackpotPlot.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\Infrastructure\JackpotPlot.Lottery.API.DatabaseMigration\JackpotPlot.Lottery.API.DatabaseMigration.csproj" />
+    <ProjectReference Include="..\..\..\Infrastructure\JackpotPlot.Lottery.API.Infrastructure\JackpotPlot.Lottery.API.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

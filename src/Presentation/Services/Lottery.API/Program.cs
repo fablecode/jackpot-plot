@@ -1,9 +1,9 @@
-﻿using JackpotPlot.Application;
-using JackpotPlot.Domain.Messaging;
+﻿using JackpotPlot.Domain.Messaging;
 using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Settings;
-using JackpotPlot.Infrastructure;
+using JackpotPlot.Lottery.API.Application;
 using JackpotPlot.Lottery.API.DatabaseMigration;
+using JackpotPlot.Lottery.API.Infrastructure;
 using Lottery.API.HostedServices;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -47,13 +47,13 @@ builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection(na
 builder.Services.AddLotteryApiDatabaseMigrationServices(builder.Configuration.GetConnectionString("LotteryApiDatabase"));
 
 // Application Installer
-builder.Services.AddApplicationServices();
+builder.Services.AddLotteryApiApplicationServices();
 
 // Infrastructure Installer
-builder.Services.AddInfrastructureServices();
+builder.Services.AddLotteryApiInfrastructureServices();
 
 // Register the background service that will consume RabbitMQ messages
-builder.Services.AddHostedService<LotteryResultBackgroundService<Message<EurojackpotResult>>>();
+builder.Services.AddHostedService<LotteryResultsBackgroundService<Message<EurojackpotResult>>>();
 
 var app = builder.Build();
 

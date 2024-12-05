@@ -1,7 +1,7 @@
 ﻿using Coravel;
-using JackpotPlot.Application;
 using JackpotPlot.Domain.Settings;
-using JackpotPlot.Infrastructure;
+using LotteryDataCollector.Service.Application;
+using LotteryDataCollector.Service.Infrastructure;
 using LotteryDataCollector.Service.Jobs.Eurojackpot;
 using NodaTime;
 using Serilog;
@@ -75,10 +75,10 @@ namespace LotteryDataCollector.Service
                 services.AddScheduler();
 
                 // Application Installer
-                services.AddApplicationServices();
+                services.AddLotteryDataCollectorServiceApplicationServices();
 
                 // Infrastructure Installer
-                services.AddInfrastructureServices();
+                services.AddLotteryDataCollectorServiceInfrastructureServices();
 
             }).UseSerilog((context, configuration) =>
                 configuration.ReadFrom.Configuration(context.Configuration));

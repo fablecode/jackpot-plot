@@ -31,8 +31,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\..\Application\JackpotPlot.Application\JackpotPlot.Application.csproj" />
-	  <ProjectReference Include="..\..\..\Infrastructure\JackpotPlot.Infrastructure\JackpotPlot.Infrastructure.csproj" />
+	  <ProjectReference Include="..\..\..\Application\LotteryDataCollector.Service.Application\LotteryDataCollector.Service.Application.csproj" />
+	  <ProjectReference Include="..\..\..\Infrastructure\LotteryDataCollector.Service.Infrastructure\LotteryDataCollector.Service.Infrastructure.csproj" />
 	</ItemGroup>
 
 </Project>
