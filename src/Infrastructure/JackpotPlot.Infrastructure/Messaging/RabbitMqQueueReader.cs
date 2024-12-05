@@ -33,54 +33,27 @@ public class RabbitMqQueueReader<T> : IQueueReader<T>
         await using var rabbitMqConnection = await _factory.CreateConnectionAsync(cancellationToken);
         await using var rabbitMqChannel = await rabbitMqConnection.CreateChannelAsync(cancellationToken: cancellationToken);
 
+        // Set QoS to process one message at a time
+        await rabbitMqChannel.BasicQosAsync(prefetchSize: 0, prefetchCount: 1, global: false, cancellationToken: cancellationToken);
+
         var consumer = new AsyncEventingBasicConsumer(rabbitMqChannel);
 
         consumer.ReceivedAsync += async (_, ea) =>
         {
-            try
-            {
-                var body = ea.Body;
-                var message = JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(body.Span));
+            var body = ea.Body;
+            var message = JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(body.Span));
 
-                if (message != null)
-                {
-                    await channel.Writer.WriteAsync(message, cancellationToken);
-                    await rabbitMqChannel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken);
-                }
-                else
-                {
-                    // Log or handle null message scenario
-                    await rabbitMqChannel.BasicNackAsync(ea.DeliveryTag, false, false, cancellationToken); // Reject and discard
-                }
-            }
-            catch (Exception ex)
+            if (message != null)
             {
-                _logger.LogError(ex, "Error processing message from queue: {QueueName}, DeliveryTag: {DeliveryTag}", queueName, ea.DeliveryTag);
-                await rabbitMqChannel.BasicNackAsync(ea.DeliveryTag, false, false, cancellationToken);
-                // Optionally log the exception
+                await channel.Writer.WriteAsync(message, cancellationToken);
             }
         };
 
-        await rabbitMqChannel.BasicConsumeAsync(queue: queueName, autoAck: false, consumer: consumer, cancellationToken: cancellationToken);
+        await rabbitMqChannel.BasicConsumeAsync(queue: queueName, true, consumer: consumer, cancellationToken: cancellationToken);
         _logger.LogInformation("Started consuming messages from queue: {QueueName}", queueName);
 
-        try
-        {
-            // Await channel completion or cancellation
-            await channel.Reader.Completion.WaitAsync(cancellationToken);
-        }
-        catch (OperationCanceledException ex)
-        {
-            // Log or handle cancellation
-            _logger.LogWarning(ex, "Subscription to queue: {QueueName} was cancelled.", queueName);
-
-        }
-        finally
-        {
-            // Ensure proper cleanup
-            consumer.ReceivedAsync -= null;
-            _logger.LogInformation("Cleaned up consumer event handlers for queue: {QueueName}.", queueName);
-        }
+        // Await channel completion or cancellation
+        await channel.Reader.Completion.WaitAsync(cancellationToken);
     }
 
 }
