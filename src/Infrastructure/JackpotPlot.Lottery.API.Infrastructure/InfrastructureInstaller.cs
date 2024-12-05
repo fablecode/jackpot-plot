@@ -1,6 +1,5 @@
 ﻿using JackpotPlot.Domain.Repositories;
 using JackpotPlot.Infrastructure;
-using JackpotPlot.Infrastructure.Repositories;
 using JackpotPlot.Lottery.API.Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 

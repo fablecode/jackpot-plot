@@ -1,6 +1,6 @@
 ﻿using JackpotPlot.Domain.Repositories;
 
-namespace JackpotPlot.Infrastructure.Repositories;
+namespace JackpotPlot.Lottery.API.Infrastructure.Repositories;
 
 public sealed class LotteryRepository : ILotteryRepository
 {
