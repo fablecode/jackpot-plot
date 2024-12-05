@@ -35,9 +35,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JackpotPlot.Infrastructure.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lottery.API", "src\Presentation\Services\Lottery.API\Lottery.API.csproj", "{4C1D8B10-3478-469E-8268-09B2BE4CFF52}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JackpotPlot.Lottery.API.DatabaseMigration", "src\Infrastructure\JackpotPlot.Lottery.API.DatabaseMigration\JackpotPlot.Lottery.API.DatabaseMigration.csproj", "{E73DEF48-DFC1-4C00-83D7-768D7D1DC8D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JackpotPlot.Lottery.API.DatabaseMigration", "src\Infrastructure\JackpotPlot.Lottery.API.DatabaseMigration\JackpotPlot.Lottery.API.DatabaseMigration.csproj", "{E73DEF48-DFC1-4C00-83D7-768D7D1DC8D4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database Migrations", "Database Migrations", "{AF870BAB-3581-41B2-94E0-13A2241D0D02}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JackpotPlot.Lottery.API.Infrastructure", "src\Infrastructure\JackpotPlot.Lottery.API.Infrastructure\JackpotPlot.Lottery.API.Infrastructure.csproj", "{9E1E3437-36E3-4859-88DC-E231517C75C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JackpotPlot.Lottery.API.Application", "src\Application\JackpotPlot.Lottery.API.Application\JackpotPlot.Lottery.API.Application.csproj", "{E9CE7157-7D4F-4365-903E-997EA8DE59BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LotteryDataCollector.Service.Application", "src\Application\LotteryDataCollector.Service.Application\LotteryDataCollector.Service.Application.csproj", "{9FE98038-ED98-445F-BFA8-CC42D0FD9F66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LotteryDataCollector.Service.Infrastructure", "src\Infrastructure\LotteryDataCollector.Service.Infrastructure\LotteryDataCollector.Service.Infrastructure.csproj", "{1D953F19-9BAE-4989-8087-60ABA605CCB3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,6 +81,22 @@ Global
 		{E73DEF48-DFC1-4C00-83D7-768D7D1DC8D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E73DEF48-DFC1-4C00-83D7-768D7D1DC8D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E73DEF48-DFC1-4C00-83D7-768D7D1DC8D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E1E3437-36E3-4859-88DC-E231517C75C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E1E3437-36E3-4859-88DC-E231517C75C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E1E3437-36E3-4859-88DC-E231517C75C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E1E3437-36E3-4859-88DC-E231517C75C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9CE7157-7D4F-4365-903E-997EA8DE59BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9CE7157-7D4F-4365-903E-997EA8DE59BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9CE7157-7D4F-4365-903E-997EA8DE59BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9CE7157-7D4F-4365-903E-997EA8DE59BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FE98038-ED98-445F-BFA8-CC42D0FD9F66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FE98038-ED98-445F-BFA8-CC42D0FD9F66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FE98038-ED98-445F-BFA8-CC42D0FD9F66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FE98038-ED98-445F-BFA8-CC42D0FD9F66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D953F19-9BAE-4989-8087-60ABA605CCB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D953F19-9BAE-4989-8087-60ABA605CCB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D953F19-9BAE-4989-8087-60ABA605CCB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D953F19-9BAE-4989-8087-60ABA605CCB3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,6 +114,10 @@ Global
 		{4C1D8B10-3478-469E-8268-09B2BE4CFF52} = {C2952D56-7FE4-45F3-845C-A0756EEAD0F7}
 		{E73DEF48-DFC1-4C00-83D7-768D7D1DC8D4} = {AF870BAB-3581-41B2-94E0-13A2241D0D02}
 		{AF870BAB-3581-41B2-94E0-13A2241D0D02} = {EDF84145-655E-4064-8A7C-B5A896A3A2C9}
+		{9E1E3437-36E3-4859-88DC-E231517C75C5} = {EDF84145-655E-4064-8A7C-B5A896A3A2C9}
+		{E9CE7157-7D4F-4365-903E-997EA8DE59BE} = {BA1D4398-6C79-4D93-8784-5678A3201AAC}
+		{9FE98038-ED98-445F-BFA8-CC42D0FD9F66} = {BA1D4398-6C79-4D93-8784-5678A3201AAC}
+		{1D953F19-9BAE-4989-8087-60ABA605CCB3} = {EDF84145-655E-4064-8A7C-B5A896A3A2C9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5ABC289-BAD2-4CF2-BF68-3189382251AB}
