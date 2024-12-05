@@ -1,4 +1,5 @@
 ﻿using Coravel.Invocable;
+using LotteryDataCollector.Service.Application.BackgroundServices.Eurojackpot.FetchEurojackpotDrawHistory;
 using MediatR;
 using NodaTime;
 
@@ -27,10 +28,8 @@ public class FetchEurojackpotResultsJob : IInvocable
             && localDateTime.Hour == 20)
         {
             _logger.LogInformation("Fetching EuroJackpot latest draw...");
-            await _mediator.Send(new FetchEurojackpotResults());
+            await _mediator.Send(new FetchEurojackpotDrawHistoryRequest());
             _logger.LogInformation("Fetching EuroJackpot latest draw completed...");
         }
     }
 }
-
-public record FetchEurojackpotResults;
