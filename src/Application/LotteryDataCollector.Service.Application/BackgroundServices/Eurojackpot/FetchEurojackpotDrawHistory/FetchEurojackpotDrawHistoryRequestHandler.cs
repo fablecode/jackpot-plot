@@ -1,7 +1,7 @@
 ﻿using JackpotPlot.Domain.Domain;
 using MediatR;
 
-namespace JackpotPlot.Application.BackgroundServices.Eurojackpot.FetchEurojackpotDrawHistory;
+namespace LotteryDataCollector.Service.Application.BackgroundServices.Eurojackpot.FetchEurojackpotDrawHistory;
 
 public sealed class FetchEurojackpotDrawHistoryRequestHandler : IRequestHandler<FetchEurojackpotDrawHistoryRequest>
 {
