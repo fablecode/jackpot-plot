@@ -1,13 +1,14 @@
-﻿using HtmlAgilityPack;
-using JackpotPlot.Domain.Models;
-using JackpotPlot.Domain.Services;
-using JackpotPlot.Infrastructure.WebPages;
-using Microsoft.Extensions.Logging;
+﻿using System.Collections.Immutable;
 using System.Data;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using HtmlAgilityPack;
+using JackpotPlot.Domain.Models;
+using JackpotPlot.Domain.Services;
+using LotteryDataCollector.Service.Infrastructure.WebPages;
+using Microsoft.Extensions.Logging;
 
-namespace JackpotPlot.Infrastructure.Services;
+namespace LotteryDataCollector.Service.Infrastructure.Services;
 
 public class EurojackpotService : IEurojackpotService
 {
@@ -59,13 +60,13 @@ public class EurojackpotService : IEurojackpotService
         var mainNumbersNode = drawHtmlDoc.DocumentNode.SelectSingleNode("//ul[contains(@class, 'balls')]");
         if (mainNumbersNode != null)
         {
-            draw.MainNumbers = mainNumbersNode.SelectNodes(".//li[@class='ball']").Select(n => int.Parse(n.InnerText.Trim())).ToList();
+            draw.MainNumbers = [..mainNumbersNode.SelectNodes(".//li[@class='ball']").Select(n => int.Parse(n.InnerText.Trim()))];
         }
 
         var euroNumbersNode = drawHtmlDoc.DocumentNode.SelectSingleNode("//ul[contains(@class, 'balls')]");
         if (euroNumbersNode != null)
         {
-            draw.EuroNumbers = euroNumbersNode.SelectNodes(".//li[@class='euro']").Select(n => int.Parse(n.InnerText.Trim())).ToList();
+            draw.EuroNumbers = euroNumbersNode.SelectNodes(".//li[@class='euro']").Select(n => int.Parse(n.InnerText.Trim())).ToImmutableArray();
         }
 
         var jackpotWinnersNode = drawHtmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class, 'box winners')]//div[@class='elem2']");
@@ -130,7 +131,7 @@ public class EurojackpotService : IEurojackpotService
 
     #region Private Helpers
 
-    public static List<DataTable> ExtractPrizeBreakdown(HtmlNodeCollection tableNodes)
+    public static ImmutableArray<DataTable> ExtractPrizeBreakdown(HtmlNodeCollection tableNodes)
     {
         var dataTables = new List<DataTable>();
 
@@ -162,7 +163,7 @@ public class EurojackpotService : IEurojackpotService
             dataTables.Add(dataTable);
         }
 
-        return dataTables;
+        return dataTables.ToImmutableArray();
     }
 
     public static DateTime ExtractDrawDateTime(string url)

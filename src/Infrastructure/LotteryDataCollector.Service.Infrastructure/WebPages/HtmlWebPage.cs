@@ -1,6 +1,6 @@
 ﻿using HtmlAgilityPack;
 
-namespace JackpotPlot.Infrastructure.WebPages;
+namespace LotteryDataCollector.Service.Infrastructure.WebPages;
 
 public sealed class HtmlWebPage : IHtmlWebPage
 {
