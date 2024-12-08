@@ -17,7 +17,7 @@ public sealed class LotteryRepository : ILotteryRepository
         using (var context = await _contextFactory.CreateDbContextAsync())
         {
             return await context.Lotteries
-                .Where(l => l.Name == name)
+                .Where(l => EF.Functions.ILike(l.Name, name))
                 .Select(l => l.Id)
                 .SingleAsync();
         }

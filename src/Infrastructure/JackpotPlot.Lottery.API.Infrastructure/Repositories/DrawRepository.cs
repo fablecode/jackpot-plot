@@ -1,10 +1,12 @@
 ﻿using System.Collections.Immutable;
+using System.Runtime.CompilerServices;
 using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Repositories;
 using JackpotPlot.Lottery.API.Infrastructure.Databases;
 using JackpotPlot.Lottery.API.Infrastructure.Models;
 using JackpotPlot.Lottery.API.Infrastructure.Queries;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace JackpotPlot.Lottery.API.Infrastructure.Repositories;
 
@@ -39,9 +41,37 @@ public class DrawRepository : IDrawRepository
     {
         using (var context = await _contextFactory.CreateDbContextAsync())
         {
-            var result = LotteryQueries.CheckDrawAndResultsCompiled(context, lotteryId, drawDate, mainNumbers.ToArray(), bonusNumbers.ToArray());
+            //var result = LotteryQueries.CheckDrawAndResultsCompiled(context, lotteryId, drawDate, mainNumbers.ToArray(), bonusNumbers.ToArray());
+            //var result = context.Database
+            //    .SqlQuery<bool>(FormattableStringFactory.Create(
+            //        "CALL public.checkdrawandresults({0}, {1}, {2}, {3})",
+            //        lotteryId,
+            //        drawDate.ToUniversalTime(),
+            //        mainNumbers,
+            //        bonusNumbers))
+            //    .AsEnumerable()
+            //    .FirstOrDefault();
 
-            return result;
+            // Create parameters
+            var lotteryIdParameter = new NpgsqlParameter<int>("LotteryId", lotteryId);
+            var drawDateParameter = new NpgsqlParameter<DateTime>("DrawDate", drawDate);
+            var winningNumbersParameter = new NpgsqlParameter<int[]>("WinningNumbers", mainNumbers.ToArray());
+            var bonusNumbersParameter = new NpgsqlParameter<int[]>("BonusNumbers", bonusNumbers.ToArray());
+            var resultParameter = new NpgsqlParameter<bool>
+            {
+                ParameterName = "Result",
+                DbType = System.Data.DbType.Boolean,
+                Direction = System.Data.ParameterDirection.Output
+            };
+
+            //// Execute stored procedure
+            await context.Database.ExecuteSqlRawAsync(
+                "CALL public.checkdrawandresults(@LotteryId, @DrawDate, @WinningNumbers, @BonusNumbers)",
+                lotteryIdParameter, drawDateParameter, winningNumbersParameter, bonusNumbersParameter, resultParameter
+            );
+
+            //// Retrieve the OUT parameter value
+            return (bool)resultParameter.Value;
         }
     }
 }
