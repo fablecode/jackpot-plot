@@ -50,7 +50,7 @@ builder.Services.AddLotteryApiDatabaseMigrationServices(builder.Configuration.Ge
 builder.Services.AddLotteryApiApplicationServices();
 
 // Infrastructure Installer
-builder.Services.AddLotteryApiInfrastructureServices();
+builder.Services.AddLotteryApiInfrastructureServices(builder.Configuration);
 
 // Register the background service that will consume RabbitMQ messages
 builder.Services.AddHostedService<LotteryResultsBackgroundService<Message<EurojackpotResult>>>();
