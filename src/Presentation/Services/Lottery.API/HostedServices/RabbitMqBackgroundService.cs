@@ -1,6 +1,7 @@
 ﻿using JackpotPlot.Domain.Messaging;
 using MediatR;
 using System.Threading.Channels;
+using JackpotPlot.Domain.Models;
 using JackpotPlot.Lottery.API.Application.Messaging.Handlers;
 
 namespace Lottery.API.HostedServices;
@@ -25,28 +26,20 @@ public abstract class RabbitMqBackgroundService<T> : BackgroundService
         _logger.LogInformation("RabbitMq Background Service for {Queue} is starting.", QueueName);
 
         // Create a channel to receive messages
-        var channel = Channel.CreateUnbounded<T>();
+        var channel = Channel.CreateUnbounded<(T, TaskCompletionSource<Result<T>>)>();
 
         // Start reading messages asynchronously
         var readingTask = _queueReader.Subscribe(QueueName, channel, stoppingToken);
 
         // Process messages as they come in
-        await foreach (var message in channel.Reader.ReadAllAsync(stoppingToken))
+        await foreach (var (message, ack) in channel.Reader.ReadAllAsync(stoppingToken))
         {
             _logger.LogInformation("Message received from queue {Queue}.", QueueName);
 
             // Process the message (this can be async)
             var result = await _mediator.Send(new MessageHandler<T>(message), stoppingToken);
 
-            if (result.IsSuccess)
-            {
-                _logger.LogInformation("Message from queue {QueueName}, processed successfully.", QueueName);
-            }
-            else
-            {
-                _logger.LogError("Message from queue {QueueName}, failed with errors. Errors: {Errors}", QueueName, result.Errors);
-            }
-
+            ack.SetResult(result);
         }
 
         // Await the completion of reading messages

@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using System.Threading.Channels;
 using JackpotPlot.Domain.Messaging;
+using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Settings;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -26,7 +27,7 @@ public class RabbitMqQueueReader<T> : IQueueReader<T>
             Password = rabbitMqConfig.Value.Password
         };
     }
-    public async ValueTask Subscribe(string queueName, Channel<T> channel, CancellationToken cancellationToken)
+    public async ValueTask Subscribe(string queueName, Channel<(T message, TaskCompletionSource<Result<T>> tcs)> channel, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Starting subscription to queue: {QueueName}", queueName);
 
@@ -45,11 +46,24 @@ public class RabbitMqQueueReader<T> : IQueueReader<T>
 
             if (message != null)
             {
-                await channel.Writer.WriteAsync(message, cancellationToken);
+                var tcs = new TaskCompletionSource<Result<T>>();
+                await channel.Writer.WriteAsync((message, tcs), cancellationToken); 
+                var result = await tcs.Task;
+
+                if (result.IsSuccess)
+                {
+                    await rabbitMqChannel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken);
+                    _logger.LogInformation("Message from queue {QueueName}, processed successfully.", queueName);
+                }
+                else
+                {
+                    await rabbitMqChannel.BasicNackAsync(ea.DeliveryTag, false, false, cancellationToken);
+                    _logger.LogError("Message from queue {QueueName}, failed with errors. Errors: {Errors}. {Message}", queueName, result.Errors, message);
+                }
             }
         };
 
-        await rabbitMqChannel.BasicConsumeAsync(queue: queueName, true, consumer: consumer, cancellationToken: cancellationToken);
+        await rabbitMqChannel.BasicConsumeAsync(queue: queueName, false, consumer: consumer, cancellationToken: cancellationToken);
         _logger.LogInformation("Started consuming messages from queue: {QueueName}", queueName);
 
         // Await channel completion or cancellation
