@@ -22,6 +22,7 @@ namespace JackpotPlot.Lottery.API.Infrastructure
         {
             services.AddTransient<ILotteryRepository, LotteryRepository>();
             services.AddTransient<IDrawRepository, DrawRepository>();
+            services.AddTransient<IDrawResultRepository, DrawResultRepository>();
 
             return services;
         }
