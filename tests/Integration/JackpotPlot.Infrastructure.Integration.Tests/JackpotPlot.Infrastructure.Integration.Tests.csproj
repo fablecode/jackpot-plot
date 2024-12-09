@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Infrastructure\JackpotPlot.Infrastructure\JackpotPlot.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\src\Infrastructure\LotteryDataCollector.Service.Infrastructure\LotteryDataCollector.Service.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
