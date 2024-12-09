@@ -1,9 +1,12 @@
-﻿CREATE OR REPLACE FUNCTION CheckDrawAndResults(
-    LotteryId INT,
-    DrawDate TIMESTAMP,
-    WinningNumbers INT[],
-    BonusNumbers INT[]
-) RETURNS BOOLEAN AS $$
+﻿CREATE OR REPLACE PROCEDURE public.checkdrawandresults(
+	IN lotteryid integer,
+	IN drawdate timestamp without time zone,
+	IN winningnumbers integer[],
+	IN bonusnumbers integer[],
+	OUT result boolean)
+LANGUAGE plpgsql
+AS $BODY$
+
 DECLARE
     DrawExists BOOLEAN;
     DrawResultExists BOOLEAN;
@@ -15,18 +18,19 @@ BEGIN
     ) INTO DrawExists;
 
     IF NOT DrawExists THEN
-        RETURN FALSE;
+        Result := FALSE;
+        RETURN;
     END IF;
 
     -- Check if the draw results exist
     SELECT EXISTS (
-        SELECT 1 FROM DrawResults dr
-        JOIN Draws d ON dr.DrawId = d.DrawId
-        WHERE d.LotteryId = LotteryId AND d.DrawDate = DrawDate
-        AND dr.WinningNumbers = WinningNumbers
-        AND (dr.BonusNumbers IS NULL OR dr.BonusNumbers = BonusNumbers)
+        SELECT 1 FROM Draw_Results dr
+        JOIN Draws d ON dr.Draw_Id = d.Id
+        WHERE d.Lottery_Id = LotteryId AND d.Draw_Date = DrawDate
+        AND dr.Numbers = WinningNumbers
+        AND (dr.Bonus_Numbers IS NULL OR dr.Bonus_Numbers = BonusNumbers)
     ) INTO DrawResultExists;
 
-    RETURN DrawResultExists;
+    Result := DrawResultExists;
 END;
-$$ LANGUAGE plpgsql;
+$$;
