@@ -27,11 +27,13 @@ public class DrawRepository : IDrawRepository
             {
                 LotteryId = lotteryId,
                 DrawDate = DateOnly.FromDateTime(draw.Date),
-                JackpotAmount = decimal.Parse(draw.JackpotAmount),
+                JackpotAmount = draw.GetJackpotAmount(),
                 RolloverCount = draw.Rollover
             };
 
             var addedDraw = await context.Draws.AddAsync(newDraw);
+
+            await context.SaveChangesAsync();
 
             return addedDraw.Entity.Id;
         }
@@ -41,17 +43,6 @@ public class DrawRepository : IDrawRepository
     {
         using (var context = await _contextFactory.CreateDbContextAsync())
         {
-            //var result = LotteryQueries.CheckDrawAndResultsCompiled(context, lotteryId, drawDate, mainNumbers.ToArray(), bonusNumbers.ToArray());
-            //var result = context.Database
-            //    .SqlQuery<bool>(FormattableStringFactory.Create(
-            //        "CALL public.checkdrawandresults({0}, {1}, {2}, {3})",
-            //        lotteryId,
-            //        drawDate.ToUniversalTime(),
-            //        mainNumbers,
-            //        bonusNumbers))
-            //    .AsEnumerable()
-            //    .FirstOrDefault();
-
             // Create parameters
             var lotteryIdParameter = new NpgsqlParameter<int>("LotteryId", lotteryId);
             var drawDateParameter = new NpgsqlParameter<DateTime>("DrawDate", drawDate);
@@ -61,12 +52,12 @@ public class DrawRepository : IDrawRepository
             {
                 ParameterName = "Result",
                 DbType = System.Data.DbType.Boolean,
-                Direction = System.Data.ParameterDirection.Output
+                Direction = System.Data.ParameterDirection.InputOutput
             };
 
             //// Execute stored procedure
             await context.Database.ExecuteSqlRawAsync(
-                "CALL public.checkdrawandresults(@LotteryId, @DrawDate, @WinningNumbers, @BonusNumbers)",
+                "CALL CheckDrawAndResults(@LotteryId, @DrawDate, @WinningNumbers, @BonusNumbers, @Result)",
                 lotteryIdParameter, drawDateParameter, winningNumbersParameter, bonusNumbersParameter, resultParameter
             );
 

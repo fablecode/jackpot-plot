@@ -28,6 +28,8 @@ public sealed class DrawResultRepository : IDrawResultRepository
 
             var addedDrawResult = await context.DrawResults.AddAsync(newDrawResult);
 
+            await context.SaveChangesAsync();
+
             return addedDrawResult.Entity.Id;
         }
     }
