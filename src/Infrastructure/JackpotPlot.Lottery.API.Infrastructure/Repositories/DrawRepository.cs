@@ -1,12 +1,10 @@
-﻿using System.Collections.Immutable;
-using System.Runtime.CompilerServices;
-using JackpotPlot.Domain.Models;
+﻿using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Repositories;
 using JackpotPlot.Lottery.API.Infrastructure.Databases;
 using JackpotPlot.Lottery.API.Infrastructure.Models;
-using JackpotPlot.Lottery.API.Infrastructure.Queries;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using System.Collections.Immutable;
 
 namespace JackpotPlot.Lottery.API.Infrastructure.Repositories;
 
@@ -62,7 +60,7 @@ public class DrawRepository : IDrawRepository
             );
 
             //// Retrieve the OUT parameter value
-            return (bool)resultParameter.Value;
+            return (bool)resultParameter.Value!;
         }
     }
 }
