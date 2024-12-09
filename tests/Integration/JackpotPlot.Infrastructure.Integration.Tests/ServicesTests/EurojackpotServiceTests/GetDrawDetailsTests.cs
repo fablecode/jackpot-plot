@@ -1,10 +1,10 @@
-﻿using System.Globalization;
-using FluentAssertions;
-using JackpotPlot.Infrastructure.Services;
-using JackpotPlot.Infrastructure.WebPages;
+﻿using FluentAssertions;
+using LotteryDataCollector.Service.Infrastructure.Services;
+using LotteryDataCollector.Service.Infrastructure.WebPages;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NUnit.Framework;
+using System.Globalization;
 
 namespace JackpotPlot.Infrastructure.Integration.Tests.ServicesTests.EurojackpotServiceTests;
 
