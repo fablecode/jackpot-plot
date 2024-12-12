@@ -15,7 +15,7 @@ public sealed class EurojackpotResultMessageHandler : IRequestHandler<MessageHan
     private readonly ILotteryRepository _lotteryRepository;
     private readonly IDrawRepository _drawRepository;
 
-    public EurojackpotResultMessageHandler(ILogger<EurojackpotResultMessageProcessor> logger, ILotteryRepository lotteryRepository, IDrawRepository drawRepository)
+    public EurojackpotResultMessageHandler(ILogger<EurojackpotResultMessageHandler> logger, ILotteryRepository lotteryRepository, IDrawRepository drawRepository, IDrawResultRepository drawResultRepository)
     {
         _logger = logger;
         _lotteryRepository = lotteryRepository;
