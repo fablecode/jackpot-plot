@@ -11,7 +11,7 @@ public sealed class EurojackpotResultMessageHandler : IRequestHandler<MessageHan
 {
     private const string LotteryName = "Eurojackpot";
     private int? _lotteryId;
-    private readonly ILogger<EurojackpotResultMessageProcessor> _logger;
+    private readonly ILogger<EurojackpotResultMessageHandler> _logger;
     private readonly ILotteryRepository _lotteryRepository;
     private readonly IDrawRepository _drawRepository;
 
