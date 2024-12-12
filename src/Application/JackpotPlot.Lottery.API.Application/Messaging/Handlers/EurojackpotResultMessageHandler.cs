@@ -1,5 +1,4 @@
 ﻿using JackpotPlot.Domain.Messaging;
-using JackpotPlot.Domain.Messaging.Processors;
 using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Repositories;
 using MediatR;
@@ -28,9 +27,10 @@ public sealed class EurojackpotResultMessageHandler : IRequestHandler<MessageHan
     {
         _lotteryId ??= await _lotteryRepository.GetLotteryIdByName(LotteryName);
 
-        if (!_drawRepository.DrawExist(_lotteryId.Value, request.Message.Data.Date, request.Message.Data.MainNumbers, request.Message.Data.EuroNumbers))
+        if (!await _drawRepository.DrawExist(_lotteryId.Value, request.Message.Data.Date, request.Message.Data.MainNumbers, request.Message.Data.EuroNumbers))
         {
-            await _drawRepository.Add(_lotteryId.Value, request.Message.Data);
+            var drawId = await _drawRepository.Add(_lotteryId.Value, request.Message.Data);
+            await _drawResultRepository.Add(drawId, request.Message.Data);
 
             return Result<Message<EurojackpotResult>>.Success(request.Message);
         }
