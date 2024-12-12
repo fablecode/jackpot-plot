@@ -14,12 +14,14 @@ public sealed class EurojackpotResultMessageHandler : IRequestHandler<MessageHan
     private readonly ILogger<EurojackpotResultMessageHandler> _logger;
     private readonly ILotteryRepository _lotteryRepository;
     private readonly IDrawRepository _drawRepository;
+    private readonly IDrawResultRepository _drawResultRepository;
 
     public EurojackpotResultMessageHandler(ILogger<EurojackpotResultMessageHandler> logger, ILotteryRepository lotteryRepository, IDrawRepository drawRepository, IDrawResultRepository drawResultRepository)
     {
         _logger = logger;
         _lotteryRepository = lotteryRepository;
         _drawRepository = drawRepository;
+        _drawResultRepository = drawResultRepository;
     }
 
     public async Task<Result<Message<EurojackpotResult>>> Handle(MessageHandler<Message<EurojackpotResult>> request, CancellationToken cancellationToken)
