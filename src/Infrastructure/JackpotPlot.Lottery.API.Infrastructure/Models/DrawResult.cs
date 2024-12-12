@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace JackpotPlot.Lottery.API.Infrastructure.Models;
+﻿namespace JackpotPlot.Lottery.API.Infrastructure.Models;
 
 public partial class DrawResult
 {
