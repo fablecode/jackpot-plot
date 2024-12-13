@@ -31,7 +31,7 @@ services:
     networks:
       - jackpotplot_net
   
-  # Lottery API Database
+  # Lottery Service Database
   lottery-db:
     image: postgres
     environment:
@@ -59,6 +59,20 @@ services:
           - rabbitmq
       networks:
           - jackpotplot_net
+  
+  # Prediction Service Database
+  prediction-db:
+      image: postgres
+      environment:
+        - POSTGRES_USER=predictionuser
+        - POSTGRES_PASSWORD=predictionpassword
+        - POSTGRES_DB=prediction_db
+      ports:
+        - "5434:5432"
+      networks:
+        - jackpotplot_net
+      volumes:
+      - prediction_db_data:/var/lib/postgresql/data
 
 volumes:
   lottery_db_data:
