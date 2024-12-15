@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Scripts\Migrations\2024\2024-12-15 - 0.0.0.1\Script0001 - Add_LotteryHistory_Table.sql" />
+    <None Remove="Scripts\Migrations\2024\2024-12-15 - 0.0.0.1\Script0002 - Add_Predictions_Table.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\Migrations\2024\2024-12-15 - 0.0.0.1\Script0002 - Add_Predictions_Table.sql" />
+    <EmbeddedResource Include="Scripts\Migrations\2024\2024-12-15 - 0.0.0.1\Script0001 - Add_LotteryHistory_Table.sql" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="dbup-postgresql" Version="5.0.40" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+		<PackageReference Include="Serilog" Version="4.1.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Scripts\PreDeployment\" />
+	  <Folder Include="Scripts\PostDeployment\" />
+	</ItemGroup>
+
+</Project>
