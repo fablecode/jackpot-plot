@@ -1,4 +1,5 @@
-﻿using JackpotPlot.Domain.Messaging;
+﻿using JackpotPlot.Domain.Constants;
+using JackpotPlot.Domain.Messaging;
 using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Repositories;
 using MediatR;
@@ -14,13 +15,22 @@ public sealed class EurojackpotResultMessageHandler : IRequestHandler<MessageHan
     private readonly ILotteryRepository _lotteryRepository;
     private readonly IDrawRepository _drawRepository;
     private readonly IDrawResultRepository _drawResultRepository;
+    private readonly IQueueWriter<Message<LotteryDrawnEvent>> _queueWriter;
 
-    public EurojackpotResultMessageHandler(ILogger<EurojackpotResultMessageHandler> logger, ILotteryRepository lotteryRepository, IDrawRepository drawRepository, IDrawResultRepository drawResultRepository)
+    public EurojackpotResultMessageHandler
+        (
+            ILogger<EurojackpotResultMessageHandler> logger, 
+            ILotteryRepository lotteryRepository, 
+            IDrawRepository drawRepository, 
+            IDrawResultRepository drawResultRepository,
+            IQueueWriter<Message<LotteryDrawnEvent>> queueWriter
+        )
     {
         _logger = logger;
         _lotteryRepository = lotteryRepository;
         _drawRepository = drawRepository;
         _drawResultRepository = drawResultRepository;
+        _queueWriter = queueWriter;
     }
 
     public async Task<Result<Message<EurojackpotResult>>> Handle(MessageHandler<Message<EurojackpotResult>> request, CancellationToken cancellationToken)
@@ -31,6 +41,18 @@ public sealed class EurojackpotResultMessageHandler : IRequestHandler<MessageHan
         {
             var drawId = await _drawRepository.Add(_lotteryId.Value, request.Message.Data);
             await _drawResultRepository.Add(drawId, request.Message.Data);
+
+            var routingKey = string.Join('.', RoutingKeys.LotteryDbUpdate, EventTypes.LotteryDrawn);
+
+            var lotteryDrawEvent = new LotteryDrawnEvent
+            {
+                LotteryId = _lotteryId.Value,
+                DrawDate = request.Message.Data.Date,
+                WinningNumbers = request.Message.Data.MainNumbers,
+                BonusNumbers = request.Message.Data.EuroNumbers
+            };
+
+            await _queueWriter.Publish(new Message<LotteryDrawnEvent>(EventTypes.LotteryDrawn, lotteryDrawEvent), routingKey);
 
             return Result<Message<EurojackpotResult>>.Success(request.Message);
         }
