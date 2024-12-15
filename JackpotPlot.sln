@@ -51,6 +51,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JackpotPlot.Prediction.API.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JackpotPlot.Prediction.API.Infrastructure", "src\Infrastructure\JackpotPlot.Prediction.API.Infrastructure\JackpotPlot.Prediction.API.Infrastructure.csproj", "{4275285B-121A-445A-90D7-3425A11C3DC7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prediction.API", "src\Presentation\Services\Prediction.API\Prediction.API.csproj", "{8289EA6C-F278-4BAC-91F1-821841E391D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JackpotPlot.Prediction.API.Application", "src\Application\JackpotPlot.Prediction.API.Application\JackpotPlot.Prediction.API.Application.csproj", "{E54DF226-944F-48F9-88EB-F241CB22D6DC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -109,6 +113,14 @@ Global
 		{4275285B-121A-445A-90D7-3425A11C3DC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4275285B-121A-445A-90D7-3425A11C3DC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4275285B-121A-445A-90D7-3425A11C3DC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8289EA6C-F278-4BAC-91F1-821841E391D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8289EA6C-F278-4BAC-91F1-821841E391D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8289EA6C-F278-4BAC-91F1-821841E391D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8289EA6C-F278-4BAC-91F1-821841E391D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E54DF226-944F-48F9-88EB-F241CB22D6DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E54DF226-944F-48F9-88EB-F241CB22D6DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E54DF226-944F-48F9-88EB-F241CB22D6DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E54DF226-944F-48F9-88EB-F241CB22D6DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -132,6 +144,8 @@ Global
 		{1D953F19-9BAE-4989-8087-60ABA605CCB3} = {EDF84145-655E-4064-8A7C-B5A896A3A2C9}
 		{C7FC5476-ABCA-41A7-AFD0-79561B7B6496} = {AF870BAB-3581-41B2-94E0-13A2241D0D02}
 		{4275285B-121A-445A-90D7-3425A11C3DC7} = {EDF84145-655E-4064-8A7C-B5A896A3A2C9}
+		{8289EA6C-F278-4BAC-91F1-821841E391D3} = {C2952D56-7FE4-45F3-845C-A0756EEAD0F7}
+		{E54DF226-944F-48F9-88EB-F241CB22D6DC} = {BA1D4398-6C79-4D93-8784-5678A3201AAC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5ABC289-BAD2-4CF2-BF68-3189382251AB}
