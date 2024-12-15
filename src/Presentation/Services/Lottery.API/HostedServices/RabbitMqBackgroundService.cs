@@ -10,11 +10,11 @@ public abstract class RabbitMqBackgroundService<T> : BackgroundService
 {
     protected abstract string QueueName { get; }
 
-    private readonly ILogger<LotteryResultsBackgroundService<T>> _logger;
+    private readonly ILogger<RabbitMqBackgroundService<T>> _logger;
     private readonly IMediator _mediator;
     private readonly IQueueReader<T> _queueReader;
 
-    protected RabbitMqBackgroundService(ILogger<LotteryResultsBackgroundService<T>> logger, IMediator mediator, IQueueReader<T> queueReader)
+    protected RabbitMqBackgroundService(ILogger<RabbitMqBackgroundService<T>> logger, IMediator mediator, IQueueReader<T> queueReader)
     {
         _logger = logger;
         _mediator = mediator;
