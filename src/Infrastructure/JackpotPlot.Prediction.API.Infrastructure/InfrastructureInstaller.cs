@@ -1,4 +1,7 @@
-﻿using JackpotPlot.Infrastructure;
+﻿using JackpotPlot.Domain.Repositories;
+using JackpotPlot.Infrastructure;
+using JackpotPlot.Prediction.API.Infrastructure.Databases;
+using JackpotPlot.Prediction.API.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,16 +20,14 @@ namespace JackpotPlot.Prediction.API.Infrastructure
 
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
-            //services.AddTransient<ILotteryRepository, LotteryRepository>();
-            //services.AddTransient<IDrawRepository, DrawRepository>();
-            //services.AddTransient<IDrawResultRepository, DrawResultRepository>();
+            services.AddTransient<ILotteryHistoryRepository, LotteryHistoryRepository>();
 
             return services;
         }
         public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
         {
-            //services.AddDbContextFactory<LotteryDbContext>(options =>
-            //    options.UseNpgsql(configuration.GetConnectionString("LotteryApiDatabase")));
+            services.AddDbContextFactory<PredictionDbContext>(options =>
+                options.UseNpgsql(configuration.GetConnectionString("PredictionApiDatabase")));
 
             return services;
         }
