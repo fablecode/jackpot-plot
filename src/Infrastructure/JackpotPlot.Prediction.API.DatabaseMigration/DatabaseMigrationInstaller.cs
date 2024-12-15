@@ -10,7 +10,7 @@ namespace JackpotPlot.Prediction.API.DatabaseMigration
 {
     public static class DatabaseMigrationInstaller
     {
-        public static IServiceCollection AddLotteryApiDatabaseMigrationServices(this IServiceCollection services, string? connectionString)
+        public static IServiceCollection AddPredictionApiDatabaseMigrationServices(this IServiceCollection services, string? connectionString)
         {
             Log.Logger.Information("Executing database migration at {@DatabaseMigrationStartTime}", DateTime.UtcNow);
             
