@@ -64,8 +64,8 @@ services:
       networks:
           - jackpotplot_net
 
-  # Lottery Data Collector Background service
-  lottery-data-collector-background-service:
+  # Lottery Data Collector Service
+  lottery-data-collector-service:
       build: 
           dockerfile: ./src/Presentation/BackgroundServices/LotteryDataCollector.Service/Dockerfile
       environment: 
@@ -92,6 +92,25 @@ services:
         - jackpotplot_net
       volumes:
       - prediction_db_data:/var/lib/postgresql/data
+
+  # Prediction Service
+  prediction-service:
+      build: 
+          dockerfile: ./src/Presentation/Services/Prediction.API/Dockerfile
+      environment: 
+          - ConnectionStrings__PredictionApiDatabase=Host=prediction-db;Port=5432;Database=prediction_db;User Id=predictionuser;Password=predictionpassword;
+          - RabbitMqSettings__Host=rabbitmq
+          - RabbitMqSettings__Port=5672
+          - RabbitMqSettings__Username=admin
+          - RabbitMqSettings__Password=jackpotplot
+          - RabbitMqSettings__Exchange=lottery-exchange
+      ports:
+          - "8081:8081"
+      depends_on:
+          - prediction-db
+          - rabbitmq
+      networks:
+          - jackpotplot_net
 
 volumes:
   lottery_db_data:
