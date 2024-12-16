@@ -14,6 +14,6 @@ public class LotteriesController : ControllerBase
     [HttpGet]
     public IActionResult Get()
     {
-        throw new NotImplementedException();
+        return Ok(new { Message = "Lotteries endpoint is working!" });
     }
 }
