@@ -3,19 +3,16 @@ using JackpotPlot.Domain.Messaging;
 using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Repositories;
 using MediatR;
-using Microsoft.Extensions.Logging;
 
 namespace JackpotPlot.Prediction.API.Application.Messaging.Handlers;
 
 public sealed class LotteryDrawnEventMessageHandler : IRequestHandler<MessageHandler<Message<LotteryDrawnEvent>>, Result<Message<LotteryDrawnEvent>>>
 {
-    private readonly ILogger<LotteryDrawnEventMessageHandler> _logger;
     private readonly IValidator<Message<LotteryDrawnEvent>> _validator;
     private readonly ILotteryHistoryRepository _lotteryHistoryRepository;
 
-    public LotteryDrawnEventMessageHandler(ILogger<LotteryDrawnEventMessageHandler> logger, IValidator<Message<LotteryDrawnEvent>> validator, ILotteryHistoryRepository lotteryHistoryRepository)
+    public LotteryDrawnEventMessageHandler(IValidator<Message<LotteryDrawnEvent>> validator, ILotteryHistoryRepository lotteryHistoryRepository)
     {
-        _logger = logger;
         _validator = validator;
         _lotteryHistoryRepository = lotteryHistoryRepository;
     }

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "LotteryDataCollector.Service": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}

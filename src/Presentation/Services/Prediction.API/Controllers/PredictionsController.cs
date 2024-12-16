@@ -12,9 +12,9 @@ public class PredictionsController : ControllerBase
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
     [HttpPost]
-    public IActionResult PredictNext([FromBody] PredictNextInput input)
+    public IActionResult Post([FromBody] PredictNextInput input)
     {
-        throw new NotImplementedException();
+        return Ok(new { Message = "PredictNext endpoint is working!" });
     }
 
     [HttpGet("strategies")]

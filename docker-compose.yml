@@ -48,6 +48,25 @@ services:
   # Lottery Service
   lottery-service:
       build: 
+          dockerfile: ./src/Presentation/Services/Lottery.API/Dockerfile
+      environment: 
+          - ConnectionStrings__LotteryApiDatabase=Host=lottery-db;Port=5432;Database=lottery_db;User Id=lotteryuser;Password=lotterypassword;
+          - RabbitMqSettings__Host=rabbitmq
+          - RabbitMqSettings__Port=5672
+          - RabbitMqSettings__Username=admin
+          - RabbitMqSettings__Password=jackpotplot
+          - RabbitMqSettings__Exchange=lottery-exchange
+      ports:
+          - "8080:8080"
+      depends_on:
+          - lottery-db
+          - rabbitmq
+      networks:
+          - jackpotplot_net
+
+  # Lottery Data Collector Background service
+  lottery-data-collector-background-service:
+      build: 
           dockerfile: ./src/Presentation/BackgroundServices/LotteryDataCollector.Service/Dockerfile
       environment: 
           - RabbitMqSettings__Host=rabbitmq
