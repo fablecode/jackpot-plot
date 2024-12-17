@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace JackpotPlot.Prediction.API.Infrastructure.Models;
+﻿namespace JackpotPlot.Prediction.API.Infrastructure.Models;
 
 public partial class Lotteryhistory
 {

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using JackpotPlot.Prediction.API.Infrastructure.Models;
+﻿using JackpotPlot.Prediction.API.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
-
-namespace JackpotPlot.Prediction.API.Infrastructure.Databases;
-
 #nullable disable
+namespace JackpotPlot.Prediction.API.Infrastructure.Databases;
 
 public partial class PredictionDbContext : DbContext
 {
@@ -24,9 +20,8 @@ public partial class PredictionDbContext : DbContext
 
     public virtual DbSet<Schemaversion> Schemaversions { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-    }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder){}
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Lotteryhistory>(entity =>
