@@ -19,4 +19,6 @@ public partial class Lottery
     public virtual ICollection<Draw> Draws { get; set; } = new List<Draw>();
 
     public virtual ICollection<LotteriesCountry> LotteriesCountries { get; set; } = new List<LotteriesCountry>();
+
+    public virtual ICollection<LotteryConfiguration> LotteryConfigurations { get; set; } = new List<LotteryConfiguration>();
 }

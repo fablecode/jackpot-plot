@@ -1,6 +1,6 @@
 ﻿using JackpotPlot.Lottery.API.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
-
+#nullable disable
 namespace JackpotPlot.Lottery.API.Infrastructure.Databases;
 
 public partial class LotteryDbContext : DbContext
@@ -26,13 +26,11 @@ public partial class LotteryDbContext : DbContext
 
     public virtual DbSet<Models.Lottery> Lotteries { get; set; }
 
-    public virtual DbSet<LotteryNumber> LotteryNumbers { get; set; }
+    public virtual DbSet<LotteryConfiguration> LotteryConfigurations { get; set; }
 
     public virtual DbSet<Schemaversion> Schemaversions { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-    }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder){}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -187,27 +185,45 @@ public partial class LotteryDbContext : DbContext
                 .HasColumnName("updated_at");
         });
 
-        modelBuilder.Entity<LotteryNumber>(entity =>
+        modelBuilder.Entity<LotteryConfiguration>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("lottery_numbers_pkey");
+            entity.HasKey(e => e.Id).HasName("lottery_configuration_pkey");
 
-            entity.ToTable("lottery_numbers");
+            entity.ToTable("lottery_configuration");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.BonusNumbers).HasColumnName("bonus_numbers");
+            entity.Property(e => e.BonusNumbersCount)
+                .HasDefaultValue(0)
+                .HasColumnName("bonus_numbers_count");
+            entity.Property(e => e.BonusNumbersRange)
+                .HasDefaultValue(0)
+                .HasColumnName("bonus_numbers_range");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("now()")
+                .HasColumnType("timestamp without time zone")
                 .HasColumnName("created_at");
-            entity.Property(e => e.DrawId).HasColumnName("draw_id");
-            entity.Property(e => e.Numbers).HasColumnName("numbers");
+            entity.Property(e => e.DrawType)
+                .HasMaxLength(50)
+                .HasDefaultValueSql("'regular'::character varying")
+                .HasColumnName("draw_type");
+            entity.Property(e => e.EndDate)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("end_date");
+            entity.Property(e => e.LotteryId).HasColumnName("lottery_id");
+            entity.Property(e => e.MainNumbersCount).HasColumnName("main_numbers_count");
+            entity.Property(e => e.MainNumbersRange).HasColumnName("main_numbers_range");
+            entity.Property(e => e.StartDate)
+                .HasDefaultValueSql("now()")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("start_date");
             entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("now()")
+                .HasColumnType("timestamp without time zone")
                 .HasColumnName("updated_at");
 
-            entity.HasOne(d => d.Draw).WithMany(p => p.LotteryNumbers)
-                .HasForeignKey(d => d.DrawId)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("lottery_numbers_draw_id_fkey");
+            entity.HasOne(d => d.Lottery).WithMany(p => p.LotteryConfigurations)
+                .HasForeignKey(d => d.LotteryId)
+                .HasConstraintName("lottery_configuration_lottery_id_fkey");
         });
 
         modelBuilder.Entity<Schemaversion>(entity =>

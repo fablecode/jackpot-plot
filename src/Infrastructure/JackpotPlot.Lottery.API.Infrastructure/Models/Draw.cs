@@ -21,6 +21,4 @@ public partial class Draw
     public virtual ICollection<DrawResult> DrawResults { get; set; } = new List<DrawResult>();
 
     public virtual Lottery? Lottery { get; set; }
-
-    public virtual ICollection<LotteryNumber> LotteryNumbers { get; set; } = new List<LotteryNumber>();
 }
