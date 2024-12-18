@@ -18,11 +18,11 @@ public sealed class GetLotteryConfigurationByLotteryIdHandler : IRequestHandler<
     {
         var result = await _lotteryConfigurationRepository.GetActiveConfigurationAsync(request.LotteryId);
 
-        if (result == null)
+        if (result != null)
         {
-            return Result<LotteryConfigurationDomain>.Failure($"Lottery configuration with id {request.LotteryId}, not found.");
+            return Result<LotteryConfigurationDomain>.Success(result);
         }
 
-        return Result<LotteryConfigurationDomain>.Success(result);
+        return Result<LotteryConfigurationDomain>.Failure($"Lottery configuration with id {request.LotteryId}, not found.");
     }
 }
