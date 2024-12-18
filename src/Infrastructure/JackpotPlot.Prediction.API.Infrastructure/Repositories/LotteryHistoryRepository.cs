@@ -1,4 +1,5 @@
-﻿using JackpotPlot.Domain.Models;
+﻿using System.Collections.Immutable;
+using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Repositories;
 using JackpotPlot.Prediction.API.Infrastructure.Databases;
 using JackpotPlot.Prediction.API.Infrastructure.Models;
@@ -32,6 +33,18 @@ public sealed class LotteryHistoryRepository : ILotteryHistoryRepository
             await context.SaveChangesAsync();
 
             return addedLotteryHistory.Entity.Id;
+        }
+    }
+
+    public async Task<ICollection<HistoricalDraw>> GetHistoricalDraws(int lotteryId)
+    {
+        using (var context = await _factory.CreateDbContextAsync())
+        {
+            return await context.Lotteryhistories
+                .Where(draw => draw.Lotteryid == lotteryId)
+                .OrderByDescending(draw => draw.Drawdate) // Sort by most recent first
+                .Select(lh => new HistoricalDraw(lh.Id, lh.Lotteryid, lh.Drawdate, lh.Winningnumbers, lh.Bonusnumbers, lh.Createdat.Value))
+                .ToListAsync();
         }
     }
 }
