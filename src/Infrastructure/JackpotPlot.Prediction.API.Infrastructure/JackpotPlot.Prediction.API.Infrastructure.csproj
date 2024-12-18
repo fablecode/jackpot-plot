@@ -14,14 +14,13 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.0" />
+		<PackageReference Include="Refit" Version="8.0.0" />
+		<PackageReference Include="Refit.HttpClientFactory" Version="8.0.0" />
+		<PackageReference Include="Refit.Newtonsoft.Json" Version="8.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\JackpotPlot.Infrastructure\JackpotPlot.Infrastructure.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Repositories\" />
 	</ItemGroup>
 
 </Project>

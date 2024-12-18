@@ -2,9 +2,14 @@
 using JackpotPlot.Infrastructure;
 using JackpotPlot.Prediction.API.Infrastructure.Databases;
 using JackpotPlot.Prediction.API.Infrastructure.Repositories;
+using JackpotPlot.Prediction.API.Infrastructure.Services.LotteryApi;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Refit;
 
 namespace JackpotPlot.Prediction.API.Infrastructure
 {
@@ -15,12 +20,15 @@ namespace JackpotPlot.Prediction.API.Infrastructure
             return services
                 .AddMessagingServices()
                 .AddDatabase(configuration)
-                .AddRepositories();
+                .AddRepositories()
+                .AddServices(configuration);
         }
 
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
             services.AddTransient<ILotteryHistoryRepository, LotteryHistoryRepository>();
+            services.AddTransient<ILotteryConfigurationRepository, LotteryConfigurationRepository>();
+            services.AddTransient<IPredictionRepository, PredictionRepository>();
 
             return services;
         }
@@ -30,6 +38,42 @@ namespace JackpotPlot.Prediction.API.Infrastructure
                 options.UseNpgsql(configuration.GetConnectionString("PredictionApiDatabase")));
 
             return services;
+        }
+        public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            var baseUrl = configuration.GetValue<string>("ApiSettings:LotteryApiBaseUrl");
+
+            var refitSettings = new RefitSettings
+            {
+                ContentSerializer = new NewtonsoftJsonContentSerializer(new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                    NullValueHandling = NullValueHandling.Ignore
+                })
+            };
+
+            services.AddRefitClient<ILotteryService>(refitSettings)
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri(baseUrl));
+
+            return services;
+        }
+    }
+
+    public static class RefitExtensions
+    {
+        public static T ForRefit<T>(string domainUrl)
+        {
+            return RestService.For<T>(domainUrl,
+                new RefitSettings
+                {
+                    ContentSerializer = new NewtonsoftJsonContentSerializer(
+                        new JsonSerializerSettings()
+                        {
+                            ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                            Converters = { new StringEnumConverter() }
+                        }
+                    )
+                });
         }
     }
 }
