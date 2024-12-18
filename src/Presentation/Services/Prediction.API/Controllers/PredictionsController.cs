@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using JackpotPlot.Domain.Constants;
+using JackpotPlot.Prediction.API.Application.Features.PredictNext;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Prediction.API.Models;
 
 namespace Prediction.API.Controllers;
 
@@ -6,15 +10,40 @@ namespace Prediction.API.Controllers;
 [Route("api/[controller]")]
 public class PredictionsController : ControllerBase
 {
+    private readonly IMediator _mediator;
+
+    public PredictionsController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
+    /// <summary>
+    /// Get Prediction by id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet("{id}")]
+    public IActionResult GetResourceById(int id)
+    {
+        throw new NotImplementedException();
+    }
+
     /// <summary>
     /// Predict numbers for the next draw.
     /// </summary>
+    /// <param name="request"></param>
     /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
     [HttpPost]
-    public IActionResult Post([FromBody] PredictNextInput input)
+    public async Task<IActionResult> Post([FromBody] PredictNextRequest request)
     {
-        return Ok(new { Message = "PredictNext endpoint is working!" });
+        var result = await _mediator.Send(request);
+
+        if (result.IsSuccess)
+        {
+            return Created();
+        }
+
+        return CreatedAtAction(nameof(GetResourceById), new { id = result.Value });
     }
 
     [HttpGet("strategies")]
@@ -22,14 +51,11 @@ public class PredictionsController : ControllerBase
     {
         var strategies = new List<PredictionStrategy>
         {
-            new("random", "Generate numbers randomly."),
-            new("frequency-based", "Predict numbers based on historical frequency." ),
-            new("ai-based", "Use advanced AI algorithms to predict numbers.")
+            new(PredictionStrategyType.Random, "Generate numbers randomly."),
+            new(PredictionStrategyType.FrequencyBased, "Predict numbers based on historical frequency." ),
+            new(PredictionStrategyType.AiBased, "Use advanced AI algorithms to predict numbers.")
         };
 
         return Ok(strategies);
     }
 }
-
-public record PredictionStrategy(string Name, string Description);
-public record PredictNextInput(int LotteryId, int? UserId = null, string Strategy = "random");
