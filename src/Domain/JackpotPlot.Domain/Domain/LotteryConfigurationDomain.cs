@@ -12,9 +12,9 @@ public sealed class LotteryConfigurationDomain
 
     public int MainNumbersRange { get; set; }
 
-    public int? BonusNumbersCount { get; set; }
+    public int BonusNumbersCount { get; set; }
 
-    public int? BonusNumbersRange { get; set; }
+    public int BonusNumbersRange { get; set; }
 
     public DateTime? StartDate { get; set; }
 
