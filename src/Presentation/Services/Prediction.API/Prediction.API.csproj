@@ -25,4 +25,8 @@
 	  <ProjectReference Include="..\..\..\Infrastructure\JackpotPlot.Prediction.API.Infrastructure\JackpotPlot.Prediction.API.Infrastructure.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Models\" />
+	</ItemGroup>
+
 </Project>
