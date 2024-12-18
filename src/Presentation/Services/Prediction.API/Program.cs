@@ -5,6 +5,7 @@ using JackpotPlot.Domain.Settings;
 using JackpotPlot.Prediction.API.Application;
 using JackpotPlot.Prediction.API.DatabaseMigration;
 using JackpotPlot.Prediction.API.Infrastructure;
+using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using Prediction.API.HostedServices;
 
@@ -42,6 +43,7 @@ builder.Services.AddSwaggerGen(options =>
 
 // IOptions<> configuration
 builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection(nameof(RabbitMqSettings)));
+builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection(nameof(ApiSettings)));
 
 // Database Migration
 builder.Services.AddPredictionApiDatabaseMigrationServices(builder.Configuration.GetConnectionString("PredictionApiDatabase"));
