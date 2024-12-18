@@ -1,6 +1,6 @@
 ﻿using JackpotPlot.Prediction.API.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
-#nullable disable
+
 namespace JackpotPlot.Prediction.API.Infrastructure.Databases;
 
 public partial class PredictionDbContext : DbContext
@@ -51,19 +51,21 @@ public partial class PredictionDbContext : DbContext
 
             entity.ToTable("predictions");
 
-            entity.HasIndex(e => new { e.Lotteryid, e.Userid, e.Generatedat }, "predictions_lotteryid_userid_generatedat_key").IsUnique();
-
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Confidencescore)
+            entity.Property(e => e.BonusNumbers).HasColumnName("bonus_numbers");
+            entity.Property(e => e.ConfidenceScore)
                 .HasPrecision(5, 2)
-                .HasColumnName("confidencescore");
-            entity.Property(e => e.Generatedat)
+                .HasColumnName("confidence_score");
+            entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("now()")
                 .HasColumnType("timestamp without time zone")
-                .HasColumnName("generatedat");
-            entity.Property(e => e.Lotteryid).HasColumnName("lotteryid");
-            entity.Property(e => e.Predictionnumbers).HasColumnName("predictionnumbers");
-            entity.Property(e => e.Userid).HasColumnName("userid");
+                .HasColumnName("created_at");
+            entity.Property(e => e.LotteryId).HasColumnName("lottery_id");
+            entity.Property(e => e.PredictedNumbers).HasColumnName("predicted_numbers");
+            entity.Property(e => e.Strategy)
+                .HasMaxLength(50)
+                .HasColumnName("strategy");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
         });
 
         modelBuilder.Entity<Schemaversion>(entity =>

@@ -4,13 +4,17 @@ public partial class Prediction
 {
     public int Id { get; set; }
 
-    public int? Userid { get; set; }
+    public int LotteryId { get; set; }
 
-    public int Lotteryid { get; set; }
+    public int? UserId { get; set; }
 
-    public List<int> Predictionnumbers { get; set; } = null!;
+    public string Strategy { get; set; } = null!;
 
-    public decimal? Confidencescore { get; set; }
+    public List<int> PredictedNumbers { get; set; } = null!;
 
-    public DateTime? Generatedat { get; set; }
+    public List<int>? BonusNumbers { get; set; }
+
+    public decimal? ConfidenceScore { get; set; }
+
+    public DateTime? CreatedAt { get; set; }
 }
