@@ -4,8 +4,7 @@
 	IN winningnumbers integer[],
 	IN bonusnumbers integer[],
 	OUT result boolean)
-LANGUAGE plpgsql
-AS $BODY$
+AS $$
 
 DECLARE
     DrawExists BOOLEAN;
@@ -33,4 +32,4 @@ BEGIN
 
     Result := DrawResultExists;
 END;
-$$;
+$$ LANGUAGE plpgsql;
