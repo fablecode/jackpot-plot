@@ -41,6 +41,8 @@ builder.Services.AddSwaggerGen(options =>
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
+
 // IOptions<> configuration
 builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection(nameof(RabbitMqSettings)));
 builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection(nameof(ApiSettings)));
