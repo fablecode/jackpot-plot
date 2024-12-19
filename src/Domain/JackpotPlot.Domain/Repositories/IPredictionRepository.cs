@@ -1,8 +1,9 @@
-﻿using JackpotPlot.Domain.ValueObjects;
+﻿using JackpotPlot.Domain.Domain;
+using JackpotPlot.Domain.ValueObjects;
 
 namespace JackpotPlot.Domain.Repositories;
 
 public interface IPredictionRepository
 {
-    Task<int> Add(PredictionResult predictionResult);
+    Task<PredictionDomain> Add(PredictionResult predictionResult);
 }

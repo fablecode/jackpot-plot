@@ -1,4 +1,5 @@
-﻿using JackpotPlot.Domain.Repositories;
+﻿using JackpotPlot.Domain.Domain;
+using JackpotPlot.Domain.Repositories;
 using JackpotPlot.Domain.ValueObjects;
 using JackpotPlot.Prediction.API.Infrastructure.Databases;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,7 @@ public sealed class PredictionRepository : IPredictionRepository
         _factory = factory;
     }
 
-    public async Task<int> Add(PredictionResult predictionResult)
+    public async Task<PredictionDomain> Add(PredictionResult predictionResult)
     {
         using (var context = await _factory.CreateDbContextAsync())
         {
@@ -30,7 +31,16 @@ public sealed class PredictionRepository : IPredictionRepository
             await context.Predictions.AddAsync(newPrediction);
             await context.SaveChangesAsync();
 
-            return newPrediction.Id;
+            return new PredictionDomain
+            {
+                Id = newPrediction.Id,
+                LotteryId = newPrediction.LotteryId,
+                Strategy = newPrediction.Strategy,
+                PredictedNumbers = newPrediction.PredictedNumbers,
+                BonusNumbers = newPrediction.BonusNumbers,
+                ConfidenceScore = newPrediction.ConfidenceScore.GetValueOrDefault(),
+                CreatedAt = newPrediction.CreatedAt.GetValueOrDefault()
+            };
         }
     }
 }
