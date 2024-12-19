@@ -22,7 +22,7 @@ public class PredictionsController : ControllerBase
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    [HttpGet("{id}")]
+    [HttpGet("{id}", Name = nameof(GetResourceById))]
     public IActionResult GetResourceById(int id)
     {
         throw new NotImplementedException();
@@ -40,10 +40,10 @@ public class PredictionsController : ControllerBase
 
         if (result.IsSuccess)
         {
-            return Created();
+            return CreatedAtRoute(nameof(GetResourceById), new { id = result.Value.Id }, new { id = result.Value.Id });
         }
 
-        return CreatedAtAction(nameof(GetResourceById), new { id = result.Value });
+        return BadRequest(result.Errors);
     }
 
     [HttpGet("strategies")]
