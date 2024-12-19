@@ -41,7 +41,7 @@ namespace JackpotPlot.Prediction.API.Infrastructure
         }
         public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
         {
-            var baseUrl = configuration.GetValue<string>("ApiSettings:LotteryApiBaseUrl");
+            var baseUrl = configuration.GetValue<string>("ApiSettings:LotteryServiceUrl");
 
             var refitSettings = new RefitSettings
             {
