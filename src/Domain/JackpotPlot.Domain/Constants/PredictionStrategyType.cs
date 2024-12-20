@@ -14,5 +14,6 @@ public static class PredictionStrategyType
     public const string LastAppearance = "last-appearance";
     public const string HighLowNumberSplit = "high-low-number-split";
     public const string NumberSum = "number-sum";
+    public const string GapAnalysis = "gap-analysis";
     public const string AiBased = "ai-based";
 }
