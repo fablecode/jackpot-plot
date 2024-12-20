@@ -21,5 +21,6 @@ public static class PredictionStrategyType
     public const string QuadrantAnalysis = "quadrant-analysis";
     public const string TimeDecay = "time-decay";
     public const string SeasonalPatterns = "seasonal-patterns";
+    public const string CyclicPatterns = "cyclic-patterns";
     public const string AiBased = "ai-based";
 }
