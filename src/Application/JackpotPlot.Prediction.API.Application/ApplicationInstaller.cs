@@ -33,12 +33,17 @@ public static class ApplicationInstaller
         services.AddScoped<IPredictionStrategy, RandomPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, StatisticalAveragingPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, WeightedProbabilityPredictionStrategy>();
+
+        // Mathematical and Statistical Strategies
         services.AddScoped<IPredictionStrategy, NumberSumPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, GapAnalysisPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, SkewnessAnalysisPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, StandardDeviationPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, WeightDistributionPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, QuadrantAnalysisPredictionStrategy>();
+
+        // Time-Based and Temporal Strategies
+        services.AddScoped<IPredictionStrategy, TimeDecayPredictionStrategy>();
 
         return services;
     }
