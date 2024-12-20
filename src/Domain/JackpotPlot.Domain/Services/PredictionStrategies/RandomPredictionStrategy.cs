@@ -43,7 +43,7 @@ public sealed class RandomPredictionStrategy : IPredictionStrategy
             lotteryConfiguration.LotteryId,
             mainNumbers,
             bonusNumbers,
-            0.5, // Random predictions are inherently less confident
+            CalculateRandomConfidence(lotteryConfiguration.MainNumbersRange, lotteryConfiguration.MainNumbersCount), // Random predictions are inherently less confident
             PredictionStrategyType.Random
         );
 
@@ -54,4 +54,13 @@ public sealed class RandomPredictionStrategy : IPredictionStrategy
     {
         return strategy.Equals(PredictionStrategyType.Random, StringComparison.OrdinalIgnoreCase);
     }
+
+    #region Private Helpers
+
+    private static double CalculateRandomConfidence(int mainNumbersRange, int mainNumbersCount)
+    {
+        return 1.0 / (mainNumbersRange - mainNumbersCount + 1); // Probability of a single correct prediction
+    }
+
+    #endregion
 }

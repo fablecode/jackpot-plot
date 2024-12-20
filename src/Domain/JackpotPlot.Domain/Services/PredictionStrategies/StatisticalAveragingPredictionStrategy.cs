@@ -36,14 +36,14 @@ public class StatisticalAveragingPredictionStrategy : IPredictionStrategy
         // Step 4: Compute averages for bonus numbers (if applicable)
         var bonusNumberAverages = lotteryConfiguration.BonusNumbersCount > 0
             ? CalculateAverages(historicalDraws, lotteryConfiguration.BonusNumbersCount, lotteryConfiguration.BonusNumbersRange, true)
-            : ImmutableArray<int>.Empty;
+            : new List<int>();
 
         var predictionResult = new PredictionResult
         (
             lotteryId,
-            mainNumberAverages,
-            bonusNumberAverages,
-            0.85, // Example confidence score
+            mainNumberAverages.ToImmutableArray(),
+            bonusNumberAverages.ToImmutableArray(),
+            CalculateStatisticalAveragingConfidence(historicalDraws, mainNumberAverages), // Example confidence score
             PredictionStrategyType.StatisticalAveraging
         );
 
@@ -57,7 +57,7 @@ public class StatisticalAveragingPredictionStrategy : IPredictionStrategy
 
     #region Private helpers
 
-    private static ImmutableArray<int> CalculateAverages(
+    private static List<int> CalculateAverages(
         ICollection<HistoricalDraw> historicalDraws,
         int numbersCount,
         int maxRange,
@@ -81,7 +81,17 @@ public class StatisticalAveragingPredictionStrategy : IPredictionStrategy
             }
         }
 
-        return averages.ToImmutableArray();
+        return averages;
+    }
+
+    private double CalculateStatisticalAveragingConfidence(ICollection<HistoricalDraw> historicalDraws, List<int> predictedNumbers)
+    {
+        var actualAverages = historicalDraws.Select(draw => draw.WinningNumbers.Average()).ToList();
+        double predictedAverage = predictedNumbers.Average();
+
+        double deviation = actualAverages.Select(avg => Math.Abs(avg - predictedAverage)).Average();
+
+        return 1.0 / (1.0 + deviation); // Inverse of average deviation
     }
 
     #endregion
