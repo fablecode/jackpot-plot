@@ -22,8 +22,17 @@ public static class ApplicationInstaller
     }
     public static IServiceCollection AddStrategies(this IServiceCollection services)
     {
+        services.AddScoped<IPredictionStrategy, ClusteringAnalysisPredictionStrategy>();
+        services.AddScoped<IPredictionStrategy, ConsecutiveNumbersPredictionStrategy>();
+        services.AddScoped<IPredictionStrategy, DeltaSystemPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, FrequencyPredictionStrategy>();
+        services.AddScoped<IPredictionStrategy, HighLowNumberSplitPredictionStrategy>();
+        services.AddScoped<IPredictionStrategy, LastAppearancePredictionStrategy>();
+        services.AddScoped<IPredictionStrategy, OddEvenBalancePredictionStrategy>();
+        services.AddScoped<IPredictionStrategy, PatternMatchingPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, RandomPredictionStrategy>();
+        services.AddScoped<IPredictionStrategy, StatisticalAveragingPredictionStrategy>();
+        services.AddScoped<IPredictionStrategy, WeightedProbabilityPredictionStrategy>();
 
         return services;
     }
