@@ -16,5 +16,6 @@ public static class PredictionStrategyType
     public const string NumberSum = "number-sum";
     public const string GapAnalysis = "gap-analysis";
     public const string SkewnessAnalysis = "skewness-analysis";
+    public const string StandardDeviation = "standard-deviation";
     public const string AiBased = "ai-based";
 }
