@@ -35,6 +35,7 @@ public static class ApplicationInstaller
         services.AddScoped<IPredictionStrategy, WeightedProbabilityPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, NumberSumPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, GapAnalysisPredictionStrategy>();
+        services.AddScoped<IPredictionStrategy, SkewnessAnalysisPredictionStrategy>();
 
         return services;
     }
