@@ -30,22 +30,22 @@ public class OddEvenBalancePredictionStrategy : IPredictionStrategy
             return Result<PredictionResult>.Failure($"No historical draws available for lottery ID: {lotteryId}.");
 
 
-        // Step 1: Calculate the odd-even ratio from historical data
+        // Step 3: Calculate the odd-even ratio from historical data
         var (oddRatio, evenRatio) = CalculateOddEvenRatio(historicalDraws);
 
-        // Step 2: Determine the count of odd and even numbers to select
+        // Step 4: Determine the count of odd and even numbers to select
         int oddCount = (int)Math.Round(lotteryConfiguration.MainNumbersCount * oddRatio);
         int evenCount = lotteryConfiguration.MainNumbersCount - oddCount; // Remaining numbers are even
 
-        // Step 3: Generate odd and even numbers within the allowed range
+        // Step 5: Generate odd and even numbers within the allowed range
         var random = new Random();
         var oddNumbers = GenerateNumbers(1, lotteryConfiguration.MainNumbersRange, n => n % 2 != 0, oddCount, random);
         var evenNumbers = GenerateNumbers(1, lotteryConfiguration.MainNumbersRange, n => n % 2 == 0, evenCount, random);
 
-        // Step 4: Combine and shuffle the numbers
-        var predictedNumbers = oddNumbers.Concat(evenNumbers).OrderBy(_ => random.Next()).ToImmutableArray();
+        // Step 6: Combine and shuffle the numbers
+        var predictedNumbers = oddNumbers.Concat(evenNumbers).OrderBy(_ => random.Next()).ToList();
 
-        // Step 5: Predict bonus numbers (optional)
+        // Step 7: Predict bonus numbers (optional)
         var bonusNumbers = lotteryConfiguration.BonusNumbersCount > 0
             ? GenerateNumbers(1, lotteryConfiguration.BonusNumbersRange, _ => true, lotteryConfiguration.BonusNumbersCount, random)
             : ImmutableArray<int>.Empty;
@@ -53,9 +53,9 @@ public class OddEvenBalancePredictionStrategy : IPredictionStrategy
         var predictionResult = new PredictionResult
         (
             lotteryId,
-            predictedNumbers,
+            predictedNumbers.ToImmutableArray(),
             bonusNumbers,
-            0.8, // Example confidence score
+            CalculateOddEvenBalanceConfidence(historicalDraws, predictedNumbers), // Example confidence score
             PredictionStrategyType.StatisticalAveraging
         );
 
@@ -89,6 +89,28 @@ public class OddEvenBalancePredictionStrategy : IPredictionStrategy
         var validNumbers = Enumerable.Range(min, max - min + 1).Where(predicate).ToList();
         return validNumbers.OrderBy(_ => random.Next()).Take(count).ToImmutableArray();
     }
+
+    private double CalculateOddEvenBalanceConfidence(ICollection<HistoricalDraw> historicalDraws, List<int> predictedNumbers)
+    {
+        var predictedOddCount = predictedNumbers.Count(n => n % 2 != 0);
+        var predictedEvenCount = predictedNumbers.Count - predictedOddCount;
+
+        int matchCount = 0;
+
+        foreach (var draw in historicalDraws)
+        {
+            var actualOddCount = draw.WinningNumbers.Count(n => n % 2 != 0);
+            var actualEvenCount = draw.WinningNumbers.Count - actualOddCount;
+
+            if (actualOddCount == predictedOddCount && actualEvenCount == predictedEvenCount)
+            {
+                matchCount++;
+            }
+        }
+
+        return (double)matchCount / historicalDraws.Count;
+    }
+
 
     #endregion
 }
