@@ -18,5 +18,6 @@ public static class PredictionStrategyType
     public const string SkewnessAnalysis = "skewness-analysis";
     public const string StandardDeviation = "standard-deviation";
     public const string WeightDistribution = "weight-distribution";
+    public const string QuadrantAnalysis = "quadrant-analysis";
     public const string AiBased = "ai-based";
 }

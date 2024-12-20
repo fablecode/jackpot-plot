@@ -38,6 +38,7 @@ public static class ApplicationInstaller
         services.AddScoped<IPredictionStrategy, SkewnessAnalysisPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, StandardDeviationPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, WeightDistributionPredictionStrategy>();
+        services.AddScoped<IPredictionStrategy, QuadrantAnalysisPredictionStrategy>();
 
         return services;
     }
