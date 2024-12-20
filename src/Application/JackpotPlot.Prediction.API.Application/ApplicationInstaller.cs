@@ -33,6 +33,7 @@ public static class ApplicationInstaller
         services.AddScoped<IPredictionStrategy, RandomPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, StatisticalAveragingPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, WeightedProbabilityPredictionStrategy>();
+        services.AddScoped<IPredictionStrategy, NumberSumPredictionStrategy>();
 
         return services;
     }
