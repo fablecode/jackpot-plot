@@ -41,7 +41,7 @@ public sealed class FrequencyPredictionStrategy : IPredictionStrategy
             .OrderByDescending(f => f.Frequency)
             .Take(lotteryConfiguration.MainNumbersCount)
             .Select(f => f.Number)
-            .ToImmutableArray();
+            .ToList();
 
         var predictedBonusNumbers = bonusNumberFrequency
             .OrderByDescending(f => f.Frequency)
@@ -53,9 +53,9 @@ public sealed class FrequencyPredictionStrategy : IPredictionStrategy
         var predictionResult = new PredictionResult
         (
             lotteryId,
-            predictedMainNumbers,
+            predictedMainNumbers.ToImmutableArray(),
             predictedBonusNumbers,
-            CalculateConfidenceScore(predictedMainNumbers, predictedBonusNumbers),
+            CalculateFrequencyBasedConfidence(historicalDraws, predictedMainNumbers),
             PredictionStrategyType.FrequencyBased
         );
 
@@ -69,7 +69,7 @@ public sealed class FrequencyPredictionStrategy : IPredictionStrategy
 
     #region Private Helpers
 
-    private List<NumberFrequency> CalculateFrequency(IEnumerable<int> numbers, int range)
+    private static List<NumberFrequency> CalculateFrequency(IEnumerable<int> numbers, int range)
     {
         var frequency = new int[range + 1]; // Range is 1-based (e.g., 1-50)
         foreach (var number in numbers)
@@ -83,11 +83,17 @@ public sealed class FrequencyPredictionStrategy : IPredictionStrategy
             .ToList();
     }
 
-    private double CalculateConfidenceScore(ImmutableArray<int> mainNumbers, ImmutableArray<int> bonusNumbers)
+    private static double CalculateFrequencyBasedConfidence(ICollection<HistoricalDraw> historicalDraws, List<int> predictedNumbers)
     {
-        // Example: Calculate confidence score based on average frequency
-        var totalNumbers = mainNumbers.Length + bonusNumbers.Length;
-        return totalNumbers > 0 ? 0.8 : 0.0; // Example static confidence score
+        var matchCount = 0;
+        var totalDraws = historicalDraws.Count;
+
+        foreach (var draw in historicalDraws)
+        {
+            matchCount += draw.WinningNumbers.Intersect(predictedNumbers).Count();
+        }
+
+        return (double)matchCount / (totalDraws * predictedNumbers.Count); // Fraction of correct predictions
     }
 
     #endregion
