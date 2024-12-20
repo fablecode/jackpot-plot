@@ -30,13 +30,13 @@ public class CyclicPatternsPredictionStrategy : IPredictionStrategy
             return Result<PredictionResult>.Failure($"No historical draws available for lottery ID: {lotteryId}.");
 
 
-        // Step 1: Identify cyclic patterns
+        // Step 3: Identify cyclic patterns
         var cycles = AnalyzeCyclicPatterns(historicalDraws.ToList(), lotteryConfiguration.MainNumbersRange);
 
-        // Step 2: Predict numbers based on cyclic patterns
+        // Step 4: Predict numbers based on cyclic patterns
         var predictedNumbers = GenerateNumbersFromCycles(cycles, lotteryConfiguration.MainNumbersCount);
 
-        // Step 3: Generate random bonus numbers (if applicable)
+        // Step 5: Generate random bonus numbers (if applicable)
         var random = new Random();
         var bonusNumbers = lotteryConfiguration.BonusNumbersCount > 0
             ? GenerateRandomNumbers(1, lotteryConfiguration.BonusNumbersRange, lotteryConfiguration.BonusNumbersCount, random)

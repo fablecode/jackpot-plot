@@ -46,6 +46,10 @@ public static class ApplicationInstaller
         services.AddScoped<IPredictionStrategy, TimeDecayPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, SeasonalPatternsPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, CyclicPatternsPredictionStrategy>();
+        services.AddScoped<IPredictionStrategy, DrawPositionAnalysisPredictionStrategy>();
+
+        // Combination-Based Strategies
+        services.AddScoped<IPredictionStrategy, ReducedNumberPoolPredictionStrategy>();
 
         return services;
     }
