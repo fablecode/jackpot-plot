@@ -24,5 +24,6 @@ public static class PredictionStrategyType
     public const string CyclicPatterns = "cyclic-patterns";
     public const string DrawPositionAnalysis = "draw-position-analysis";
     public const string ReducedNumberPool = "reduced-number-pool";
+    public const string GroupSelection = "group-selection";
     public const string AiBased = "ai-based";
 }
