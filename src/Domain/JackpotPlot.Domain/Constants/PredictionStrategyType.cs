@@ -20,5 +20,6 @@ public static class PredictionStrategyType
     public const string WeightDistribution = "weight-distribution";
     public const string QuadrantAnalysis = "quadrant-analysis";
     public const string TimeDecay = "time-decay";
+    public const string SeasonalPatterns = "seasonal-patterns";
     public const string AiBased = "ai-based";
 }

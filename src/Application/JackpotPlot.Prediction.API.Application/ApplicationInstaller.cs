@@ -44,6 +44,7 @@ public static class ApplicationInstaller
 
         // Time-Based and Temporal Strategies
         services.AddScoped<IPredictionStrategy, TimeDecayPredictionStrategy>();
+        services.AddScoped<IPredictionStrategy, SeasonalPatternsPredictionStrategy>();
 
         return services;
     }
