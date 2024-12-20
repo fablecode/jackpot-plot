@@ -41,9 +41,9 @@ public class DeltaSystemPredictionStrategy : IPredictionStrategy
         var predictionResult = new PredictionResult
         (
             lotteryId,
-            predictedNumbers, 
+            predictedNumbers.ToImmutableArray(), 
             ImmutableArray<int>.Empty, // Adjust for bonus numbers if needed
-            0.8, // Example confidence score
+            CalculateDeltaSystemConfidence(historicalDraws, predictedNumbers), // Example confidence score
             PredictionStrategyType.DeltaSystem
         );
 
@@ -65,7 +65,7 @@ public class DeltaSystemPredictionStrategy : IPredictionStrategy
         {
             var numbers = draw.WinningNumbers.OrderBy(n => n).ToList();
 
-            for (int i = 1; i < numbers.Count; i++)
+            for (var i = 1; i < numbers.Count; i++)
             {
                 deltas.Add(numbers[i] - numbers[i - 1]);
             }
@@ -84,7 +84,7 @@ public class DeltaSystemPredictionStrategy : IPredictionStrategy
             .ToList();
     }
 
-    private static ImmutableArray<int> GenerateNumbersFromDeltas(List<int> deltas, int maxRange)
+    private static List<int> GenerateNumbersFromDeltas(List<int> deltas, int maxRange)
     {
         var random = new Random();
         var firstNumber = random.Next(1, maxRange / 2); // Start with a random number in the lower half of the range
@@ -100,7 +100,34 @@ public class DeltaSystemPredictionStrategy : IPredictionStrategy
             numbers.Add(nextNumber);
         }
 
-        return numbers.ToImmutableArray();
+        return numbers;
+    }
+
+    private double CalculateDeltaSystemConfidence(ICollection<HistoricalDraw> historicalDraws, List<int> predictedNumbers)
+    {
+        int correctDeltas = 0;
+        int totalDeltas = 0;
+
+        foreach (var draw in historicalDraws)
+        {
+            var actualDeltas = CalculateDeltas(draw.WinningNumbers);
+            var predictedDeltas = CalculateDeltas(predictedNumbers);
+
+            correctDeltas += actualDeltas.Intersect(predictedDeltas).Count();
+            totalDeltas += actualDeltas.Count;
+        }
+
+        return (double)correctDeltas / totalDeltas;
+    }
+
+    private List<int> CalculateDeltas(List<int> numbers)
+    {
+        var deltas = new List<int>();
+        for (int i = 1; i < numbers.Count; i++)
+        {
+            deltas.Add(numbers[i] - numbers[i - 1]);
+        }
+        return deltas;
     }
 
     #endregion
