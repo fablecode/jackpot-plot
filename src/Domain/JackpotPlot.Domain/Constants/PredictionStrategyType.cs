@@ -28,5 +28,6 @@ public static class PredictionStrategyType
     public const string InvertedFrequency = "inverted-frequency";
     public const string Mixed = "mixed";
     public const string SymmetryAnalysis = "symmetry-analysis";
+    public const string NumberChain = "number-chain";
     public const string AiBased = "ai-based";
 }

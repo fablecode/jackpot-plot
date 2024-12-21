@@ -83,6 +83,7 @@ public static class ApplicationInstaller
 
         // Pattern-Based Strategies
         services.AddScoped<IPredictionStrategy, SymmetryAnalysisPredictionStrategy>();
+        services.AddScoped<IPredictionStrategy, NumberChainPredictionStrategy>();
 
         return services;
     }
