@@ -85,6 +85,7 @@ public static class ApplicationInstaller
         services.AddScoped<IPredictionStrategy, SymmetryAnalysisPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, NumberChainPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, RepeatingNumbersPredictionStrategy>();
+        services.AddScoped<IPredictionStrategy, RarePatternsPredictionStrategy>();
 
         return services;
     }

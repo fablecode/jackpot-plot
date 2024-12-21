@@ -30,5 +30,6 @@ public static class PredictionStrategyType
     public const string SymmetryAnalysis = "symmetry-analysis";
     public const string NumberChain = "number-chain";
     public const string RepeatingNumbers = "repeating-numbers";
+    public const string RarePatterns = "rare-patterns";
     public const string AiBased = "ai-based";
 }
