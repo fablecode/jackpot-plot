@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
+using JackpotPlot.Domain.Constants;
 using JackpotPlot.Domain.Interfaces;
+using JackpotPlot.Domain.Repositories;
 using JackpotPlot.Domain.Services.PredictionStrategies;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -51,8 +53,36 @@ public static class ApplicationInstaller
         // Combination-Based Strategies
         services.AddScoped<IPredictionStrategy, ReducedNumberPoolPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, GroupSelectionPredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, MixedPredictionStrategy>();
+        services.AddScoped<IPredictionStrategy, MixedPredictionStrategy>(provider =>
+        {
+            var frequencyPredictionStrategy = provider.GetRequiredService<FrequencyPredictionStrategy>();
+            var reducedNumberPoolPredictionStrategy = provider.GetRequiredService<ReducedNumberPoolPredictionStrategy>();
+            var cyclicPatternsPredictionStrategy = provider.GetRequiredService<CyclicPatternsPredictionStrategy>();
+
+            var lotteryConfigurationRepository = provider.GetRequiredService<ILotteryConfigurationRepository>();
+            var lotteryHistoryRepository = provider.GetRequiredService<ILotteryHistoryRepository>();
+
+            var strategies = new List<IPredictionStrategy>
+            {
+                frequencyPredictionStrategy,
+                reducedNumberPoolPredictionStrategy,
+                cyclicPatternsPredictionStrategy
+            };
+
+            var weights = new Dictionary<string, double>
+            {
+                { PredictionStrategyType.FrequencyBased, 0.5 },
+                { PredictionStrategyType.ReducedNumberPool, 0.3 },
+                { PredictionStrategyType.CyclicPatterns, 0.2 }
+            };
+
+            return new MixedPredictionStrategy(strategies, weights, lotteryConfigurationRepository,lotteryHistoryRepository);
+        });
+
         services.AddScoped<IPredictionStrategy, InvertedFrequencyPredictionStrategy>();
+
+        // Pattern-Based Strategies
+        services.AddScoped<IPredictionStrategy, SymmetryAnalysisPredictionStrategy>();
 
         return services;
     }
