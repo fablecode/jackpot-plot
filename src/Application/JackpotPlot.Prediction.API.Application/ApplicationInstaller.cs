@@ -51,6 +51,7 @@ public static class ApplicationInstaller
         // Combination-Based Strategies
         services.AddScoped<IPredictionStrategy, ReducedNumberPoolPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, GroupSelectionPredictionStrategy>();
+        services.AddScoped<IPredictionStrategy, InvertedFrequencyPredictionStrategy>();
 
         return services;
     }
