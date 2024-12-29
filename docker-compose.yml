@@ -30,6 +30,16 @@ services:
         - ./docker/configuration/rabbitmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config  # Custom RabbitMQ config
     networks:
       - jackpotplot_net
+
+  # Ocelot Gateway
+  gateway:
+    build:
+      dockerfile: ./src/Presentation/Gateway/JackpotPlot.Gateway/Dockerfile
+    ports:
+      - "8080:8080" # Expose Ocelot Gateway
+    depends_on:
+      - lottery-service
+      - prediction-service
   
   # Lottery Service Database
   lottery-db:
