@@ -67,7 +67,7 @@ services:
           - RabbitMqSettings__Password=jackpotplot
           - RabbitMqSettings__Exchange=lottery-exchange
       ports:
-          - "8080:8080"
+          - "5001:5001"
       depends_on:
           - lottery-db
           - rabbitmq

@@ -25,6 +25,6 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 
 # Expose the default port
-EXPOSE 8080
+EXPOSE 5001
 
 ENTRYPOINT ["dotnet", "Lottery.API.dll"]
