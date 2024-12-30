@@ -25,6 +25,6 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 
 # Expose the default port
-EXPOSE 8081
+EXPOSE 5002
 
 ENTRYPOINT ["dotnet", "Prediction.API.dll"]

@@ -115,7 +115,7 @@ services:
           - RabbitMqSettings__Password=jackpotplot
           - RabbitMqSettings__Exchange=lottery-exchange
       ports:
-          - "8081:8081"
+          - "5002:5002"
       depends_on:
           - prediction-db
           - rabbitmq
