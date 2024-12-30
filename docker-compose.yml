@@ -37,6 +37,8 @@ services:
       dockerfile: ./src/Presentation/Gateway/JackpotPlot.Gateway/Dockerfile
     ports:
       - "8080:8080" # Expose Ocelot Gateway
+    networks:
+      - jackpotplot_net
     depends_on:
       - lottery-service
       - prediction-service
