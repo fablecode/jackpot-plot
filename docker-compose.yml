@@ -127,13 +127,12 @@ services:
   # Angular Client
   angular-client:
       build:
-          context: ./src/Presentation/Clients/Web/jackpot-plot-web
-          dockerfile: Dockerfile
+        context: ./src/Presentation/Clients/Web/jackpot-plot-web/
+        dockerfile: Dockerfile
       ports:
         - "4200:80"
       depends_on:
-        - lottery-service
-        - prediction-service
+        - gateway
 
 volumes:
   lottery_db_data:
