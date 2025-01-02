@@ -28,9 +28,6 @@ COPY --from=build-stage /app/dist/jackpot-plot-web/browser .
 # Replace the default NGINX configuration with a custom configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-RUN cat /etc/nginx/conf.d/default.conf
-
-
 # Expose port 80 for the web server
 EXPOSE 80
 
