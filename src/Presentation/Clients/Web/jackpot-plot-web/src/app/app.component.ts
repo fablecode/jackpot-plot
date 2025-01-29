@@ -1,39 +1,25 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { TranslationService } from './modules/i18n';
-// language list
-import { locale as enLang } from './modules/i18n/vocabs/en';
-import { locale as chLang } from './modules/i18n/vocabs/ch';
-import { locale as esLang } from './modules/i18n/vocabs/es';
-import { locale as jpLang } from './modules/i18n/vocabs/jp';
-import { locale as deLang } from './modules/i18n/vocabs/de';
-import { locale as frLang } from './modules/i18n/vocabs/fr';
-import { ThemeModeService } from './_metronic/partials/layout/theme-mode-switcher/theme-mode.service';
+import {AfterViewInit, Component, HostBinding} from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import KTComponents from '../metronic/core/index';
+import KTLayout from '../metronic/app/layouts/demo1';
+import {HeaderComponent} from './layouts/header/header.component';
+import {FooterComponent} from './layouts/footer/footer.component';
+import {SidebarComponent} from './layouts/sidebar/sidebar.component';
+import {SearchModalComponent} from './partials/search-modal/search-modal.component';
 
 @Component({
-  // tslint:disable-next-line:component-selector
-  // eslint-disable-next-line @angular-eslint/component-selector
-  selector: 'body[root]',
+  selector: 'app-root',
+  standalone: true,
+  imports: [RouterOutlet, HeaderComponent, FooterComponent, SidebarComponent, SearchModalComponent],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit {
-  constructor(
-    private translationService: TranslationService,
-    private modeService: ThemeModeService
-  ) {
-    // register translations
-    this.translationService.loadTranslations(
-      enLang,
-      chLang,
-      esLang,
-      jpLang,
-      deLang,
-      frLang
-    );
-  }
+export class AppComponent implements AfterViewInit {
+  title = 'jackpot-plot-web';
+  @HostBinding('class') hostClass = 'flex grow';
 
-  ngOnInit() {
-    this.modeService.init();
+  ngAfterViewInit(): void {
+    KTComponents.init();
+    KTLayout.init();
   }
 }
