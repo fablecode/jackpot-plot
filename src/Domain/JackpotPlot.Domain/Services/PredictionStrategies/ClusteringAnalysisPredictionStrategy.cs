@@ -59,7 +59,7 @@ public class ClusteringAnalysisPredictionStrategy : IPredictionStrategy
 
     public bool Handles(string strategy)
     {
-        return strategy.Equals(PredictionStrategyType.ClusteringAnalysis, StringComparison.OrdinalIgnoreCase);
+        return !string.IsNullOrWhiteSpace(strategy) && strategy.Equals(PredictionStrategyType.ClusteringAnalysis, StringComparison.OrdinalIgnoreCase);
     }
 
     #region Private Helpers
