@@ -12,9 +12,9 @@ public static class ClusteringAnalysisPredictionStrategyHelpers
         foreach (var draw in historicalDraws)
         {
             var numbers = draw.WinningNumbers;
-            for (int i = 0; i < numbers.Count; i++)
+            for (var i = 0; i < numbers.Count; i++)
             {
-                for (int j = i + 1; j < numbers.Count; j++)
+                for (var j = i + 1; j < numbers.Count; j++)
                 {
                     matrix[numbers[i], numbers[j]]++;
                     matrix[numbers[j], numbers[i]]++; // Symmetric co-occurrence
@@ -31,14 +31,14 @@ public static class ClusteringAnalysisPredictionStrategyHelpers
         var clusters = new List<List<int>>();
         var random = new Random();
 
-        for (int i = 0; i < clusterCount; i++)
+        for (var i = 0; i < clusterCount; i++)
         {
             clusters.Add(new List<int>());
         }
 
-        for (int number = 1; number < coOccurrenceMatrix.GetLength(0); number++)
+        for (var number = 1; number < coOccurrenceMatrix.GetLength(0); number++)
         {
-            int assignedCluster = random.Next(0, clusterCount); // Randomly assign to a cluster
+            var assignedCluster = random.Next(0, clusterCount); // Randomly assign to a cluster
             clusters[assignedCluster].Add(number);
         }
 
