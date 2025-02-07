@@ -76,7 +76,7 @@ public class GenerateRandomNumbersTests
     }
 
     [Test]
-    public void Given_A_Count_GreaterThan_The_Available_Numbers_When_GenerateRandomNumbers_Method_Is_Invoked_Then_It_Returns_All_Available_Numbers()
+    public void Given_A_Count_GreaterThan_The_Available_Numbers_When_GenerateRandomNumbers_Method_Is_Invoked_Then_It_Returns_A_List_With_Two_Available_Numbers()
     {
         // Arrange
         const int min = 1;
@@ -91,6 +91,23 @@ public class GenerateRandomNumbersTests
 
         // Assert
         result.Length.Should().Be(2);
+    }
+
+    [Test]
+    public void Given_A_Count_GreaterThan_The_Available_Numbers_When_GenerateRandomNumbers_Method_Is_Invoked_Then_It_Returns_All_Available_Numbers()
+    {
+        // Arrange
+        const int min = 1;
+        const int max = 5;
+        // Exclude most numbers so that only two remain.
+        var exclude = new List<int> { 3, 4, 5 }; // availableNumbers will be {1, 2}
+        const int count = 5; // request more than available
+        var random = new Random(1234);
+
+        // Act
+        var result = ClusteringAnalysisPredictionStrategyHelpers.GenerateRandomNumbers(min, max, exclude, count, random);
+
+        // Assert
         result.Should().BeEquivalentTo(new List<int> { 1, 2 });
     }
 
