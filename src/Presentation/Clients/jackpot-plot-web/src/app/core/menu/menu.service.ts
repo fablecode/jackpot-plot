@@ -29,7 +29,7 @@ export class MenuService {
     },
     {
       title: 'Predictions',
-      icon: 'ki-route  ',
+      icon: 'ki-data  ',
       link: '/predictions',
       children: [
         { title: 'Number Generator', link: '/overview'},
@@ -49,7 +49,7 @@ export class MenuService {
     },
     {
       title: 'Winning Strategies',
-      icon: 'ki-data',
+      icon: 'ki-route',
       link: '/winning-strategies',
       children: [
         { title: 'Mathematical Strategies', link: '/overview'},
