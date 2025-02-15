@@ -5,5 +5,7 @@ export const ROUTE_PATHS = {
   HOT_COLD_NUMBERS: 'hot-and-cold-numbers',
   WINNING_PATTERNS: 'winning-patterns',
   REPORTS: 'reports',
-  SETTINGS: 'settings'
+  SETTINGS: 'settings',
+  PREDICTIONS: 'predictions',
+  NUMBER_GENERATOR: 'number-generator',
 };

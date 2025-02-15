@@ -36,7 +36,7 @@ export class MenuService {
       icon: 'ki-data  ',
       link: '/predictions',
       children: [
-        { title: 'Number Generator', link: '/overview'},
+        { title: 'Number Generator', link: `/${ROUTE_PATHS.PREDICTIONS}/${ROUTE_PATHS.NUMBER_GENERATOR}`},
         { title: 'Statistical Probability', link: '/overview'},
         { title: 'Custom Number Selection', link: '/overview'},
       ]
