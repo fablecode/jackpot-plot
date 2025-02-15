@@ -23,32 +23,32 @@
 			<div class="menu flex flex-col grow gap-0.5" data-menu="true" data-menu-accordion-expand-all="false"
 				id="sidebar_menu">
 
-        <div *ngFor="let item of menuItems; let i = index" class="menu-item" [attr.data-menu-item-toggle]="item.children ? 'accordion' : null" [attr.data-menu-item-trigger]="item.children ? 'click' : null">
+        <div *ngFor="let menu of menuItems; let i = index" class="menu-item" [attr.data-menu-item-toggle]="menu.children ? 'accordion' : null" [attr.data-menu-item-trigger]="menu.children ? 'click' : null" [class.show]="isExpanded(menu.id)">
           <div class="menu-link flex items-center grow cursor-pointer border border-transparent gap-[10px] pl-[10px] pr-[10px] py-[6px]" tabindex="{{ i }}">
             <span class="menu-icon items-start text-gray-500 dark:text-gray-400 w-[20px]">
-							<i class="ki-filled {{ item.icon }} text-lg">
+							<i class="ki-filled {{ menu.icon }} text-lg">
 							</i>
 						</span>
             <span class="menu-title text-sm font-semibold text-gray-700 menu-item-active:text-primary menu-link-hover:!text-primary">
-							{{ item.title }}
+							{{ menu.title }}
 						</span>
-            <span *ngIf="item.children" class="menu-arrow text-gray-400 w-[20px] shrink-0 justify-end ml-1 mr-[-10px]">
+            <span *ngIf="menu.children" class="menu-arrow text-gray-400 w-[20px] shrink-0 justify-end ml-1 mr-[-10px]">
 							<i class="ki-filled ki-plus text-2xs menu-item-show:hidden">
 							</i>
 							<i class="ki-filled ki-minus text-2xs hidden menu-item-show:inline-flex">
 							</i>
 						</span>
           </div>
-          <div *ngIf="item.children" class="menu-accordion gap-0.5 pl-[10px] relative before:absolute before:left-[20px] before:top-0 before:bottom-0 before:border-l before:border-gray-200">
-            <div class="menu-item" *ngFor="let child of item.children;">
-              <a class="menu-link gap-[14px] pl-[10px] pr-[10px] py-[8px] border border-transparent items-center grow menu-item-active:bg-secondary-active dark:menu-item-active:bg-coal-300 dark:menu-item-active:border-gray-100 menu-item-active:rounded-lg hover:bg-secondary-active dark:hover:bg-coal-300 dark:hover:border-gray-100 hover:rounded-lg"
-                 href="html/demo1.html" tabindex="0">
+          <div *ngIf="menu.children" class="menu-accordion gap-0.5 pl-[10px] relative before:absolute before:left-[20px] before:top-0 before:bottom-0 before:border-l before:border-gray-200" [class.show]="isExpanded(menu.id)">
+            <div class="menu-item" *ngFor="let item of menu.children;" [class.active]="isActive(item.link)">
+              <a [routerLink]="item.link" class="menu-link gap-[14px] pl-[10px] pr-[10px] py-[8px] border border-transparent items-center grow menu-item-active:bg-secondary-active dark:menu-item-active:bg-coal-300 dark:menu-item-active:border-gray-100 menu-item-active:rounded-lg hover:bg-secondary-active dark:hover:bg-coal-300 dark:hover:border-gray-100 hover:rounded-lg"
+                 tabindex="0">
 								<span
                   class="menu-bullet flex w-[6px] relative before:absolute before:top-0 before:size-[6px] before:rounded-full before:-translate-x-1/2 before:-translate-y-1/2 menu-item-active:before:bg-primary menu-item-hover:before:bg-primary">
 								</span>
                 <span
                   class="menu-title text-2sm font-medium text-gray-700 menu-item-active:text-primary menu-item-active:font-semibold menu-link-hover:!text-primary">
-									{{child.title}}
+									{{item.title}}
 								</span>
               </a>
             </div>

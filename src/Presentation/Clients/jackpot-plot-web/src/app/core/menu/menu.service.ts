@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import { MenuItem } from './menu.model';
+import {ROUTE_PATHS} from '../constants/routes.constants';
 
 @Injectable({
   providedIn: 'root'
@@ -7,17 +8,19 @@ import { MenuItem } from './menu.model';
 export class MenuService {
   private menuItems: MenuItem[] = [
     {
+      id: ROUTE_PATHS.DASHBOARD,
       title: 'Dashboard',
       icon: 'ki-element-11',
-      link: '/dashboard',
+      link: `/${ROUTE_PATHS.DASHBOARD}`,
       children: [
-        { title: 'Overview', icon: 'ki-home', link: '/overview'},
-        { title: 'Trends', icon: 'ki-chart-line-up-2', link: '/trends'},
-        { title: 'Hot & Cold Numbers', icon: 'ki-fire', link: '/hot-and-cold-numbers'},
-        { title: 'Winning Patterns', icon: 'ki-grid', link: '/winning-patterns'}
+        { title: 'Overview', icon: 'ki-home', link: `/${ROUTE_PATHS.DASHBOARD}/${ROUTE_PATHS.OVERVIEW}`},
+        { title: 'Trends',  icon: 'ki-chart-line-up-2', link: `/${ROUTE_PATHS.DASHBOARD}/${ROUTE_PATHS.TRENDS}`},
+        { title: 'Hot & Cold Numbers', icon: 'ki-fire', link: `/${ROUTE_PATHS.DASHBOARD}/${ROUTE_PATHS.HOT_COLD_NUMBERS}`},
+        { title: 'Winning Patterns', icon: 'ki-grid', link: `/${ROUTE_PATHS.DASHBOARD}/${ROUTE_PATHS.WINNING_PATTERNS}`}
       ]
     },
     {
+      id: 'lottery',
       title: 'Lottery',
       icon: 'ki-scroll',
       link: '/lottery',
@@ -28,6 +31,7 @@ export class MenuService {
       ]
     },
     {
+      id: 'predictions',
       title: 'Predictions',
       icon: 'ki-data  ',
       link: '/predictions',
@@ -38,6 +42,7 @@ export class MenuService {
       ]
     },
     {
+      id: 'draw insights',
       title: 'Draw Insights',
       icon: 'ki-chart-line-up',
       link: '/draw-insights',
@@ -48,6 +53,7 @@ export class MenuService {
       ]
     },
     {
+      id: 'winning strategies',
       title: 'Winning Strategies',
       icon: 'ki-route',
       link: '/winning-strategies',
@@ -58,6 +64,7 @@ export class MenuService {
       ]
     },
     {
+      id: 'comparison tool',
       title: 'Comparison Tool',
       icon: 'ki-parcel-tracking',
       link: '/comparison-tool',
@@ -68,6 +75,7 @@ export class MenuService {
       ]
     },
     {
+      id: 'user tools',
       title: 'User Tools',
       icon: 'ki-setting-2',
       link: '/winning-strategies',
@@ -78,6 +86,7 @@ export class MenuService {
       ]
     },
     {
+      id: 'community',
       title: 'Community',
       icon: 'ki-people',
       link: '/community',
