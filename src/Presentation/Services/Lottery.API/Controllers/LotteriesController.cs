@@ -1,4 +1,5 @@
-﻿using JackpotPlot.Lottery.API.Application.Features.GetLotteryConfigurationByLotteryId;
+﻿using JackpotPlot.Lottery.API.Application.Features.GetLotteries;
+using JackpotPlot.Lottery.API.Application.Features.GetLotteryConfigurationByLotteryId;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,11 +19,17 @@ public class LotteriesController : ControllerBase
     /// Get all lotteries
     /// </summary>
     /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
     [HttpGet]
-    public IActionResult Get()
+    public async Task<IActionResult> Get()
     {
-        return Ok(new { Message = "Lotteries endpoint is working!" });
+        var result = await _mediator.Send(new GetLotteriesQuery());
+
+        if (result.IsSuccess)
+        {
+            return Ok(result.Value);
+        }
+
+        return NoContent();
     }
 
     /// <summary>

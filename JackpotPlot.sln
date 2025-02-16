@@ -59,11 +59,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gateway", "Gateway", "{186C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JackpotPlot.Gateway", "src\Presentation\Gateway\JackpotPlot.Gateway\JackpotPlot.Gateway.csproj", "{014631E8-03EE-4A76-AED9-883F1875F8A7}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Clients", "Clients", "{FF87397B-C758-4993-A3C8-A270B855986B}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JackpotPlot.Domain.Unit.Tests", "tests\Unit\JackpotPlot.Domain.Unit.Tests\JackpotPlot.Domain.Unit.Tests.csproj", "{453A9970-2D1C-4B75-9838-55A3870AEE46}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JackpotPlotWeb", "src\Presentation\Clients\JackpotPlotWeb\JackpotPlotWeb.csproj", "{76227E68-F147-426E-BD0D-B001C89E882B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -139,10 +135,6 @@ Global
 		{453A9970-2D1C-4B75-9838-55A3870AEE46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{453A9970-2D1C-4B75-9838-55A3870AEE46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{453A9970-2D1C-4B75-9838-55A3870AEE46}.Release|Any CPU.Build.0 = Release|Any CPU
-		{76227E68-F147-426E-BD0D-B001C89E882B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{76227E68-F147-426E-BD0D-B001C89E882B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{76227E68-F147-426E-BD0D-B001C89E882B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{76227E68-F147-426E-BD0D-B001C89E882B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -170,9 +162,7 @@ Global
 		{E54DF226-944F-48F9-88EB-F241CB22D6DC} = {BA1D4398-6C79-4D93-8784-5678A3201AAC}
 		{186C5CA5-DC66-4AF0-B4B6-A6761A4A3897} = {D5E393DE-DBAD-4AEF-B2F0-9CA894DA794E}
 		{014631E8-03EE-4A76-AED9-883F1875F8A7} = {186C5CA5-DC66-4AF0-B4B6-A6761A4A3897}
-		{FF87397B-C758-4993-A3C8-A270B855986B} = {D5E393DE-DBAD-4AEF-B2F0-9CA894DA794E}
 		{453A9970-2D1C-4B75-9838-55A3870AEE46} = {9DE4F7D6-502B-43A0-83D7-EE17B2B93815}
-		{76227E68-F147-426E-BD0D-B001C89E882B} = {FF87397B-C758-4993-A3C8-A270B855986B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5ABC289-BAD2-4CF2-BF68-3189382251AB}
