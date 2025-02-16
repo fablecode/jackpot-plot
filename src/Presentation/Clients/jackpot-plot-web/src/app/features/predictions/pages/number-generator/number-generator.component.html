@@ -10,17 +10,10 @@
         <div class="card-body grid gap-5">
           <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
             <label class="form-label max-w-56">Choose a lottery</label>
-            <select class="select" name="select">
-              <option selected="" value="-1">
-              </option>
-              <option value="2">
-                Powerball
-              </option>
-              <option value="3">
-                EuroMillions
-              </option>
-              <option value="4">
-                Mega Millions
+            <select class="select" name="select" [(ngModel)]="selectedLottery" (change)="onLotteryChange($event)">
+              <option *ngIf="loading" disabled>Loading...</option>
+              <option *ngFor="let lottery of lotteries" [value]="lottery.id">
+                {{ lottery.name }}
               </option>
             </select>
           </div>
