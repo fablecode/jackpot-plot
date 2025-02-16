@@ -1,1 +1,243 @@
-<p>overview works!</p>
+<!-- Container -->
+<div class="container-fluid">
+  <div class="grid gap-5 lg:gap-7.5">
+    <!-- begin: grid -->
+    <div class="grid lg:grid-cols-3 gap-y-5 lg:gap-7.5 items-stretch">
+      <div class="lg:col-span-1">
+        <div class="card h-full">
+          <div class="card-header">
+            <h3 class="card-title">Jackpots</h3>
+          </div>
+          <div class="card-body flex flex-col gap-4 p-5 lg:p-7.5 lg:pt-4">
+            <div class="grid gap-3">
+              <div class="flex items-center justify-between flex-wrap gap-2">
+                <div class="flex items-center gap-1.5">
+                  <i class="ki-filled ki-shop text-base text-gray-500">
+                  </i>
+                  <span class="text-sm font-normal text-gray-900">
+               Powerball
+              </span>
+                </div>
+                <div class="flex items-center text-sm font-medium text-gray-800 gap-6">
+              <span class="lg:text-right">
+               $172k
+              </span>
+                  <span class="lg:text-right">
+               <i class="ki-filled ki-arrow-up text-success">
+               </i>
+               3.9%
+              </span>
+                </div>
+              </div>
+              <div class="flex items-center justify-between flex-wrap gap-2">
+                <div class="flex items-center gap-1.5">
+                  <i class="ki-filled ki-facebook text-base text-gray-500">
+                  </i>
+                  <span class="text-sm font-normal text-gray-900">
+               Lotto 6/49
+              </span>
+                </div>
+                <div class="flex items-center text-sm font-medium text-gray-800 gap-6">
+              <span class="lg:text-right">
+               $85k
+              </span>
+                  <span class="lg:text-right">
+               <i class="ki-filled ki-arrow-down text-danger">
+               </i>
+               0.7%
+              </span>
+                </div>
+              </div>
+              <div class="flex items-center justify-between flex-wrap gap-2">
+                <div class="flex items-center gap-1.5">
+                  <i class="ki-filled ki-instagram text-base text-gray-500">
+                  </i>
+                  <span class="text-sm font-normal text-gray-900">
+               Mega Millions
+              </span>
+                </div>
+                <div class="flex items-center text-sm font-medium text-gray-800 gap-6">
+              <span class="lg:text-right">
+               $36k
+              </span>
+                  <span class="lg:text-right">
+               <i class="ki-filled ki-arrow-up text-success">
+               </i>
+               8.2%
+              </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="lg:col-span-2">
+        <div class="grid">
+          <div class="card card-grid h-full min-w-full">
+            <div class="card-header">
+              <h3 class="card-title">Latest Draw Results</h3>
+              <div class="input input-sm max-w-48">
+                <i class="ki-filled ki-magnifier">
+                </i>
+                <input placeholder="Search Draw Results" type="text">
+              </div>
+            </div>
+            <div class="card-body">
+              <div data-datatable="true" data-datatable-page-size="5" class="datatable-initialized">
+                <div class="scrollable-x-auto">
+                  <table class="table table-border" data-datatable-table="true">
+                    <thead>
+                      <tr>
+                        <th class="min-w-[280px]">
+                          <span class="sort asc">
+                           <span class="sort-label">
+                            Date
+                           </span>
+                           <span class="sort-icon">
+                           </span>
+                          </span>
+                        </th>
+                        <th class="min-w-[135px]">
+                          <span class="sort">
+                           <span class="sort-label">
+                            Lottery
+                           </span>
+                           <span class="sort-icon">
+                           </span>
+                          </span>
+                        </th>
+                        <th class="min-w-[135px]">
+                          <span class="sort">
+                           <span class="sort-label">
+                            Winning Numbers
+                           </span>
+                           <span class="sort-icon">
+                           </span>
+                          </span>
+                        </th>
+                        <th class="min-w-[135px]">
+                          <span class="sort">
+                           <span class="sort-label">
+                            Jackpot
+                           </span>
+                           <span class="sort-icon">
+                           </span>
+                          </span>
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" data-datatable-spinner="true" style="display: none;">
+                      <div class="flex items-center gap-2 px-4 py-2 font-medium leading-none text-2sm border border-gray-200 shadow-default rounded-md text-gray-500 bg-light">
+                        <svg class="animate-spin -ml-1 h-5 w-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
+                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Loading...
+                      </div>
+                    </div>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <div class="flex flex-col gap-2">
+                            <a class="leading-none font-medium text-sm text-gray-900 hover:text-primary" href="#">
+                              Sunday, 2 July 2024
+                            </a>
+                          </div>
+                        </td>
+                        <td>
+                          Powerball
+                        </td>
+                        <td>12, 23, 34, 45, 56</td>
+                        <td>
+                          $100M
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="flex flex-col gap-2">
+                            <a class="leading-none font-medium text-sm text-gray-900 hover:text-primary" href="#">
+                              Thursday, 25 April 2024
+                            </a>
+                          </div>
+                        </td>
+                        <td>
+                          EuroMillions
+                        </td>
+                        <td>05, 10, 15, 25, 50</td>
+                        <td>
+                          $50M
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="flex flex-col gap-2">
+                            <a class="leading-none font-medium text-sm text-gray-900 hover:text-primary" href="#">
+                              Monday, 3 February 2025
+                            </a>
+                          </div>
+                        </td>
+                        <td>
+                          Mega Millions
+                        </td>
+                        <td>12, 23, 34, 45, 56</td>
+                        <td>
+                          $168M
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="flex flex-col gap-2">
+                            <a class="leading-none font-medium text-sm text-gray-900 hover:text-primary" href="#">
+                              Saturday, 4 April 2025
+                            </a>
+                          </div>
+                        </td>
+                        <td>
+                          Lotto 69/7
+                        </td>
+                        <td>12, 23, 34, 45, 56</td>
+                        <td>
+                          $10M
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="flex flex-col gap-2">
+                            <a class="leading-none font-medium text-sm text-gray-900 hover:text-primary" href="#">
+                              Monday, 23 December 2025
+                            </a>
+                          </div>
+                        </td>
+                        <td>
+                          Lotto Max
+                        </td>
+                        <td>12, 23, 34, 45, 56</td>
+                        <td>
+                          $53M
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-gray-600 text-2sm font-medium">
+                  <div class="flex items-center gap-2 order-2 md:order-1">
+                    Show
+                    <select class="select select-sm w-16" data-datatable-size="true" name="perpage"><option value="5">5</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="50">50</option></select>
+                    per page
+                  </div>
+                  <div class="flex items-center gap-4 order-1 md:order-2">
+                    <span data-datatable-info="true">1-5 of 15</span>
+                    <div class="pagination" data-datatable-pagination="true"><div class="pagination"><button class="btn disabled" disabled=""><i class="ki-outline ki-black-left rtl:transform rtl:rotate-180"></i></button><button class="btn active disabled" disabled="">1</button><button class="btn">2</button><button class="btn">3</button><button class="btn"><i class="ki-outline ki-black-right rtl:transform rtl:rotate-180"></i></button></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end: grid -->
+  </div>
+</div>
+<!-- End of Container -->
