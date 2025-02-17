@@ -1,4 +1,9 @@
-﻿using JackpotPlot.Domain.Constants;
+﻿using System.Reflection;
+using System.Text.RegularExpressions;
+using JackpotPlot.Domain.Constants;
+using JackpotPlot.Domain.Interfaces;
+using JackpotPlot.Domain.Services.PredictionStrategies;
+using JackpotPlot.Domain.Services.PredictionStrategies.Attributes;
 using JackpotPlot.Prediction.API.Application.Features.PredictNext;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -49,13 +54,32 @@ public class PredictionsController : ControllerBase
     [HttpGet("strategies")]
     public IActionResult GetStrategies()
     {
-        var strategies = new List<PredictionStrategy>
-        {
-            new(PredictionStrategyType.Random, "Generate numbers randomly."),
-            new(PredictionStrategyType.FrequencyBased, "Predict numbers based on historical frequency." ),
-            new(PredictionStrategyType.AiBased, "Use advanced AI algorithms to predict numbers.")
-        };
+        // Get all loaded assemblies (or limit to a specific assembly if preferred)
+        var strategies = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(a => a.GetTypes())
+            .Where(t => typeof(IPredictionStrategy).IsAssignableFrom(t)
+                        && t.IsClass
+                        && !t.IsAbstract)
+            .Select(t => new
+            {
+                t.GetCustomAttribute<PredictionStrategyDescriptionAttribute>()?.Id,
+                Name = FormatStrategyName(t.Name),
+                Description = t.GetCustomAttribute<PredictionStrategyDescriptionAttribute>()?.Description
+                              ?? "No description available"
+            })
+            .ToList();
 
         return Ok(strategies);
+    }
+
+    private string FormatStrategyName(string name)
+    {
+        // Remove 'PredictionStrategy' suffix if present
+        name = name.EndsWith("PredictionStrategy")
+            ? name.Substring(0, name.Length - "PredictionStrategy".Length)
+            : name;
+
+        // Add spaces between words (convert PascalCase to normal text)
+        return Regex.Replace(name, "(?<!^)([A-Z])", " $1");
     }
 }
