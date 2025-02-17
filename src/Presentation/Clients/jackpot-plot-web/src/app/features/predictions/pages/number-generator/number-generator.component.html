@@ -7,45 +7,43 @@
         <div class="card-header">
           <h3 class="card-title">Lottery Number Generator</h3>
         </div>
-        <div class="card-body grid gap-5">
+        <form [formGroup]="generateNumbersForm" class="card-body grid gap-5" (ngSubmit)="onSubmit()">
           <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-            <label class="form-label max-w-56">Choose a lottery</label>
-            <select class="select" name="select" [(ngModel)]="selectedLottery" (change)="onLotteryChange($event)">
-              <option *ngIf="loading" disabled>Loading...</option>
-              <option *ngFor="let lottery of lotteries" [value]="lottery.id">
-                {{ lottery.name }}
+            <label for="lottery" class="form-label max-w-56">Choose a lottery:</label>
+            <select id="lottery" class="select" name="select" formControlName="selectedLottery" [ngClass]="{'invalid-field': isFieldInvalid('selectedLottery'), 'shake': isShaking}">
+              <option value="" selected>-- Select a Lottery --</option>
+              <option *ngFor="let option of lotteryOptions" [value]="option.id">
+                {{ option.name }}
               </option>
             </select>
           </div>
           <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-            <label class="form-label max-w-56">Number of Plays</label>
-            <select class="select" name="select">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option selected="" value="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="9">9</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-              <option value="20">20</option>
-              <option value="25">25</option>
+            <label for="plays" class="form-label max-w-56">Number of Plays:</label>
+            <select id="plays" class="select" name="select" formControlName="selectedNumberOfPlays">
+              <option *ngFor="let num of numberOfPlaysOptions" [value]="num">
+                {{ num }}
+              </option>
+            </select>
+          </div>
+          <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+            <label for="strategy" class="form-label max-w-56">Strategy:</label>
+            <select id="strategy" class="select" name="select" formControlName="selectedStrategy">
+              <option *ngFor="let option of strategyOptions" [value]="option.id">
+                {{ option.name }}
+              </option>
             </select>
           </div>
           <div class="flex justify-end gap-2.5">
-            <button class="btn btn-light">
+            <button class="btn btn-light" [disabled]="generateNumbersForm.invalid">
               Clear
             </button>
-            <button class="btn btn-primary">
+            <button type="submit" class="btn btn-primary" [disabled]="generateNumbersForm.invalid">
               <i class="ki-filled ki-technology-4">
               </i>
               Generate
             </button>
           </div>
-        </div>
+        </form>
       </div>
       <div class="flex flex-col gap-2">
         <div class="flex flex-wrap items-center gap-5 justify-between">
