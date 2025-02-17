@@ -3,10 +3,12 @@ using JackpotPlot.Domain.Constants;
 using JackpotPlot.Domain.Interfaces;
 using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Repositories;
+using JackpotPlot.Domain.Services.PredictionStrategies.Attributes;
 using JackpotPlot.Domain.ValueObjects;
 
 namespace JackpotPlot.Domain.Services.PredictionStrategies;
 
+[PredictionStrategyDescription(PredictionStrategyType.ConsecutiveNumbers, "Focuses on frequently occurring consecutive pairs or sequences, assuming that numbers appearing in a chain might appear together again.")]
 public class ConsecutiveNumbersPredictionStrategy : IPredictionStrategy
 {
     private readonly ILotteryConfigurationRepository _lotteryConfigurationRepository;

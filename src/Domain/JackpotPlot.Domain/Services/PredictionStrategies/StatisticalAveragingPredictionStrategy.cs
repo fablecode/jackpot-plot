@@ -3,10 +3,12 @@ using JackpotPlot.Domain.Constants;
 using JackpotPlot.Domain.Interfaces;
 using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Repositories;
+using JackpotPlot.Domain.Services.PredictionStrategies.Attributes;
 using JackpotPlot.Domain.ValueObjects;
 
 namespace JackpotPlot.Domain.Services.PredictionStrategies;
 
+[PredictionStrategyDescription(PredictionStrategyType.StatisticalAveraging, "Computes averages (mean/median) of historical draws to predict numbers that tend to cluster around these average values.")]
 public class StatisticalAveragingPredictionStrategy : IPredictionStrategy
 {
     private readonly ILotteryConfigurationRepository _lotteryConfigurationRepository;

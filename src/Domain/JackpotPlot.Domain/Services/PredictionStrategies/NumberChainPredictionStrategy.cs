@@ -3,10 +3,12 @@ using JackpotPlot.Domain.Constants;
 using JackpotPlot.Domain.Interfaces;
 using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Repositories;
+using JackpotPlot.Domain.Services.PredictionStrategies.Attributes;
 using JackpotPlot.Domain.ValueObjects;
 
 namespace JackpotPlot.Domain.Services.PredictionStrategies;
 
+[PredictionStrategyDescription(PredictionStrategyType.NumberChain, "Identifies chains or sequences of numbers that often appear together in historical draws and uses these chains to inform the predicted numbers.")]
 public class NumberChainPredictionStrategy : IPredictionStrategy
 {
     private readonly ILotteryConfigurationRepository _lotteryConfigurationRepository;

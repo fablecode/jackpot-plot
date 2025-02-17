@@ -3,10 +3,12 @@ using JackpotPlot.Domain.Constants;
 using JackpotPlot.Domain.Interfaces;
 using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Repositories;
+using JackpotPlot.Domain.Services.PredictionStrategies.Attributes;
 using JackpotPlot.Domain.ValueObjects;
 
 namespace JackpotPlot.Domain.Services.PredictionStrategies;
 
+[PredictionStrategyDescription(PredictionStrategyType.StandardDeviation, "Uses the spread (standard deviation) of historical draws to generate predictions that mimic the overall variability in the numbers.")]
 public class StandardDeviationPredictionStrategy : IPredictionStrategy
 {
     private readonly ILotteryConfigurationRepository _lotteryConfigurationRepository;

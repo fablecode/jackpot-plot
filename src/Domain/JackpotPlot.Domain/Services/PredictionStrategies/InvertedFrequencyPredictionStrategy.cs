@@ -3,10 +3,12 @@ using JackpotPlot.Domain.Constants;
 using JackpotPlot.Domain.Interfaces;
 using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Repositories;
+using JackpotPlot.Domain.Services.PredictionStrategies.Attributes;
 using JackpotPlot.Domain.ValueObjects;
 
 namespace JackpotPlot.Domain.Services.PredictionStrategies;
 
+[PredictionStrategyDescription(PredictionStrategyType.InvertedFrequency, "Emphasizes “cold” numbers that have appeared less frequently in the past, under the theory that these may be more likely to be drawn in the future.")]
 public class InvertedFrequencyPredictionStrategy : IPredictionStrategy
 {
     private readonly ILotteryConfigurationRepository _lotteryConfigurationRepository;

@@ -4,10 +4,12 @@ using JackpotPlot.Domain.Domain;
 using JackpotPlot.Domain.Interfaces;
 using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Repositories;
+using JackpotPlot.Domain.Services.PredictionStrategies.Attributes;
 using JackpotPlot.Domain.ValueObjects;
 
 namespace JackpotPlot.Domain.Services.PredictionStrategies;
 
+[PredictionStrategyDescription(PredictionStrategyType.PatternMatching, "Identifies recurring patterns (such as odd/even or high/low sequences) in historical data and uses these patterns as templates for future predictions.")]
 public class PatternMatchingPredictionStrategy : IPredictionStrategy
 {
     private readonly ILotteryConfigurationRepository _lotteryConfigurationRepository;

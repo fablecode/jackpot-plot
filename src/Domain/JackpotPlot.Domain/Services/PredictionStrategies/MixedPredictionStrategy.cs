@@ -3,10 +3,12 @@ using JackpotPlot.Domain.Constants;
 using JackpotPlot.Domain.Interfaces;
 using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Repositories;
+using JackpotPlot.Domain.Services.PredictionStrategies.Attributes;
 using JackpotPlot.Domain.ValueObjects;
 
 namespace JackpotPlot.Domain.Services.PredictionStrategies;
 
+[PredictionStrategyDescription(PredictionStrategyType.Mixed, "Combines multiple prediction strategies, weighting their outputs to generate a more robust overall prediction.")]
 public class MixedPredictionStrategy : IPredictionStrategy
 {
     private readonly List<IPredictionStrategy> _strategies;
