@@ -7,7 +7,7 @@
         <div class="card-header">
           <h3 class="card-title">Lottery Number Generator</h3>
         </div>
-        <form [formGroup]="generateNumbersForm" class="card-body grid gap-5" (ngSubmit)="onSubmit()">
+        <form [formGroup]="generateNumbersForm" class="card-body grid gap-5" (ngSubmit)="onSearch()">
           <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
             <label for="lottery" class="form-label max-w-56">Choose a lottery:</label>
             <select id="lottery" class="select" name="select" formControlName="selectedLottery" [ngClass]="{'invalid-field': isFieldInvalid('selectedLottery'), 'shake': isShaking}">
@@ -46,90 +46,46 @@
         </form>
       </div>
       <div class="flex flex-col gap-2">
-        <div class="flex flex-wrap items-center gap-5 justify-between">
-          <h3 class="text-lg text-gray-900 font-semibold">
-            5 Play results
-          </h3>
-<!--          <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-5">-->
-<!--            <select class="select" name="select">-->
-<!--              <option>Random</option>-->
-<!--              <option>Frequency</option>-->
-<!--              <option>Last Appearance</option>-->
-<!--            </select>-->
-<!--          </div>-->
+        <!-- Fancy Loading Animation -->
+        <div *ngIf="isLoadingPredictions" class="loading-container">
+          <div class="loading-cube">
+            <div class="cube"></div>
+            <div class="cube"></div>
+            <div class="cube"></div>
+            <div class="cube"></div>
+          </div>
+          <p>Finding your lucky numbers...</p>
         </div>
-        <div>
-          <div class="card">
+        <div *ngIf="searchResults" class="flex flex-wrap items-center gap-5 justify-between">
+          <h3 class="text-lg text-gray-900 font-semibold">
+            {{searchResults.numberOfPlays}} play result(s)
+          </h3>
+        </div>
+        <div *ngIf="searchResults" class="card">
             <div class="card-body grid gap-5 p-2.5">
-              <div class="flex items-center flex-wrap gap-3 lg:gap-4">
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">5</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">2</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">34</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">19</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">20</label>
-<!--                <span class="sm:ms-8 sm:ps-8 border-s border-s-gray-200"></span>-->
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">21</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">30</label>
+              <div *ngFor="let play of searchResults.predictions" class="flex items-center flex-wrap gap-3 lg:gap-4">
+
+                <label
+                  *ngFor="let prediction of play.predictions"
+                  class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300"
+                  [ngClass]="{
+                    'hot-number': prediction.status === 'hot',
+                    'cold-number': prediction.status === 'cold',
+                    'neutral-number': prediction.status === 'neutral'
+                  }"
+                  title="Frequency: {{prediction.frequency}}"
+                >
+                  {{prediction.number}}
+                </label>
+
+                <!-- Fancy Quest Effect -->
                 <a href="/">
                   <i class="ki-filled ki-pin text-primary-clarity"></i>
                 </a>
-              </div>
-              <div class="flex items-center flex-wrap gap-3 lg:gap-4">
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">5</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">2</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">34</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">19</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">20</label>
-<!--                <span class="sm:ms-8 sm:ps-8 border-s border-s-gray-200"></span>-->
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">21</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">30</label>
-                <a href="/">
-                  <i class="ki-filled ki-pin text-primary-clarity"></i>
-                </a>
-              </div>
-              <div class="flex items-center flex-wrap gap-3 lg:gap-4">
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">5</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">2</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">34</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">19</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">20</label>
-<!--                <span class="sm:ms-8 sm:ps-8 border-s border-s-gray-200"></span>-->
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">21</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">30</label>
-                <a href="/">
-                  <i class="ki-filled ki-pin text-primary-clarity"></i>
-                </a>
-              </div>
-              <div class="flex items-center flex-wrap gap-3 lg:gap-4">
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">5</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">2</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">34</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">19</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">20</label>
-<!--                <span class="sm:ms-8 sm:ps-8 border-s border-s-gray-200"></span>-->
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">21</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">30</label>
-                <a href="/">
-                  <i class="ki-filled ki-pin text-primary-clarity"></i>
-                </a>
-              </div>
-              <div class="flex items-center flex-wrap gap-3 lg:gap-4">
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">5</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">2</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">34</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">19</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">20</label>
-<!--                <span class="sm:ms-8 sm:ps-8 border-s border-s-gray-200"></span>-->
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">21</label>
-                <label class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300">30</label>
-                <a href="/">
-                  <i class="ki-filled ki-pin text-primary-clarity">
-                  </i>
-                </a>
+
               </div>
             </div>
           </div>
-        </div>
       </div>
     </div>
 
