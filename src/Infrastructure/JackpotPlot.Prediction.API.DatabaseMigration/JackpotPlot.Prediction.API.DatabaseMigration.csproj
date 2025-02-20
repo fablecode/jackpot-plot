@@ -9,11 +9,13 @@
   <ItemGroup>
     <None Remove="Scripts\Migrations\2024\2024-12-15 - 0.0.0.1\Script0001 - Add_LotteryHistory_Table.sql" />
     <None Remove="Scripts\Migrations\2024\2024-12-15 - 0.0.0.1\Script0002 - Add_Predictions_Table.sql" />
+    <None Remove="Scripts\Migrations\2025\2025-02-18 - 0.0.0.1\Script0001 - Add_Get_Hot_Cold_Numbers_Table.sql" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Scripts\Migrations\2024\2024-12-15 - 0.0.0.1\Script0002 - Add_Predictions_Table.sql" />
     <EmbeddedResource Include="Scripts\Migrations\2024\2024-12-15 - 0.0.0.1\Script0001 - Add_LotteryHistory_Table.sql" />
+    <EmbeddedResource Include="Scripts\Migrations\2025\2025-02-18 - 0.0.0.1\Script0001 - Add_Get_Hot_Cold_Numbers_Table.sql" />
   </ItemGroup>
 
 	<ItemGroup>

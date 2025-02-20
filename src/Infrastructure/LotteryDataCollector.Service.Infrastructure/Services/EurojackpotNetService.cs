@@ -10,12 +10,12 @@ using Microsoft.Extensions.Logging;
 
 namespace LotteryDataCollector.Service.Infrastructure.Services;
 
-public class EurojackpotService : IEurojackpotService
+public class EurojackpotNetService : IEurojackpotService
 {
-    private readonly ILogger<EurojackpotService> _logger;
+    private readonly ILogger<EurojackpotNetService> _logger;
     private readonly IHtmlWebPage _htmlWebPage;
 
-    public EurojackpotService(ILogger<EurojackpotService> logger, IHtmlWebPage htmlWebPage)
+    public EurojackpotNetService(ILogger<EurojackpotNetService> logger, IHtmlWebPage htmlWebPage)
     {
         _logger = logger;
         _htmlWebPage = htmlWebPage;
@@ -37,6 +37,11 @@ public class EurojackpotService : IEurojackpotService
                 yield return drawDetails;
             }
         }
+    }
+
+    public IAsyncEnumerable<EurojackpotResult> GetAllDrawHistoryResultsAsync()
+    {
+        throw new NotImplementedException();
     }
 
     public EurojackpotResult GetDrawDetails(string drawUrl)

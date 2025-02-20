@@ -21,7 +21,7 @@ public sealed class EurojackpotJobs
 
     public async Task FetchDrawHistory()
     {
-        foreach(var result in _eurojackpotService.GetAllDrawHistoryResults())
+        await foreach(var result in _eurojackpotService.GetAllDrawHistoryResultsAsync())
         {
             var message = new Message<EurojackpotResult>(EventTypes.EurojackpotDraw, result);
 

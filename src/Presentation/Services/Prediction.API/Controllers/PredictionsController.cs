@@ -45,7 +45,10 @@ public class PredictionsController : ControllerBase
 
         if (result.IsSuccess)
         {
-            return CreatedAtRoute(nameof(GetResourceById), new { id = result.Value.Id }, new { id = result.Value.Id });
+            var predictions = result.Value;
+
+            // If multiple predictions, return 201 with all predictions
+            return CreatedAtAction(nameof(Post), new { count = predictions.Predictions.Length }, predictions);
         }
 
         return BadRequest(result.Errors);
@@ -72,6 +75,7 @@ public class PredictionsController : ControllerBase
         return Ok(strategies);
     }
 
+    #region Private Helpers
     private string FormatStrategyName(string name)
     {
         // Remove 'PredictionStrategy' suffix if present
@@ -81,5 +85,6 @@ public class PredictionsController : ControllerBase
 
         // Add spaces between words (convert PascalCase to normal text)
         return Regex.Replace(name, "(?<!^)([A-Z])", " $1");
-    }
+    } 
+    #endregion
 }

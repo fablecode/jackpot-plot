@@ -27,6 +27,7 @@ public static class ApplicationInstaller
         services.AddScoped<IPredictionStrategy, ClusteringAnalysisPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, ConsecutiveNumbersPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, DeltaSystemPredictionStrategy>();
+        services.AddScoped<FrequencyPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, FrequencyPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, HighLowNumberSplitPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, LastAppearancePredictionStrategy>();
@@ -47,10 +48,12 @@ public static class ApplicationInstaller
         // Time-Based and Temporal Strategies
         services.AddScoped<IPredictionStrategy, TimeDecayPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, SeasonalPatternsPredictionStrategy>();
+        services.AddScoped<CyclicPatternsPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, CyclicPatternsPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, DrawPositionAnalysisPredictionStrategy>();
 
         // Combination-Based Strategies
+        services.AddScoped<ReducedNumberPoolPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, ReducedNumberPoolPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, GroupSelectionPredictionStrategy>();
         services.AddScoped<IPredictionStrategy, MixedPredictionStrategy>(provider =>
@@ -76,7 +79,7 @@ public static class ApplicationInstaller
                 { PredictionStrategyType.CyclicPatterns, 0.2 }
             };
 
-            return new MixedPredictionStrategy(strategies, weights, lotteryConfigurationRepository,lotteryHistoryRepository);
+            return new MixedPredictionStrategy(strategies, weights, lotteryConfigurationRepository, lotteryHistoryRepository);
         });
 
         services.AddScoped<IPredictionStrategy, InvertedFrequencyPredictionStrategy>();
