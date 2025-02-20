@@ -29,6 +29,7 @@ namespace JackpotPlot.Prediction.API.Infrastructure
             services.AddTransient<ILotteryHistoryRepository, LotteryHistoryRepository>();
             services.AddTransient<ILotteryConfigurationRepository, LotteryConfigurationRepository>();
             services.AddTransient<IPredictionRepository, PredictionRepository>();
+            services.AddTransient<ILotteryStatisticsRepository, LotteryStatisticsRepository>();
 
             return services;
         }
