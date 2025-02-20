@@ -116,6 +116,7 @@ services:
           - RabbitMqSettings__Username=admin
           - RabbitMqSettings__Password=jackpotplot
           - RabbitMqSettings__Exchange=lottery-exchange
+          - ApiSettings__LotteryServiceUrl=http://gateway:8080
       ports:
           - "5002:5002"
       depends_on:
