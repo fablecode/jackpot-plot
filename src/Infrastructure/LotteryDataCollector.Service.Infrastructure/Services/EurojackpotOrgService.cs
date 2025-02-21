@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Data;
+using System.Net.Http.Headers;
 using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Services;
 using Newtonsoft.Json;
@@ -64,14 +65,13 @@ public class EurojackpotOrgService : IEurojackpotService
             }
         }
     }
-
     public async Task<EurojackpotOrgResult> FetchDataAsync(string url)
     {
         using (var client = _factory.CreateClient())
         {
             Console.WriteLine($"🔄 Sending request to: {url}");
 
-            HttpResponseMessage response = await client.GetAsync(url);
+            var response = await client.GetAsync(url);
 
             if (response.StatusCode == System.Net.HttpStatusCode.MovedPermanently ||
                 response.StatusCode == System.Net.HttpStatusCode.Found)
@@ -102,9 +102,9 @@ public class EurojackpotOrgService : IEurojackpotService
 
 public class EurojackpotOrgResult
 {
-    public int nr { get; set; }
+    public long nr { get; set; }
     public Date date { get; set; }
-    public int jackpot { get; set; }
+    public long jackpot { get; set; }
     public Numbers numbers { get; set; }
     public Odds odds { get; set; }
 }
@@ -142,83 +142,83 @@ public class Odds
 public class Rank1
 {
     public string rank { get; set; }
-    public int winners { get; set; }
-    public int prize { get; set; }
+    public long? winners { get; set; }
+    public long? prize { get; set; }
 }
 
 public class Rank2
 {
     public string rank { get; set; }
-    public int winners { get; set; }
-    public int prize { get; set; }
+    public long? winners { get; set; }
+    public long? prize { get; set; }
 }
 
 public class Rank3
 {
     public string rank { get; set; }
-    public int winners { get; set; }
-    public int prize { get; set; }
+    public long? winners { get; set; }
+    public long? prize { get; set; }
 }
 
 public class Rank4
 {
     public string rank { get; set; }
-    public int winners { get; set; }
-    public int prize { get; set; }
+    public long? winners { get; set; }
+    public long? prize { get; set; }
 }
 
 public class Rank5
 {
     public string rank { get; set; }
-    public int winners { get; set; }
-    public int prize { get; set; }
+    public long? winners { get; set; }
+    public long? prize { get; set; }
 }
 
 public class Rank6
 {
     public string rank { get; set; }
-    public int winners { get; set; }
-    public int prize { get; set; }
+    public long? winners { get; set; }
+    public long? prize { get; set; }
 }
 
 public class Rank7
 {
     public string rank { get; set; }
-    public int winners { get; set; }
-    public int prize { get; set; }
+    public long? winners { get; set; }
+    public long? prize { get; set; }
 }
 
 public class Rank8
 {
     public string rank { get; set; }
-    public int winners { get; set; }
-    public int prize { get; set; }
+    public long? winners { get; set; }
+    public long? prize { get; set; }
 }
 
 public class Rank9
 {
     public string rank { get; set; }
-    public int winners { get; set; }
-    public int prize { get; set; }
+    public long winners { get; set; }
+    public long prize { get; set; }
 }
 
 public class Rank10
 {
     public string rank { get; set; }
-    public int winners { get; set; }
-    public int prize { get; set; }
+    public long? winners { get; set; }
+    public long? prize { get; set; }
 }
 
 public class Rank11
 {
     public string rank { get; set; }
-    public int winners { get; set; }
-    public int prize { get; set; }
+    public long? winners { get; set; }
+    public long? prize { get; set; }
 }
 
 public class Rank12
 {
     public string rank { get; set; }
-    public int winners { get; set; }
-    public int prize { get; set; }
+    public long? winners { get; set; }
+    public long? prize { get; set; }
 }
