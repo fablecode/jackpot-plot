@@ -28,6 +28,7 @@
           <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
             <label for="strategy" class="form-label max-w-56">Strategy:</label>
             <select id="strategy" class="select" name="select" formControlName="selectedStrategy">
+              <option *ngIf="isLoadingStrategies">Loading....</option>
               <option *ngFor="let option of strategyOptions" [value]="option.id">
                 {{ option.name }}
               </option>
