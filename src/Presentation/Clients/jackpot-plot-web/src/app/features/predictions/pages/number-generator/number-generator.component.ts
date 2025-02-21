@@ -27,6 +27,9 @@ export class NumberGeneratorComponent implements OnInit {
   isLoadingPredictions = false;
   searchResults: LotterySearchResult | null = null;
 
+  isLoadingLotteries: boolean = true;
+  isLoadingStrategies: boolean = true;
+
   constructor(private lotteryService: LotteryService, private predictionService: PredictionService) {
     this.generateNumbersForm = new FormGroup({
       selectedLottery: new FormControl('', Validators.required),
@@ -38,8 +41,6 @@ export class NumberGeneratorComponent implements OnInit {
   onSearch() {
     if (this.generateNumbersForm.valid) {
       this.isLoadingPredictions = true;
-
-      const { selectedLottery, selectedNumberOfPlays, selectedStrategy } = this.generateNumbersForm.value;
 
       this.predictionService.searchLottery(this.generateNumbersForm.value.selectedLottery, this.generateNumbersForm.value.selectedNumberOfPlays, this.generateNumbersForm.value.selectedStrategy)
         .subscribe({
@@ -68,15 +69,23 @@ export class NumberGeneratorComponent implements OnInit {
     this.lotteryService.getAllLotteries().subscribe({
       next: (data: Lottery[]) => {
         this.lotteryOptions = data;
+        this.isLoadingLotteries = false;
       },
-      error: (err) => console.error('Error fetching lotteries:', err)
+      error: (err) => {
+        console.error('Error fetching lotteries:', err);
+        this.isLoadingLotteries = false;
+      }
     });
 
     this.predictionService.getAllStrategies().subscribe({
       next: (data: Strategy[]) => {
         this.strategyOptions = data;
+        this.isLoadingStrategies = false;
       },
-      error: (err) => console.error('Error fetching strategies:', err)
+      error: (err) => {
+        console.error('Error fetching strategies:', err);
+        this.isLoadingStrategies = false;
+      }
     });
 
     // Populate static number of plays list (1–10, 15, 20, 25)
