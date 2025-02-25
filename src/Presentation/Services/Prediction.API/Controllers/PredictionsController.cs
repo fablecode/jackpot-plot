@@ -1,13 +1,10 @@
-﻿using System.Reflection;
-using System.Text.RegularExpressions;
-using JackpotPlot.Domain.Constants;
-using JackpotPlot.Domain.Interfaces;
-using JackpotPlot.Domain.Services.PredictionStrategies;
+﻿using JackpotPlot.Domain.Interfaces;
 using JackpotPlot.Domain.Services.PredictionStrategies.Attributes;
 using JackpotPlot.Prediction.API.Application.Features.PredictNext;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Prediction.API.Models;
+using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace Prediction.API.Controllers;
 

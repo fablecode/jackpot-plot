@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using JackpotPlot.Domain.Models;
+﻿using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Repositories;
 using JackpotPlot.Prediction.API.Infrastructure.Databases;
 using JackpotPlot.Prediction.API.Infrastructure.Models;
@@ -14,6 +13,25 @@ public sealed class LotteryHistoryRepository : ILotteryHistoryRepository
     public LotteryHistoryRepository(IDbContextFactory<PredictionDbContext> factory)
     {
         _factory = factory;
+    }
+
+    public async Task<(Dictionary<int, int> hotNumbers, Dictionary<int, int> coldNumbers)> GetAll()
+    {
+        using (var context = await _factory.CreateDbContextAsync())
+        {
+            var results = await context.Lotteryhistories.ToListAsync();
+
+            // Count occurrences of all numbers
+            var numberCounts = results.SelectMany(l => l.Winningnumbers)
+                .GroupBy(n => n)
+                .ToDictionary(g => g.Key, g => g.Count());
+
+            // Find the 5 most common (hot) and 5 least common (cold) numbers
+            var hotNumbers = numberCounts.OrderByDescending(x => x.Value).Take(5).ToDictionary(x => x.Key, x => x.Value);
+            var coldNumbers = numberCounts.OrderBy(x => x.Value).Take(5).ToDictionary(x => x.Key, x => x.Value);
+
+            return (hotNumbers, coldNumbers);
+        }
     }
 
     public async Task<int> Add(LotteryDrawnEvent lotteryDrawnEvent)
