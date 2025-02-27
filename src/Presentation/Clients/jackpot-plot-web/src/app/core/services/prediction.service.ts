@@ -6,6 +6,7 @@ import {Strategy} from '../models/strategy.model';
 
 
 import {LotterySearchResult} from '../models/lotterySearchResult';
+import {HotColdNumbers} from '../models/hot-cold-numbers';
 
 @Injectable({
   providedIn: 'root' // Makes this service available throughout the app
@@ -28,5 +29,13 @@ export class PredictionService {
       strategy: strategy
     };
     return this.http.post<LotterySearchResult>(`${this.BASE_URL}`, searchParams);
+  }
+
+  getHotColdNumbers(lotteryId: number): Observable<HotColdNumbers> {
+    return this.http.get<HotColdNumbers>(`${this.BASE_URL}/hot-cold-numbers?lotteryId=${lotteryId}`);
+  }
+
+  getTrendingNumbers(): Observable<Record<number, number>> {
+    return this.http.get<Record<number, number>>(`${this.BASE_URL}/trending-numbers`);
   }
 }

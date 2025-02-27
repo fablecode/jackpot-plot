@@ -76,7 +76,7 @@ public sealed class PredictionRepository : IPredictionRepository
                 .SelectMany(p => p.PredictedNumbers)
                 .GroupBy(n => n)
                 .OrderByDescending(g => g.Count())
-                .Take(10) // ✅ Get top 10 trending numbers
+                .Take(40) // ✅ Get top 40 trending numbers
                 .ToDictionary(g => g.Key, g => g.Count());
 
             return numberCounts;

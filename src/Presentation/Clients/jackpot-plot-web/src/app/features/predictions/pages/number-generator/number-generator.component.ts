@@ -7,13 +7,23 @@ import {Strategy} from '../../../../core/models/strategy.model';
 import {PredictionService} from '../../../../core/services/prediction.service';
 
 import {LotterySearchResult} from '../../../../core/models/lotterySearchResult';
+import {
+  HotColdNumbersComponent
+} from '../../../../shared/components/charts/hot-cold-numbers/hot-cold-numbers.component';
+import {HotColdNumbersService} from '../../../../shared/components/charts/hot-cold-numbers/hot-cold-numbers.service';
+import {
+  TrendingNumbersComponent
+} from '../../../../shared/components/charts/trending-numbers/trending-numbers.component';
+import {TrendingNumbersService} from '../../../../shared/components/charts/trending-numbers/trending-numbers.service';
 
 @Component({
   selector: 'app-number-generator',
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    HotColdNumbersComponent,
+    TrendingNumbersComponent
   ],
   templateUrl: './number-generator.component.html',
   styleUrl: './number-generator.component.scss'
@@ -27,10 +37,15 @@ export class NumberGeneratorComponent implements OnInit {
   isLoadingPredictions = false;
   searchResults: LotterySearchResult | null = null;
 
+  lotteryHotNumbers = {};
+  lotteryColdNumbers = {};
+
   isLoadingLotteries: boolean = true;
   isLoadingStrategies: boolean = true;
 
-  constructor(private lotteryService: LotteryService, private predictionService: PredictionService) {
+  showCharts = false;
+
+  constructor(private lotteryService: LotteryService, private predictionService: PredictionService, private hotColdNumbersService: HotColdNumbersService, private trendingNumbersService: TrendingNumbersService) {
     this.generateNumbersForm = new FormGroup({
       selectedLottery: new FormControl('', Validators.required),
       selectedNumberOfPlays: new FormControl(5, Validators.required),
@@ -47,6 +62,8 @@ export class NumberGeneratorComponent implements OnInit {
           next: (data) => {
             this.searchResults = data;
             this.isLoadingPredictions = false;
+            this.showCharts = true;
+            this.loadCharts();
           },
           error: (error) => {
             console.error('Error fetching lottery predictions:', error);
@@ -56,16 +73,41 @@ export class NumberGeneratorComponent implements OnInit {
             console.log('Search completed.');
           }
         });
-
-      console.log('Selected Lottery:', this.generateNumbersForm.value.selectedLottery);
-      console.log('Selected number of plays:', this.generateNumbersForm.value.selectedNumberOfPlays);
-      console.log('Selected strategy:', this.generateNumbersForm.value.selectedStrategy);
     } else {
       console.log('Form is invalid');
     }
   }
 
+  loadCharts() {
+    this.predictionService.getHotColdNumbers(this.generateNumbersForm.value.selectedLottery)
+      .subscribe({
+        next: (data) => {
+          this.hotColdNumbersService.updateNumbers(data.hotNumbers, data.coldNumbers);
+        },
+        error: (error) => {
+          console.error('Error fetching Hot & Cold numbers:', error);
+        },
+        complete: () => {
+          console.log('Loading Hot & Cold numbers completed.');
+        }
+      });
+
+    this.predictionService.getTrendingNumbers()
+      .subscribe({
+        next: (data) => {
+          this.trendingNumbersService.updateTrendingNumbers(data);
+        },
+        error: (error) => {
+          console.error('Error fetching Trending numbers:', error);
+        },
+        complete: () => {
+          console.log('Loading Trending numbers completed.');
+        }
+      });
+  }
+
   ngOnInit(): void {
+
     this.lotteryService.getAllLotteries().subscribe({
       next: (data: Lottery[]) => {
         this.lotteryOptions = data;
