@@ -16,7 +16,7 @@ public class LotteriesController : ControllerBase
     }
 
     /// <summary>
-    /// Get 
+    /// Get All Hot & Cold Numbers
     /// </summary>
     /// <returns></returns>
     [HttpGet("hot-cold-numbers")]

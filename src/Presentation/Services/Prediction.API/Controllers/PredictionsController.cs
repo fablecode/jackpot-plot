@@ -1,10 +1,13 @@
 ﻿using JackpotPlot.Domain.Interfaces;
 using JackpotPlot.Domain.Services.PredictionStrategies.Attributes;
+using JackpotPlot.Prediction.API.Application.Features.GetHotAndColdNumbers;
 using JackpotPlot.Prediction.API.Application.Features.PredictNext;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using JackpotPlot.Prediction.API.Application.Features.GetHotAndColdNumbersByLotteryId;
+using JackpotPlot.Prediction.API.Application.Features.GetTrendingNumbers;
 
 namespace Prediction.API.Controllers;
 
@@ -70,6 +73,37 @@ public class PredictionsController : ControllerBase
             .ToList();
 
         return Ok(strategies);
+    }
+
+    /// <summary>
+    /// Get Hot & Cold Number by lotteryId
+    /// </summary>
+    /// <param name="lotteryId"></param>
+    /// <returns></returns>
+    [HttpGet("hot-cold-numbers")]
+    public async Task<ActionResult> GetHotColdNumbers(int lotteryId)
+    {
+        var result = await _mediator.Send(new GetHotAndColdNumbersByLotteryIdQuery(lotteryId));
+
+        if (result.IsSuccess)
+        {
+            return Ok(result.Value);
+        }
+
+        return NoContent();
+    }
+
+    [HttpGet("trending-numbers")]
+    public async Task<ActionResult<Dictionary<int, int>>> GetTrendingNumbers()
+    {
+        var result = await _mediator.Send(new GetTrendingNumbersQuery());
+
+        if (result.IsSuccess)
+        {
+            return Ok(result.Value);
+        }
+
+        return NoContent();
     }
 
     #region Private Helpers
