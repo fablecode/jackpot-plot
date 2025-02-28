@@ -1,4 +1,5 @@
-﻿using JackpotPlot.Domain.Domain;
+﻿using System.Collections.Immutable;
+using JackpotPlot.Domain.Domain;
 using JackpotPlot.Domain.Repositories;
 using JackpotPlot.Domain.ValueObjects;
 using JackpotPlot.Prediction.API.Infrastructure.Databases;
@@ -80,6 +81,30 @@ public sealed class PredictionRepository : IPredictionRepository
                 .ToDictionary(g => g.Key, g => g.Count());
 
             return numberCounts;
+        }
+    }
+
+    public async Task<ImmutableDictionary<int, int>> GetPredictionSuccessRate()
+    {
+        using (var context = await _factory.CreateDbContextAsync())
+        {
+            var predictions = await context.Predictions.ToListAsync();
+            var winningNumbers = await context.Lotteryhistories.ToListAsync();
+
+            var successRates = new Dictionary<int, int>();
+
+            foreach (var prediction in predictions)
+            {
+                var draw = winningNumbers.FirstOrDefault(l => l.Lotteryid == prediction.LotteryId);
+                if (draw != null)
+                {
+                    var matchCount = prediction.PredictedNumbers.Intersect(draw.Winningnumbers).Count();
+                    if (!successRates.TryAdd(matchCount, 1))
+                        successRates[matchCount]++;
+                }
+            }
+
+            return successRates.ToImmutableDictionary(); // ✅ Returns aggregated histogram bins
         }
     }
 }

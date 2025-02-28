@@ -1,9 +1,8 @@
-﻿using System.Collections.Immutable;
-using System.Data;
-using System.Net.Http.Headers;
-using JackpotPlot.Domain.Models;
+﻿using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Services;
 using Newtonsoft.Json;
+using System.Collections.Immutable;
+using System.Data;
 
 namespace LotteryDataCollector.Service.Infrastructure.Services;
 
