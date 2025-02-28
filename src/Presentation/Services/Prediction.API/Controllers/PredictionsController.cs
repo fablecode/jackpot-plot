@@ -1,13 +1,14 @@
 ﻿using JackpotPlot.Domain.Interfaces;
 using JackpotPlot.Domain.Services.PredictionStrategies.Attributes;
-using JackpotPlot.Prediction.API.Application.Features.GetHotAndColdNumbers;
+using JackpotPlot.Prediction.API.Application.Features.GetHotAndColdNumbersByLotteryId;
+using JackpotPlot.Prediction.API.Application.Features.GetPredictionSuccessRate;
+using JackpotPlot.Prediction.API.Application.Features.GetTrendingNumbers;
 using JackpotPlot.Prediction.API.Application.Features.PredictNext;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Immutable;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using JackpotPlot.Prediction.API.Application.Features.GetHotAndColdNumbersByLotteryId;
-using JackpotPlot.Prediction.API.Application.Features.GetTrendingNumbers;
 
 namespace Prediction.API.Controllers;
 
@@ -97,6 +98,19 @@ public class PredictionsController : ControllerBase
     public async Task<ActionResult<Dictionary<int, int>>> GetTrendingNumbers()
     {
         var result = await _mediator.Send(new GetTrendingNumbersQuery());
+
+        if (result.IsSuccess)
+        {
+            return Ok(result.Value);
+        }
+
+        return NoContent();
+    }
+
+    [HttpGet("success-rate")]
+    public async Task<ActionResult<ImmutableDictionary<int, int>>> GetPredictionSuccessRate()
+    {
+        var result = await _mediator.Send(new GetPredictionSuccessRateQuery());
 
         if (result.IsSuccess)
         {

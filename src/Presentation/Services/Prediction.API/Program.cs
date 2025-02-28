@@ -1,13 +1,12 @@
-﻿using System.Reflection;
-using JackpotPlot.Domain.Messaging;
+﻿using JackpotPlot.Domain.Messaging;
 using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Settings;
 using JackpotPlot.Prediction.API.Application;
 using JackpotPlot.Prediction.API.DatabaseMigration;
 using JackpotPlot.Prediction.API.Infrastructure;
-using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using Prediction.API.HostedServices;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
