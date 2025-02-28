@@ -1,12 +1,13 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {ConfigService} from './config.service';
-import {Observable} from 'rxjs';
+import {map, Observable} from 'rxjs';
 import {Strategy} from '../models/strategy.model';
 
 
 import {LotterySearchResult} from '../models/lotterySearchResult';
 import {HotColdNumbers} from '../models/hot-cold-numbers';
+import {PredictionSuccessRate} from '../models/prediction-success-rate.model';
 
 @Injectable({
   providedIn: 'root' // Makes this service available throughout the app
@@ -37,5 +38,14 @@ export class PredictionService {
 
   getTrendingNumbers(): Observable<Record<number, number>> {
     return this.http.get<Record<number, number>>(`${this.BASE_URL}/trending-numbers`);
+  }
+
+  getPredictionSuccessRate(): Observable<{ matchCount: number; frequency: number }[]> {
+    return this.http.get<Record<number, number>>(`${this.BASE_URL}/success-rate`).pipe(
+      map(response => Object.entries(response).map(([matchCount, frequency]) => ({
+        matchCount: Number(matchCount),
+        frequency: frequency
+      })))
+    );
   }
 }

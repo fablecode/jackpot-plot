@@ -15,6 +15,12 @@ import {
   TrendingNumbersComponent
 } from '../../../../shared/components/charts/trending-numbers/trending-numbers.component';
 import {TrendingNumbersService} from '../../../../shared/components/charts/trending-numbers/trending-numbers.service';
+import {
+  PredictionSuccessRateComponent
+} from '../../../../shared/components/charts/prediction-success-rate/prediction-success-rate.component';
+import {
+  PredictionSuccessRateService
+} from '../../../../shared/components/charts/prediction-success-rate/prediction-success-rate.service';
 
 @Component({
   selector: 'app-number-generator',
@@ -23,7 +29,8 @@ import {TrendingNumbersService} from '../../../../shared/components/charts/trend
     FormsModule,
     ReactiveFormsModule,
     HotColdNumbersComponent,
-    TrendingNumbersComponent
+    TrendingNumbersComponent,
+    PredictionSuccessRateComponent
   ],
   templateUrl: './number-generator.component.html',
   styleUrl: './number-generator.component.scss'
@@ -37,15 +44,12 @@ export class NumberGeneratorComponent implements OnInit {
   isLoadingPredictions = false;
   searchResults: LotterySearchResult | null = null;
 
-  lotteryHotNumbers = {};
-  lotteryColdNumbers = {};
-
   isLoadingLotteries: boolean = true;
   isLoadingStrategies: boolean = true;
 
   showCharts = false;
 
-  constructor(private lotteryService: LotteryService, private predictionService: PredictionService, private hotColdNumbersService: HotColdNumbersService, private trendingNumbersService: TrendingNumbersService) {
+  constructor(private lotteryService: LotteryService, private predictionService: PredictionService, private hotColdNumbersService: HotColdNumbersService, private trendingNumbersService: TrendingNumbersService, private predictionSuccessRateService: PredictionSuccessRateService) {
     this.generateNumbersForm = new FormGroup({
       selectedLottery: new FormControl('', Validators.required),
       selectedNumberOfPlays: new FormControl(5, Validators.required),
@@ -102,6 +106,19 @@ export class NumberGeneratorComponent implements OnInit {
         },
         complete: () => {
           console.log('Loading Trending numbers completed.');
+        }
+      });
+
+    this.predictionService.getPredictionSuccessRate()
+      .subscribe({
+        next: (data) => {
+          this.predictionSuccessRateService.updatePredictionSuccessRate(data);
+        },
+        error: (error) => {
+          console.error('Error fetching Prediction Success Rate numbers:', error);
+        },
+        complete: () => {
+          console.log('Loading Prediction Success Rate numbers completed.');
         }
       });
   }

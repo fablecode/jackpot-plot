@@ -2,7 +2,6 @@ import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ChartComponent, NgxApexchartsModule} from 'ngx-apexcharts';
 import {ChartOptions} from '../../../../core/models/chart.options.type';
-import {HotColdNumbersService} from '../hot-cold-numbers/hot-cold-numbers.service';
 import {TrendingNumbersService} from './trending-numbers.service';
 
 @Component({
@@ -45,7 +44,7 @@ export class TrendingNumbersComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // ✅ Subscribe to a single observable for both hot & cold numbers
+    // ✅ Subscribe to a single observable for trending numbers
     this.trendingNumbersService.getTrendingNumbers().subscribe((trendingNumbers) => {
       this.updateChart(trendingNumbers);
     });

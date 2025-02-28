@@ -7,7 +7,8 @@ import {
   ApexTitleSubtitle,
   ApexTooltip,
   ApexXAxis,
-  ApexYAxis
+  ApexYAxis,
+  ApexPlotOptions
 } from "ngx-apexcharts";
 
 export type ChartOptions = {
@@ -20,4 +21,5 @@ export type ChartOptions = {
   legend: ApexLegend;
   stroke: ApexStroke;
   tooltip: ApexTooltip;
+  plotOptions?: ApexPlotOptions;
 };
