@@ -21,6 +21,7 @@ import {
 import {
   PredictionSuccessRateService
 } from '../../../../shared/components/charts/prediction-success-rate/prediction-success-rate.service';
+import {forkJoin, tap} from 'rxjs';
 
 @Component({
   selector: 'app-number-generator',
@@ -60,6 +61,7 @@ export class NumberGeneratorComponent implements OnInit {
   onSearch() {
     if (this.generateNumbersForm.valid) {
       this.isLoadingPredictions = true;
+      this.searchResults = null;
 
       this.predictionService.searchLottery(this.generateNumbersForm.value.selectedLottery, this.generateNumbersForm.value.selectedNumberOfPlays, this.generateNumbersForm.value.selectedStrategy)
         .subscribe({
@@ -67,7 +69,17 @@ export class NumberGeneratorComponent implements OnInit {
             this.searchResults = data;
             this.isLoadingPredictions = false;
             this.showCharts = true;
-            this.loadCharts();
+
+            // Load additional data and wait for all to complete
+            this.loadCharts().subscribe({
+              next: () => {
+                this.isLoadingPredictions = false; // Hide loader after everything is done
+              },
+              error: (error) => {
+                console.error('Error fetching additional data:', error);
+                this.isLoadingPredictions = false; // Hide loader even if there's an error
+              }
+            });
           },
           error: (error) => {
             console.error('Error fetching lottery predictions:', error);
@@ -83,44 +95,19 @@ export class NumberGeneratorComponent implements OnInit {
   }
 
   loadCharts() {
-    this.predictionService.getHotColdNumbers(this.generateNumbersForm.value.selectedLottery)
-      .subscribe({
-        next: (data) => {
-          this.hotColdNumbersService.updateNumbers(data.hotNumbers, data.coldNumbers);
-        },
-        error: (error) => {
-          console.error('Error fetching Hot & Cold numbers:', error);
-        },
-        complete: () => {
-          console.log('Loading Hot & Cold numbers completed.');
-        }
-      });
 
-    this.predictionService.getTrendingNumbers()
-      .subscribe({
-        next: (data) => {
-          this.trendingNumbersService.updateTrendingNumbers(data);
-        },
-        error: (error) => {
-          console.error('Error fetching Trending numbers:', error);
-        },
-        complete: () => {
-          console.log('Loading Trending numbers completed.');
-        }
-      });
+    const hotColdNumbers$ = this.predictionService.getHotColdNumbers(this.generateNumbersForm.value.selectedLottery);
+    const trendingNumbers$ = this.predictionService.getTrendingNumbers();
+    const predictionSuccessRate$ = this.predictionService.getPredictionSuccessRate();
 
-    this.predictionService.getPredictionSuccessRate()
-      .subscribe({
-        next: (data) => {
-          this.predictionSuccessRateService.updatePredictionSuccessRate(data);
-        },
-        error: (error) => {
-          console.error('Error fetching Prediction Success Rate numbers:', error);
-        },
-        complete: () => {
-          console.log('Loading Prediction Success Rate numbers completed.');
-        }
-      });
+    return forkJoin([hotColdNumbers$, trendingNumbers$, predictionSuccessRate$]).pipe(
+      tap(([hotColdData, trendingData, successRateData]) => {
+        // Update respective services
+        this.hotColdNumbersService.updateNumbers(hotColdData.hotNumbers, hotColdData.coldNumbers);
+        this.trendingNumbersService.updateTrendingNumbers(trendingData);
+        this.predictionSuccessRateService.updatePredictionSuccessRate(successRateData);
+      })
+    );
   }
 
   ngOnInit(): void {
@@ -154,12 +141,5 @@ export class NumberGeneratorComponent implements OnInit {
   isFieldInvalid(field: string): boolean {
     const control = this.generateNumbersForm.get(field);
     return control?.invalid && control?.touched;
-  }
-
-  triggerShake() {
-    this.isShaking = true;
-    setTimeout(() => {
-      this.isShaking = false;
-    }, 300); // Shake duration (matches CSS animation)
   }
 }
