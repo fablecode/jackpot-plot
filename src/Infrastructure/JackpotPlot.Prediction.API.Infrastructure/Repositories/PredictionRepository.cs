@@ -1,9 +1,10 @@
-﻿using System.Collections.Immutable;
-using JackpotPlot.Domain.Domain;
+﻿using JackpotPlot.Domain.Domain;
+using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Repositories;
 using JackpotPlot.Domain.ValueObjects;
 using JackpotPlot.Prediction.API.Infrastructure.Databases;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Immutable;
 
 namespace JackpotPlot.Prediction.API.Infrastructure.Repositories;
 
@@ -105,6 +106,33 @@ public sealed class PredictionRepository : IPredictionRepository
             }
 
             return successRates.ToImmutableDictionary(); // ✅ Returns aggregated histogram bins
+        }
+    }
+
+    public async Task<NumberSpreadResult> GetNumberSpread()
+    {
+        using (var context = await _factory.CreateDbContextAsync())
+        {
+            var predictions = await context.Predictions.ToListAsync();
+            int low = 0, mid = 0, high = 0;
+
+            foreach (var num in predictions.SelectMany(prediction => prediction.PredictedNumbers))
+            {
+                switch (num)
+                {
+                    case >= 1 and <= 20:
+                        low++;
+                        break;
+                    case >= 21 and <= 40:
+                        mid++;
+                        break;
+                    default:
+                        high++;
+                        break;
+                }
+            }
+
+            return new NumberSpreadResult(low, mid, high);
         }
     }
 }
