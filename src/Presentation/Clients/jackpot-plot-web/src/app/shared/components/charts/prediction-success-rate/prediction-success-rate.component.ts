@@ -42,7 +42,7 @@ export class PredictionSuccessRateComponent implements OnInit, AfterViewInit {
         title: { text: "Frequency (Number of Predictions)" }
       },
       title: {
-        text: "📊 Prediction Success Rate (Histogram)",
+        text: "🎯 Prediction Success Rate (Histogram)",
         align: "center"
       },
       dataLabels: {
@@ -100,7 +100,7 @@ export class PredictionSuccessRateComponent implements OnInit, AfterViewInit {
         title: { text: "Frequency (Number of Predictions)" }
       },
       title: {
-        text: "📊 Prediction Success Rate (Histogram)",
+        text: "🎯 Prediction Success Rate (Histogram)",
         align: "center"
       }
     });

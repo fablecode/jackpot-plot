@@ -8,6 +8,7 @@ import {Strategy} from '../models/strategy.model';
 import {LotterySearchResult} from '../models/lotterySearchResult';
 import {HotColdNumbers} from '../models/hot-cold-numbers';
 import {PredictionSuccessRate} from '../models/prediction-success-rate.model';
+import {NumberSpread} from '../models/numberSpread';
 
 @Injectable({
   providedIn: 'root' // Makes this service available throughout the app
@@ -47,5 +48,9 @@ export class PredictionService {
         frequency: frequency
       })))
     );
+  }
+
+  getNumberSpread() : Observable<NumberSpread> {
+    return this.http.get<NumberSpread>(`${this.BASE_URL}/number-spread`);
   }
 }

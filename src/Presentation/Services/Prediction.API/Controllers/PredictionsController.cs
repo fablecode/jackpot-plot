@@ -1,4 +1,5 @@
 ﻿using JackpotPlot.Domain.Interfaces;
+using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Services.PredictionStrategies.Attributes;
 using JackpotPlot.Prediction.API.Application.Features.GetHotAndColdNumbersByLotteryId;
 using JackpotPlot.Prediction.API.Application.Features.GetPredictionSuccessRate;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Immutable;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using JackpotPlot.Prediction.API.Application.Features.GetNumberSpread;
 
 namespace Prediction.API.Controllers;
 
@@ -119,6 +121,20 @@ public class PredictionsController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpGet("number-spread")]
+    public async Task<ActionResult<NumberSpreadResult>> GetNumberSpread()
+    {
+        var result = await _mediator.Send(new GetNumberSpreadQuery());
+
+        if (result.IsSuccess)
+        {
+            return Ok(result.Value);
+        }
+
+        return NoContent();
+    }
+
 
     #region Private Helpers
     private string FormatStrategyName(string name)
