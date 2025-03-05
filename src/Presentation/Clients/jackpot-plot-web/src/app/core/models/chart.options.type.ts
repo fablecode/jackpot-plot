@@ -22,4 +22,5 @@ export type ChartOptions = {
   stroke: ApexStroke;
   tooltip: ApexTooltip;
   plotOptions?: ApexPlotOptions;
+  colors: any
 };

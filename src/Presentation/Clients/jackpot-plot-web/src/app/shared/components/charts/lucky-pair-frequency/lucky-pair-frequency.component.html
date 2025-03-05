@@ -1,0 +1,13 @@
+<apx-chart #chart
+   *ngIf="chartOptions?.series"
+   [series]="chartOptions.series"
+   [chart]="chartOptions.chart"
+   [xaxis]="chartOptions.xaxis"
+   [yaxis]="chartOptions.yaxis"
+   [title]="chartOptions.title"
+   [dataLabels]="chartOptions.dataLabels"
+   [legend]="chartOptions.legend"
+   [stroke]="chartOptions.stroke"
+   [colors]="chartOptions.colors"
+   [tooltip]="chartOptions.tooltip">
+</apx-chart>

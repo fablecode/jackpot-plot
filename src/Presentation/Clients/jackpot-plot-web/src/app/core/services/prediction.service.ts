@@ -9,6 +9,7 @@ import {LotterySearchResult} from '../models/lotterySearchResult';
 import {HotColdNumbers} from '../models/hot-cold-numbers';
 import {PredictionSuccessRate} from '../models/prediction-success-rate.model';
 import {NumberSpread} from '../models/numberSpread';
+import {LuckyPair} from '../models/lucky-pair';
 
 @Injectable({
   providedIn: 'root' // Makes this service available throughout the app
@@ -52,5 +53,9 @@ export class PredictionService {
 
   getNumberSpread() : Observable<NumberSpread> {
     return this.http.get<NumberSpread>(`${this.BASE_URL}/number-spread`);
+  }
+
+  getLuckyPairFrequency(): Observable<LuckyPair[]> {
+    return this.http.get<LuckyPair[]>(`${this.BASE_URL}/lucky-pair-frequency`);
   }
 }
