@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Immutable;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using JackpotPlot.Prediction.API.Application.Features.GetLuckyPair;
 using JackpotPlot.Prediction.API.Application.Features.GetNumberSpread;
 
 namespace Prediction.API.Controllers;
@@ -130,6 +131,19 @@ public class PredictionsController : ControllerBase
         if (result.IsSuccess)
         {
             return Ok(result.Value);
+        }
+
+        return NoContent();
+    }
+
+    [HttpGet("lucky-pair-frequency")]
+    public async Task<ActionResult<LuckyPairResult>> GetLuckPairFrequency()
+    {
+        var result = await _mediator.Send(new GetLuckyPairQuery());
+
+        if (result.IsSuccess)
+        {
+            return Ok((result.Value));
         }
 
         return NoContent();

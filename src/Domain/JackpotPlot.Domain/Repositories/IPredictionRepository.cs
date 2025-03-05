@@ -12,4 +12,5 @@ public interface IPredictionRepository
     Task<Dictionary<int, int>> GetTrendingNumbers();
     Task<ImmutableDictionary<int, int>> GetPredictionSuccessRate();
     Task<NumberSpreadResult> GetNumberSpread();
+    Task<ImmutableArray<LuckyPairResult>> GetLuckyPair();
 }

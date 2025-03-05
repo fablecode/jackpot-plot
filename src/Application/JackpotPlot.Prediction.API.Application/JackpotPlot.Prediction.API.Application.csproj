@@ -18,6 +18,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Features\GetHotAndColdNumbers\" />
+	  <Folder Include="Features\GetLuckyPair\" />
 	  <Folder Include="Validations\" />
 	</ItemGroup>
 

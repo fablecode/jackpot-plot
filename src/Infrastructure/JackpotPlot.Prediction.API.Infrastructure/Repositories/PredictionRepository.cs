@@ -5,6 +5,7 @@ using JackpotPlot.Domain.ValueObjects;
 using JackpotPlot.Prediction.API.Infrastructure.Databases;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
+using System.Threading;
 
 namespace JackpotPlot.Prediction.API.Infrastructure.Repositories;
 
@@ -135,5 +136,36 @@ public sealed class PredictionRepository : IPredictionRepository
             return new NumberSpreadResult(low, mid, high);
         }
     }
+
+    public async Task<ImmutableArray<LuckyPairResult>> GetLuckyPair()
+    {
+        using (var context = await _factory.CreateDbContextAsync())
+        {
+            var predictions = await context.Predictions.ToListAsync();
+            var pairCounts = new Dictionary<(int, int), int>();
+
+            foreach (var prediction in predictions)
+            {
+                var numbers = prediction.PredictedNumbers.OrderBy(n => n).ToArray();
+                for (var i = 0; i < numbers.Length; i++)
+                {
+                    for (var j = i + 1; j < numbers.Length; j++)
+                    {
+                        var pair = (numbers[i], numbers[j]);
+                        if (!pairCounts.TryAdd(pair, 1))
+                            pairCounts[pair]++;
+                    }
+                }
+            }
+
+            return [
+                ..pairCounts
+                    .OrderByDescending(kv => kv.Value)
+                    .Take(20) // ✅ Limit to top 20 pairs for better performance
+                    .Select(kv => new LuckyPairResult ( kv.Key.Item1, kv.Key.Item2, kv.Value ))
+            ];
+        }
+    }
+
 }
 
