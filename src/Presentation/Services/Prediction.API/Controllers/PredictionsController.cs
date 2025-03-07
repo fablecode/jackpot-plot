@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using JackpotPlot.Prediction.API.Application.Features.GetLuckyPair;
 using JackpotPlot.Prediction.API.Application.Features.GetNumberSpread;
+using JackpotPlot.Prediction.API.Application.Features.GetWinningNumberFrequency;
 
 namespace Prediction.API.Controllers;
 
@@ -140,6 +141,19 @@ public class PredictionsController : ControllerBase
     public async Task<ActionResult<LuckyPairResult>> GetLuckPairFrequency()
     {
         var result = await _mediator.Send(new GetLuckyPairQuery());
+
+        if (result.IsSuccess)
+        {
+            return Ok((result.Value));
+        }
+
+        return NoContent();
+    }
+
+    [HttpGet("winning-number-frequency")]
+    public async Task<ActionResult<List<WinningNumberFrequencyResult>>> GetWinningNumberFrequency()
+    {
+        var result = await _mediator.Send(new GetWinningNumberFrequencyQuery());
 
         if (result.IsSuccess)
         {
