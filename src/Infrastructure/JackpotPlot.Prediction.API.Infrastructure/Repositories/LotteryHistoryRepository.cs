@@ -1,8 +1,11 @@
-﻿using JackpotPlot.Domain.Models;
+﻿using System.Collections.Immutable;
+using System.Threading;
+using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Repositories;
 using JackpotPlot.Prediction.API.Infrastructure.Databases;
 using JackpotPlot.Prediction.API.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace JackpotPlot.Prediction.API.Infrastructure.Repositories;
 
@@ -61,8 +64,42 @@ public sealed class LotteryHistoryRepository : ILotteryHistoryRepository
             return await context.Lotteryhistories
                 .Where(draw => draw.Lotteryid == lotteryId)
                 .OrderByDescending(draw => draw.Drawdate) // Sort by most recent first
-                .Select(lh => new HistoricalDraw(lh.Id, lh.Lotteryid, lh.Drawdate, lh.Winningnumbers, lh.Bonusnumbers, lh.Createdat.Value))
+                .Select(lh => new HistoricalDraw(lh.Id, lh.Lotteryid, lh.Drawdate, lh.Winningnumbers, lh.Bonusnumbers!, lh.Createdat!.Value))
                 .ToListAsync();
+        }
+    }
+
+    public async Task<ImmutableArray<WinningNumberFrequencyResult>> GetWinningNumberFrequency()
+    {
+        using (var context = await _factory.CreateDbContextAsync())
+        {
+            var results = new List<WinningNumberFrequencyResult>();
+            var frequencyDict = new Dictionary<int, Dictionary<string, int>>();
+
+            using (var conn = (NpgsqlConnection)context.Database.GetDbConnection()) // ✅ Get PostgreSQL connection
+            {
+                await conn.OpenAsync();
+
+                using (var cmd = new NpgsqlCommand("SELECT * FROM get_winning_number_frequency_over_time()", conn))
+                {
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            int number = reader.GetInt32(0);
+                            string date = reader.GetDateTime(1).ToString("yyyy-MM-dd");
+                            int frequency = reader.GetInt32(2);
+
+                            if (!frequencyDict.ContainsKey(number))
+                                frequencyDict[number] = new Dictionary<string, int>();
+
+                            frequencyDict[number][date] = frequency;
+                        }
+                    }
+                }
+            }
+
+            return [..frequencyDict.Select(kv => new WinningNumberFrequencyResult { Number = kv.Key, FrequencyOverTime = kv.Value })];
         }
     }
 }

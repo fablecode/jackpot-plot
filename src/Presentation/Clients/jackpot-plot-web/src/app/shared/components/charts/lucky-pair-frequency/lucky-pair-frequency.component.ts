@@ -35,7 +35,7 @@ export class LuckyPairFrequencyComponent implements OnInit, AfterViewInit {
 
   initChart(): void {
     this.chartOptions = {
-      series: [{ name: "Frequency", data: [] }],
+      series: [{ name: "", data: [] }],
       chart: { type: "heatmap", height: 350, animations: { enabled: true } },
       xaxis: { title: { text: "Lucky Pairs" } },
       yaxis: { title: { text: "Frequency" } },
@@ -54,7 +54,7 @@ export class LuckyPairFrequencyComponent implements OnInit, AfterViewInit {
       const heatmapData = luckNumberFrequencies.map(pair => ({ x: `${pair.number1} & ${pair.number2}`, y: pair.frequency }));
 
       this.chart.updateSeries([
-        { name: "Frequency", data: heatmapData }
+        { name: "", data: heatmapData }
       ]);
     }
   }

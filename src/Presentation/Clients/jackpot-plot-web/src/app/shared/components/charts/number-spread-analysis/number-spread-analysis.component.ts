@@ -26,7 +26,7 @@ export class NumberSpreadAnalysisComponent implements OnInit, AfterViewInit {
       ],
       chart: { type: "bar", height: 350, stacked: true }, // ✅ Stacked bar chart
       xaxis: { categories: ["Number Distribution"], title: { text: "Number Ranges" } },
-      yaxis: { title: { text: "Frequency" } },
+      yaxis: { title: { text: "Frequency1" } },
       title: { text: "📊 Number Spread Analysis", align: "center" },
       dataLabels: { enabled: false },
       legend: { position: "top" },

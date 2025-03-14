@@ -34,6 +34,12 @@ import {
 import {
   LuckyPairFrequencyComponent
 } from '../../../../shared/components/charts/lucky-pair-frequency/lucky-pair-frequency.component';
+import {
+  WinningNumberFrequencyService
+} from '../../../../shared/components/charts/winning-number-frequency/winning-number-frequency.service';
+import {
+  WinningNumberFrequencyComponent
+} from '../../../../shared/components/charts/winning-number-frequency/winning-number-frequency.component';
 
 @Component({
   selector: 'app-number-generator',
@@ -45,7 +51,8 @@ import {
     TrendingNumbersComponent,
     PredictionSuccessRateComponent,
     NumberSpreadAnalysisComponent,
-    LuckyPairFrequencyComponent
+    LuckyPairFrequencyComponent,
+    WinningNumberFrequencyComponent
   ],
   templateUrl: './number-generator.component.html',
   styleUrl: './number-generator.component.scss'
@@ -70,7 +77,8 @@ export class NumberGeneratorComponent implements OnInit {
     private trendingNumbersService: TrendingNumbersService,
     private predictionSuccessRateService: PredictionSuccessRateService,
     private numberSpreadAnalysisService: NumberSpreadAnalysisService,
-    private luckNumberFrequencyService: LuckyPairFrequencyService
+    private luckNumberFrequencyService: LuckyPairFrequencyService,
+    private winningNumberFrequencyService: WinningNumberFrequencyService,
   ) {
     this.generateNumbersForm = new FormGroup({
       selectedLottery: new FormControl('', Validators.required),
@@ -122,15 +130,17 @@ export class NumberGeneratorComponent implements OnInit {
     const predictionSuccessRate$ = this.predictionService.getPredictionSuccessRate();
     const numberSpread$ = this.predictionService.getNumberSpread();
     const luckyNumberFrequency$ = this.predictionService.getLuckyPairFrequency();
+    const winningNumberFrequencies$ = this.predictionService.getWinningNumberFrequency();
 
-    return forkJoin([hotColdNumbers$, trendingNumbers$, predictionSuccessRate$, numberSpread$, luckyNumberFrequency$]).pipe(
-      tap(([hotColdData, trendingData, successRateData, numberSpreadData, luckNumberFrequencyData]) => {
+    return forkJoin([hotColdNumbers$, trendingNumbers$, predictionSuccessRate$, numberSpread$, luckyNumberFrequency$, winningNumberFrequencies$]).pipe(
+      tap(([hotColdData, trendingData, successRateData, numberSpreadData, luckNumberFrequencyData, winningNumberFrequenciesData]) => {
         // Update respective services
         this.hotColdNumbersService.updateNumbers(hotColdData.hotNumbers, hotColdData.coldNumbers);
         this.trendingNumbersService.updateTrendingNumbers(trendingData);
         this.predictionSuccessRateService.updatePredictionSuccessRate(successRateData);
         this.numberSpreadAnalysisService.updateNumberSpreadAnalysis(numberSpreadData);
         this.luckNumberFrequencyService.updateLuckNumberFrequencies(luckNumberFrequencyData);
+        this.winningNumberFrequencyService.updateWinningNumberFrequencies(winningNumberFrequenciesData);
       })
     );
   }
