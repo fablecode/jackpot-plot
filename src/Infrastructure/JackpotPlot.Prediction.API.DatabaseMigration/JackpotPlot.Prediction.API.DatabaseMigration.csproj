@@ -11,6 +11,8 @@
     <None Remove="Scripts\Migrations\2024\2024-12-15 - 0.0.0.1\Script0002 - Add_Predictions_Table.sql" />
     <None Remove="Scripts\Migrations\2025\2025-02-18 - 0.0.0.1\Script0001 - Add_Get_Hot_Cold_Numbers_Table.sql" />
     <None Remove="Scripts\Migrations\2025\2025-03-07 - 0.0.0.1\Script0001 - Get_Winning_Number_Frequency_Over_Time.sql" />
+    <None Remove="Scripts\Migrations\2025\2025-03-14 - 0.0.0.1\Script0001 - Get_Lucky_Pair_Frequency.sql" />
+    <None Remove="Scripts\Migrations\2025\2025-03-15 - 0.0.0.1\Script0001 - Get_Frequent_Prediction_Pairs.sql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,6 +20,8 @@
     <EmbeddedResource Include="Scripts\Migrations\2024\2024-12-15 - 0.0.0.1\Script0001 - Add_LotteryHistory_Table.sql" />
     <EmbeddedResource Include="Scripts\Migrations\2025\2025-02-18 - 0.0.0.1\Script0001 - Add_Get_Hot_Cold_Numbers_Table.sql" />
     <EmbeddedResource Include="Scripts\Migrations\2025\2025-03-07 - 0.0.0.1\Script0001 - Get_Winning_Number_Frequency_Over_Time.sql" />
+    <EmbeddedResource Include="Scripts\Migrations\2025\2025-03-14 - 0.0.0.1\Script0001 - Get_Lucky_Pair_Frequency.sql" />
+    <EmbeddedResource Include="Scripts\Migrations\2025\2025-03-15 - 0.0.0.1\Script0001 - Get_Frequent_Prediction_Pairs.sql" />
   </ItemGroup>
 
 	<ItemGroup>

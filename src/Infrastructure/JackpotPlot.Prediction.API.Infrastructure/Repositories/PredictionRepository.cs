@@ -4,6 +4,7 @@ using JackpotPlot.Domain.Repositories;
 using JackpotPlot.Domain.ValueObjects;
 using JackpotPlot.Prediction.API.Infrastructure.Databases;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using System.Collections.Immutable;
 using System.Threading;
 
@@ -141,29 +142,30 @@ public sealed class PredictionRepository : IPredictionRepository
     {
         using (var context = await _factory.CreateDbContextAsync())
         {
-            var predictions = await context.Predictions.ToListAsync();
-            var pairCounts = new Dictionary<(int, int), int>();
+            var results = new List<LuckyPairResult>();
 
-            foreach (var prediction in predictions)
+            using (var conn = (NpgsqlConnection)context.Database.GetDbConnection())
             {
-                var numbers = prediction.PredictedNumbers.OrderBy(n => n).ToArray();
-                for (var i = 0; i < numbers.Length; i++)
+                await conn.OpenAsync();
+
+                using (var cmd = new NpgsqlCommand("SELECT * FROM get_frequent_prediction_pairs()", conn))
                 {
-                    for (var j = i + 1; j < numbers.Length; j++)
+                    using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        var pair = (numbers[i], numbers[j]);
-                        if (!pairCounts.TryAdd(pair, 1))
-                            pairCounts[pair]++;
+                        while (await reader.ReadAsync())
+                        {
+                            results.Add(new LuckyPairResult
+                            (
+                                reader.GetInt32(0),
+                                reader.GetInt32(1), 
+                                reader.GetInt64(2)
+                            ));
+                        }
                     }
                 }
             }
 
-            return [
-                ..pairCounts
-                    .OrderByDescending(kv => kv.Value)
-                    .Take(20) // ✅ Limit to top 20 pairs for better performance
-                    .Select(kv => new LuckyPairResult ( kv.Key.Item1, kv.Key.Item2, kv.Value ))
-            ];
+            return [..results];
         }
     }
 
