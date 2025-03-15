@@ -102,4 +102,38 @@ public sealed class LotteryHistoryRepository : ILotteryHistoryRepository
             return [..frequencyDict.Select(kv => new WinningNumberFrequencyResult { Number = kv.Key, FrequencyOverTime = kv.Value })];
         }
     }
+
+    public async Task<ImmutableArray<WinningNumberMovingAverageResult>> GetMovingAverageWinningNumbers(int lotteryId, int windowSize)
+    {
+        var results = new List<WinningNumberMovingAverageResult>();
+
+        using (var context = await _factory.CreateDbContextAsync())
+        {
+            using (var conn = (NpgsqlConnection)context.Database.GetDbConnection())
+            {
+                await conn.OpenAsync();
+
+                using (var cmd = new NpgsqlCommand("SELECT * FROM get_moving_average_winning_numbers(@lotteryId, @windowSize)", conn))
+                {
+                    cmd.Parameters.AddWithValue("lotteryId", lotteryId);
+                    cmd.Parameters.AddWithValue("windowSize", windowSize);
+
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            results.Add(new WinningNumberMovingAverageResult
+                            (
+                                reader.GetDateTime(reader.GetOrdinal("draw_date")),
+                                reader.GetInt32(reader.GetOrdinal("winning_number")),
+                                reader.GetDecimal(reader.GetOrdinal("moving_average"))
+                            ));
+                        }
+                    }
+                }
+            }
+        }
+
+        return [.. results];
+    }
 }

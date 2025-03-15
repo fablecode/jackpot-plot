@@ -9,4 +9,5 @@ public interface ILotteryHistoryRepository
     Task<int> Add(LotteryDrawnEvent lotteryDrawnEvent);
     Task<ICollection<HistoricalDraw>> GetHistoricalDraws(int lotteryId);
     Task<ImmutableArray<WinningNumberFrequencyResult>> GetWinningNumberFrequency();
+    Task<ImmutableArray<WinningNumberMovingAverageResult>> GetMovingAverageWinningNumbers(int lotteryId, int windowSize);
 }

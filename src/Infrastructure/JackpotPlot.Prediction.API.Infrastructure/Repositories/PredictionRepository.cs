@@ -6,7 +6,6 @@ using JackpotPlot.Prediction.API.Infrastructure.Databases;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using System.Collections.Immutable;
-using System.Threading;
 
 namespace JackpotPlot.Prediction.API.Infrastructure.Repositories;
 
@@ -168,6 +167,5 @@ public sealed class PredictionRepository : IPredictionRepository
             return [..results];
         }
     }
-
 }
 
