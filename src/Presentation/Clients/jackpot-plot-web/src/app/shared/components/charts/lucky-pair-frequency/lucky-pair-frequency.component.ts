@@ -41,7 +41,10 @@ export class LuckyPairFrequencyComponent implements OnInit, AfterViewInit {
       }],
       chart: {
         type: "heatmap",
-        height: 350
+        height: 350,
+        zoom: { enabled: false }, // ✅ Prevents zoom-related touch conflicts
+        animations: { enabled: true }, // ✅ Disables animations to reduce event listener errors
+        toolbar: { show: false }, // ✅ Removes the toolbar to prevent zoom issues
       },
       dataLabels: {
         enabled: true,

@@ -137,7 +137,7 @@ export class NumberGeneratorComponent implements OnInit {
         // Update respective services
         this.hotColdNumbersService.updateNumbers(hotColdData.hotNumbers, hotColdData.coldNumbers);
         this.trendingNumbersService.updateTrendingNumbers(trendingData);
-        this.predictionSuccessRateService.updatePredictionSuccessRate(successRateData);
+        // this.predictionSuccessRateService.updatePredictionSuccessRate(successRateData);
         this.numberSpreadAnalysisService.updateNumberSpreadAnalysis(numberSpreadData);
         this.luckNumberFrequencyService.updateLuckNumberFrequencies(luckNumberFrequencyData);
         this.winningNumberFrequencyService.updateWinningNumberFrequencies(winningNumberFrequenciesData);
