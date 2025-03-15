@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {LotteryService} from '../../../../core/services/lottery.service';
 import {Lottery} from '../../../../core/models/lottery.model';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {CommonModule, NgForOf} from '@angular/common';
+import {CommonModule} from '@angular/common';
 import {Strategy} from '../../../../core/models/strategy.model';
 import {PredictionService} from '../../../../core/services/prediction.service';
 
@@ -49,10 +49,8 @@ import {
     ReactiveFormsModule,
     HotColdNumbersComponent,
     TrendingNumbersComponent,
-    PredictionSuccessRateComponent,
     NumberSpreadAnalysisComponent,
-    LuckyPairFrequencyComponent,
-    WinningNumberFrequencyComponent
+    LuckyPairFrequencyComponent
   ],
   templateUrl: './number-generator.component.html',
   styleUrl: './number-generator.component.scss'
@@ -75,10 +73,8 @@ export class NumberGeneratorComponent implements OnInit {
     private lotteryService: LotteryService, private predictionService: PredictionService,
     private hotColdNumbersService: HotColdNumbersService,
     private trendingNumbersService: TrendingNumbersService,
-    private predictionSuccessRateService: PredictionSuccessRateService,
     private numberSpreadAnalysisService: NumberSpreadAnalysisService,
     private luckNumberFrequencyService: LuckyPairFrequencyService,
-    private winningNumberFrequencyService: WinningNumberFrequencyService,
   ) {
     this.generateNumbersForm = new FormGroup({
       selectedLottery: new FormControl('', Validators.required),
@@ -125,22 +121,18 @@ export class NumberGeneratorComponent implements OnInit {
 
   loadCharts() {
 
-    const hotColdNumbers$ = this.predictionService.getHotColdNumbers(this.generateNumbersForm.value.selectedLottery);
     const trendingNumbers$ = this.predictionService.getTrendingNumbers();
-    const predictionSuccessRate$ = this.predictionService.getPredictionSuccessRate();
+    const hotColdNumbers$ = this.predictionService.getHotColdNumbers(this.generateNumbersForm.value.selectedLottery);
     const numberSpread$ = this.predictionService.getNumberSpread();
     const luckyNumberFrequency$ = this.predictionService.getLuckyPairFrequency();
-    const winningNumberFrequencies$ = this.predictionService.getWinningNumberFrequency();
 
-    return forkJoin([hotColdNumbers$, trendingNumbers$, predictionSuccessRate$, numberSpread$, luckyNumberFrequency$, winningNumberFrequencies$]).pipe(
-      tap(([hotColdData, trendingData, successRateData, numberSpreadData, luckNumberFrequencyData, winningNumberFrequenciesData]) => {
+    return forkJoin([hotColdNumbers$, trendingNumbers$, numberSpread$, luckyNumberFrequency$]).pipe(
+      tap(([hotColdData, trendingData, numberSpreadData, luckNumberFrequencyData]) => {
         // Update respective services
         this.hotColdNumbersService.updateNumbers(hotColdData.hotNumbers, hotColdData.coldNumbers);
         this.trendingNumbersService.updateTrendingNumbers(trendingData);
-        // this.predictionSuccessRateService.updatePredictionSuccessRate(successRateData);
         this.numberSpreadAnalysisService.updateNumberSpreadAnalysis(numberSpreadData);
         this.luckNumberFrequencyService.updateLuckNumberFrequencies(luckNumberFrequencyData);
-        this.winningNumberFrequencyService.updateWinningNumberFrequencies(winningNumberFrequenciesData);
       })
     );
   }
