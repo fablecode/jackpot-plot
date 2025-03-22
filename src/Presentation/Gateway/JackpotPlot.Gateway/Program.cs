@@ -16,6 +16,16 @@ builder.Services.AddCors(options =>
         });
 });
 
+builder.Services.AddAuthentication()
+    .AddJwtBearer("KeycloakJWT", options =>
+    {
+        options.Authority = "http://keycloak:8080/realms/jackpotplot";
+        options.Audience = "account";
+        options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters.ValidIssuer = "http://keycloak:8080/realms/jackpotplot";
+    });
+
+
 // Add Ocelot configuration
 builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
 builder.Services.AddOcelot();
