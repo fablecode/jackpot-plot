@@ -1,4 +1,5 @@
-﻿using Ocelot.DependencyInjection;
+﻿using System.Diagnostics;
+using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,6 +36,9 @@ var app = builder.Build();
 app.UseCors("AllowAngular"); // Apply CORS middleware BEFORE Ocelot
 
 // Use Ocelot middleware
+app.UseAuthentication();
+app.UseAuthorization();
+
 await app.UseOcelot();
 
 app.Run();
