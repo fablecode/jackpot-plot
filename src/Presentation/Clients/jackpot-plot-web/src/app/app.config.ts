@@ -3,7 +3,7 @@ import {provideRouter, withComponentInputBinding} from '@angular/router';
 
 import { routes } from './app.routes';
 import {provideHttpClient} from '@angular/common/http';
-import {provideKeycloak} from 'keycloak-angular';
+import {provideKeycloak, withAutoRefreshToken} from 'keycloak-angular';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,6 +21,12 @@ export const appConfig: ApplicationConfig = {
         onLoad: 'check-sso', // or 'login-required' based on your needs
         silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
       },
+      features: [
+        withAutoRefreshToken({
+          onInactivityTimeout: 'logout',
+          sessionTimeout: 60000
+        })
+      ]
     })
   ]
 };
