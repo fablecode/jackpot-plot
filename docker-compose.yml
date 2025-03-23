@@ -159,7 +159,6 @@ services:
       KC_HOSTNAME: localhost
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: jackpotplot
-      KC_SPI_LOGIN_PROTOCOL_OPENID_CONNECT_SUPPRESS_3PC_CHECK: "true"
     ports:
       - "8085:8080"
     command: ["start-dev"]
