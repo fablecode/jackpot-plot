@@ -32,8 +32,8 @@
               },
               {
                 "glob": "**/*",
-                "input": "src/assets/media",
-                "output": "assets/media"
+                "input": "src/assets",
+                "output": "assets"
               }
             ],
             "styles": [
