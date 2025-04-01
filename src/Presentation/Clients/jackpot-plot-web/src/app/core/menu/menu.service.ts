@@ -34,7 +34,7 @@ export class MenuService {
       id: 'predictions',
       title: 'Predictions',
       icon: 'ki-data  ',
-      link: '/predictions',
+      link: `/${ROUTE_PATHS.PREDICTIONS}`,
       children: [
         { title: 'Number Generator', link: `/${ROUTE_PATHS.PREDICTIONS}/${ROUTE_PATHS.NUMBER_GENERATOR}`},
         { title: 'Statistical Probability', link: '/overview'},
@@ -78,9 +78,10 @@ export class MenuService {
       id: 'user tools',
       title: 'User Tools',
       icon: 'ki-setting-2',
-      link: '/winning-strategies',
+      link: `/${ROUTE_PATHS.USER_TOOLS}`,
       children: [
         { title: 'Saved Predictions', link: '/overview'},
+        { title: 'Kanban Board', link: `/${ROUTE_PATHS.USER_TOOLS}/${ROUTE_PATHS.KANBAN_BOARD}`},
         { title: 'Custom Number Picker', link: '/overview'},
         { title: 'Favorite Numbers, link: ', link: '/overview'},
       ]
