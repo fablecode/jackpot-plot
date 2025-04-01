@@ -8,4 +8,6 @@ export const ROUTE_PATHS = {
   SETTINGS: 'settings',
   PREDICTIONS: 'predictions',
   NUMBER_GENERATOR: 'number-generator',
+  USER_TOOLS: 'user-tools',
+  KANBAN_BOARD: 'kanban-board',
 };
