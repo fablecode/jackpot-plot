@@ -1447,7 +1447,7 @@
 				<i class="ki-filled ki-magnifier">
 				</i>
 			</button>
-      <div class="menu" data-menu="true">
+      <div class="menu" data-menu="true" *ngIf="isAuthenticated">
         <div class="menu-item" data-menu-item-offset="20px, 10px" data-menu-item-offset-rtl="-20px, 10px" data-menu-item-placement="bottom-end" data-menu-item-placement-rtl="bottom-start" data-menu-item-toggle="dropdown" data-menu-item-trigger="click|lg:click">
           <div class="menu-toggle btn btn-icon rounded-full">
             <img alt="" class="size-9 rounded-full border-2 border-success shrink-0" src="/assets/media/avatars/300-2.png">
@@ -1467,9 +1467,9 @@
                 </div>
 
               </div>
-              <span class="badge badge-xs badge-primary badge-outline">
-            Pro
-           </span>
+<!--              <span class="badge badge-xs badge-primary badge-outline">-->
+<!--            Pro-->
+<!--           </span>-->
             </div>
             <div class="menu-separator">
             </div>
@@ -1705,7 +1705,7 @@
                 </div>
               </div>
               <div class="menu-item px-4 py-1.5">
-                <a class="btn btn-sm btn-light justify-center" href="/metronic/tailwind/demo1/authentication/classic/sign-in">
+                <a class="btn btn-sm btn-light justify-center" href="#" (click)="onLogoutClick($event)">
                   Log out
                 </a>
               </div>
