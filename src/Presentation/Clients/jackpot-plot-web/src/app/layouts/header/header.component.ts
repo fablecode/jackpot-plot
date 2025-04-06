@@ -3,11 +3,14 @@ import {AuthService} from '../../core/services/auth.service';
 import {Router} from '@angular/router';
 import {ROUTE_PATHS} from '../../core/constants/routes.constants';
 import {Subscription} from 'rxjs';
+import {NgIf} from '@angular/common';
 
 @Component({
 	selector: 'app-header',
 	standalone: true,
-	imports: [],
+  imports: [
+    NgIf
+  ],
 	templateUrl: './header.component.html',
 	styleUrl: './header.component.scss'
 })
