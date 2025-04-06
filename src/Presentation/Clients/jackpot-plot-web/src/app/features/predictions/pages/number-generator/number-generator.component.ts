@@ -21,7 +21,7 @@ import {
 import {
   PredictionSuccessRateService
 } from '../../../../shared/components/charts/prediction-success-rate/prediction-success-rate.service';
-import {forkJoin, tap} from 'rxjs';
+import {delay, forkJoin, of, tap} from 'rxjs';
 import {
   NumberSpreadAnalysisComponent
 } from '../../../../shared/components/charts/number-spread-analysis/number-spread-analysis.component';
@@ -40,6 +40,7 @@ import {
 import {
   WinningNumberFrequencyComponent
 } from '../../../../shared/components/charts/winning-number-frequency/winning-number-frequency.component';
+import {Play} from '../../../../core/models/play';
 
 @Component({
   selector: 'app-number-generator',
@@ -66,6 +67,8 @@ export class NumberGeneratorComponent implements OnInit {
 
   isLoadingLotteries: boolean = true;
   isLoadingStrategies: boolean = true;
+
+  isBookmarked = false;
 
   showCharts = false;
 
@@ -135,6 +138,28 @@ export class NumberGeneratorComponent implements OnInit {
         this.luckNumberFrequencyService.updateLuckNumberFrequencies(luckNumberFrequencyData);
       })
     );
+  }
+
+  toggleBookmark(event: Event, play: Play): void {
+    event.preventDefault();
+
+    // Prevent multiple clicks
+    if (play.bookmarkLoading){
+      return;
+    }
+
+    play.bookmarkLoading = true;
+
+    // Fake API delay (e.g., 1.5s)
+    of(true).pipe(delay(1500)).subscribe(() => {
+      play.isBookmarked = !play.isBookmarked;
+      play.bookmarkAnimation = true;
+      play.bookmarkLoading = false;
+
+      setTimeout(() => {
+        play.bookmarkAnimation = false;
+      }, 400);
+    });
   }
 
   ngOnInit(): void {
