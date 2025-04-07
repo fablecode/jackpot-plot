@@ -35,6 +35,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
     await this.router.navigate([`/${ROUTE_PATHS.DASHBOARD}/${ROUTE_PATHS.OVERVIEW}`]);
   }
 
+  getUsername(): string {
+    return this.authService.getUsername();
+  }
+
+  getEmail(): string {
+    return this.authService.getEmail();
+  }
+
   ngOnInit(): void {
     this.authSub = this.authService.isLoggedIn().subscribe(
       (authStatus) => {

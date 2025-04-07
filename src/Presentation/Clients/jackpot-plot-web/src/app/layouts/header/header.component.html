@@ -1450,20 +1450,20 @@
       <div class="menu" data-menu="true" *ngIf="isAuthenticated">
         <div class="menu-item" data-menu-item-offset="20px, 10px" data-menu-item-offset-rtl="-20px, 10px" data-menu-item-placement="bottom-end" data-menu-item-placement-rtl="bottom-start" data-menu-item-toggle="dropdown" data-menu-item-trigger="click|lg:click">
           <div class="menu-toggle btn btn-icon rounded-full">
-            <img alt="" class="size-9 rounded-full border-2 border-success shrink-0" src="/assets/media/avatars/300-2.png">
+            <img alt="" class="size-9 rounded-full border-2 border-success shrink-0" src="/assets/media/avatars/jackpot-bot.webp">
 
           </div>
           <div class="menu-dropdown menu-default light:border-gray-300 w-screen max-w-[250px]" style="">
             <div class="flex items-center justify-between px-5 py-1.5 gap-1.5">
               <div class="flex items-center gap-2">
-                <img alt="" class="size-9 rounded-full border-2 border-success" src="/assets/media/avatars/300-2.png">
+                <img alt="" class="size-9 rounded-full border-2 border-success" src="/assets/media/avatars/jackpot-bot.webp">
                 <div class="flex flex-col gap-1.5">
               <span class="text-sm text-gray-800 font-semibold leading-none">
-               Cody Fisher
+               {{getUsername()}}
               </span>
-                  <a class="text-xs text-gray-600 hover:text-primary font-medium leading-none" href="/metronic/tailwind/demo1/account/home/get-started">
-                    c.fisher&#64;gmail.com
-                  </a>
+                  <span class="text-xs text-gray-600 hover:text-primary font-medium leading-none">
+                    {{getEmail()}}
+                  </span>
                 </div>
 
               </div>

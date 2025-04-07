@@ -40,4 +40,12 @@ export class AuthService {
   async hasRole(role: string): Promise<boolean> {
     return this.keycloak.hasRealmRole(role);
   }
+
+  getUsername(): string | undefined {
+    return this.keycloak.tokenParsed?.['preferred_username'];
+  }
+
+  getEmail(): string | undefined {
+    return this.keycloak.tokenParsed?.['email'];
+  }
 }
