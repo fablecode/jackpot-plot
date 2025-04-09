@@ -35,7 +35,7 @@ export const provideKeycloakAngular = () =>
       UserActivityService,
       {
         provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
-        useValue: [localhostCondition] // Specify conditions for adding the Bearer token
+        useValue: ['*'] // 🔥 Add Bearer token to all HTTP requests
       }
     ]
   });
