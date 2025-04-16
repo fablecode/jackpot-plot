@@ -13,6 +13,8 @@ using System.Text.RegularExpressions;
 using JackpotPlot.Prediction.API.Application.Features.GetLuckyPair;
 using JackpotPlot.Prediction.API.Application.Features.GetNumberSpread;
 using JackpotPlot.Prediction.API.Application.Features.GetWinningNumberFrequency;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Prediction.API.Controllers;
 
@@ -21,10 +23,12 @@ namespace Prediction.API.Controllers;
 public class PredictionsController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly ILogger<PredictionsController> _logger;
 
-    public PredictionsController(IMediator mediator)
+    public PredictionsController(IMediator mediator, ILogger<PredictionsController> logger)
     {
         _mediator = mediator;
+        _logger = logger;
     }
 
     /// <summary>
@@ -46,6 +50,22 @@ public class PredictionsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] PredictNextRequest request)
     {
+        // If the user is authenticated, extract their ID from claims
+        if (User.Identity is { IsAuthenticated: true })
+        {
+            var subClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (Guid.TryParse(subClaim, out var userGuid))
+            {
+                // Recreate the request with UserId set
+                request = request with { UserId = userGuid };
+            }
+        }
+        else
+        {
+            _logger.LogError("User is not authentication.");
+        }
+
         var result = await _mediator.Send(request);
 
         if (result.IsSuccess)
