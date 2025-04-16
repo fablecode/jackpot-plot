@@ -13,7 +13,6 @@ const allUrlsCondition = createInterceptorCondition<IncludeBearerTokenCondition>
 export const provideKeycloakAngular = () =>
   provideKeycloak({
     config: {
-      // url: 'http://keycloak:8080/auth',
       url: 'http://localhost:8085',
       realm: 'jackpotplot',
       clientId: 'jackpotplot-web',
