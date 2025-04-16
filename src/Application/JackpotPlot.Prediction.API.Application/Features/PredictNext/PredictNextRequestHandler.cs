@@ -30,7 +30,7 @@ public sealed class PredictNextRequestHandler : IRequestHandler<PredictNextReque
 
             if (predictionResult.IsSuccess)
             {
-                await _predictionRepository.Add(predictionResult.Value);
+                var newPrediction = await _predictionRepository.Add(request.UserId, predictionResult.Value);
 
                 var timeRage = new DateTime(1900, 1, 1, 0, 0, 0).TimeOfDay;
 

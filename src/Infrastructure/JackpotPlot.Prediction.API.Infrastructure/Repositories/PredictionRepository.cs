@@ -18,13 +18,14 @@ public sealed class PredictionRepository : IPredictionRepository
         _factory = factory;
     }
 
-    public async Task<PredictionDomain> Add(PredictionResult predictionResult)
+    public async Task<PredictionDomain> Add(Guid? userId, PredictionResult predictionResult)
     {
         using (var context = await _factory.CreateDbContextAsync())
         {
             var newPrediction = new Models.Prediction
             {
                 LotteryId = predictionResult.LotteryId,
+                UserId = userId,
                 Strategy = predictionResult.Strategy,
                 PredictedNumbers = predictionResult.PredictedNumbers.ToList(),
                 BonusNumbers = predictionResult.BonusNumbers.ToList(),

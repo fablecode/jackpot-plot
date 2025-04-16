@@ -14,6 +14,7 @@
     <None Remove="Scripts\Migrations\2025\2025-03-14 - 0.0.0.1\Script0001 - Get_Lucky_Pair_Frequency.sql" />
     <None Remove="Scripts\Migrations\2025\2025-03-15 - 0.0.0.1\Script0001 - Get_Frequent_Prediction_Pairs.sql" />
     <None Remove="Scripts\Migrations\2025\2025-03-15 - 0.0.0.1\Script0002 - Get_Moving_Average_Winning_Numbers.sql" />
+    <None Remove="Scripts\Migrations\2025\2025-04-09 - 0.0.0.1\Script0001 - Change_User_Id_Column_From_INT_To_GUID.sql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,6 +25,7 @@
     <EmbeddedResource Include="Scripts\Migrations\2025\2025-03-14 - 0.0.0.1\Script0001 - Get_Lucky_Pair_Frequency.sql" />
     <EmbeddedResource Include="Scripts\Migrations\2025\2025-03-15 - 0.0.0.1\Script0002 - Get_Moving_Average_Winning_Numbers.sql" />
     <EmbeddedResource Include="Scripts\Migrations\2025\2025-03-15 - 0.0.0.1\Script0001 - Get_Frequent_Prediction_Pairs.sql" />
+    <EmbeddedResource Include="Scripts\Migrations\2025\2025-04-09 - 0.0.0.1\Script0001 - Change_User_Id_Column_From_INT_To_GUID.sql" />
   </ItemGroup>
 
 	<ItemGroup>
