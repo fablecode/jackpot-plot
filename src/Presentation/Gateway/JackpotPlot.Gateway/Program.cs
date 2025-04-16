@@ -1,4 +1,7 @@
 ﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
@@ -17,15 +20,20 @@ builder.Services.AddCors(options =>
         });
 });
 
-builder.Services.AddAuthentication()
-    .AddJwtBearer("KeycloakJWT", options =>
-    {
-        options.Authority = "http://keycloak:8080/realms/jackpotplot";
-        options.Audience = "account";
-        options.RequireHttpsMetadata = false;
-        options.TokenValidationParameters.ValidIssuer = "http://keycloak:8080/realms/jackpotplot";
-    });
-
+//builder.Services.AddAuthentication()
+//    .AddJwtBearer("KeycloakJWT", options =>
+//    {
+//        options.Authority = "http://localhost:8085/realms/jackpotplot";
+//        options.Audience = "account";
+//        options.RequireHttpsMetadata = false;
+//        options.TokenValidationParameters = new TokenValidationParameters
+//        {
+//            ValidateIssuer = true,
+//            ValidIssuer = "http://localhost:8085/realms/jackpotplot",
+//            ValidateAudience = true,
+//            ValidAudience = "account"
+//        };
+//    });
 
 // Add Ocelot configuration
 builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
@@ -36,8 +44,8 @@ var app = builder.Build();
 app.UseCors("AllowAngular"); // Apply CORS middleware BEFORE Ocelot
 
 // Use Ocelot middleware
-app.UseAuthentication();
-app.UseAuthorization();
+//app.UseAuthentication();
+//app.UseAuthorization();
 
 await app.UseOcelot();
 

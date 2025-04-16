@@ -22,7 +22,10 @@
                 }
             ],
             "UpstreamPathTemplate": "/api/predictions/{everything}",
-            "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ]
+            "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+            "AddHeadersToRequest": {
+                "Authorization": "{Authorization}"
+            }
         }
     ],
     "GlobalConfiguration": {
