@@ -74,30 +74,8 @@
                 >
                   {{prediction.number}}
                 </label>
-
-                <!-- Fancy Quest Effect -->
-                <!-- Filled Star (Bookmarked) -->
-                <a href="/" *ngIf="play.isBookmarked" (click)="toggleBookmark($event, play)">
-                  <i class="ki-filled ki-star text-yellow-500 hover:text-yellow-600 transition-colors"
-                     [ngClass]="{
-                      'animate-pulse text-gray-300': play.bookmarkLoading,
-                      'hover:text-gray-600': !play.bookmarkLoading,
-                      'bookmark-animate': play.bookmarkAnimation
-                    }"
-                     title="Remove bookmark" aria-label="Remove bookmark" role="button" tabindex="0"></i>
-                </a>
-
-                <!-- Outline Star (Not Bookmarked) -->
-                <a href="/" *ngIf="!play.isBookmarked" (click)="toggleBookmark($event, play)">
-                  <i class="ki-outline ki-star text-gray-400 hover:text-gray-600 transition-colors"
-                     [ngClass]="{
-                      'animate-pulse text-gray-300': play.bookmarkLoading,
-                      'hover:text-gray-600': !play.bookmarkLoading,
-                      'bookmark-animate': play.bookmarkAnimation
-                    }"
-                     title="Bookmark this combination" aria-label="Bookmark this combination" role="button" tabindex="0"></i>
-                </a>
-
+                </div>
+                <app-save-to-ticket-menu class="ml-auto"></app-save-to-ticket-menu>
               </div>
             </div>
           </div>
