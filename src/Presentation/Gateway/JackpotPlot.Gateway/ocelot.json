@@ -10,7 +10,10 @@
                 }
             ],
             "UpstreamPathTemplate": "/api/lotteries/{everything}",
-            "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ]
+            "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+            "AddHeadersToRequest": {
+                "Authorization": "{Authorization}"
+            }
         },
         {
             "DownstreamPathTemplate": "/api/predictions/{everything}",

@@ -1,6 +1,5 @@
-﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
@@ -20,20 +19,54 @@ builder.Services.AddCors(options =>
         });
 });
 
-//builder.Services.AddAuthentication()
-//    .AddJwtBearer("KeycloakJWT", options =>
-//    {
-//        options.Authority = "http://localhost:8085/realms/jackpotplot";
-//        options.Audience = "account";
-//        options.RequireHttpsMetadata = false;
-//        options.TokenValidationParameters = new TokenValidationParameters
-//        {
-//            ValidateIssuer = true,
-//            ValidIssuer = "http://localhost:8085/realms/jackpotplot",
-//            ValidateAudience = true,
-//            ValidAudience = "account"
-//        };
-//    });
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer("KeycloakJWT", options =>
+    {
+        options.Authority = "http://localhost:8085/realms/jackpotplot";
+        options.RequireHttpsMetadata = false;
+        options.Audience = "account";
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = "http://localhost:8085/realms/jackpotplot",
+
+            ValidateAudience = true,
+            ValidAudience = "account",
+
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = false,
+
+            // ✅ Correct way to bypass signature
+            SignatureValidator = (token, parameters) =>
+            {
+                var handler = new JsonWebTokenHandler();
+                var result = handler.ReadJsonWebToken(token); // ✅ returns JsonWebToken
+                return result;
+            }
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                Console.WriteLine($"JWT auth failed: {context.Exception.Message}");
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                Console.WriteLine("JWT token validated (signature skipped)");
+                return Task.CompletedTask;
+            }
+        };
+    });
+
+
+builder.Services.AddAuthorization();
 
 // Add Ocelot configuration
 builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
@@ -44,8 +77,8 @@ var app = builder.Build();
 app.UseCors("AllowAngular"); // Apply CORS middleware BEFORE Ocelot
 
 // Use Ocelot middleware
-//app.UseAuthentication();
-//app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 
 await app.UseOcelot();
 
