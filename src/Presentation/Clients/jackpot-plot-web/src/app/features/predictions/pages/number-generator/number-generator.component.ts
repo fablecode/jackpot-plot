@@ -42,6 +42,10 @@ import {
 } from '../../../../shared/components/charts/winning-number-frequency/winning-number-frequency.component';
 import {Play} from '../../../../core/models/play';
 
+import {
+  GeneratedNumbersMenuComponent
+} from '../../../../shared/components/generated-numbers-menu/generated-numbers-menu.component';
+
 @Component({
   selector: 'app-number-generator',
   imports: [
@@ -51,7 +55,8 @@ import {Play} from '../../../../core/models/play';
     HotColdNumbersComponent,
     TrendingNumbersComponent,
     NumberSpreadAnalysisComponent,
-    LuckyPairFrequencyComponent
+    LuckyPairFrequencyComponent,
+    GeneratedNumbersMenuComponent
   ],
   templateUrl: './number-generator.component.html',
   styleUrl: './number-generator.component.scss'
@@ -77,7 +82,7 @@ export class NumberGeneratorComponent implements OnInit {
     private hotColdNumbersService: HotColdNumbersService,
     private trendingNumbersService: TrendingNumbersService,
     private numberSpreadAnalysisService: NumberSpreadAnalysisService,
-    private luckNumberFrequencyService: LuckyPairFrequencyService,
+    private luckNumberFrequencyService: LuckyPairFrequencyService
   ) {
     this.generateNumbersForm = new FormGroup({
       selectedLottery: new FormControl('', Validators.required),

@@ -1,0 +1,15 @@
+<h2 mat-dialog-title class="text-base font-semibold">Save number(s) to...</h2>
+
+<mat-dialog-content class="max-h-80 overflow-auto pr-2">
+  <mat-selection-list>
+    <mat-list-option *ngFor="let playlist of playlists" [(selected)]="playlist.selected">
+      {{ playlist.name }}
+    </mat-list-option>
+  </mat-selection-list>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="flex justify-between mt-4">
+  <button mat-stroked-button color="primary" class="w-full rounded-full" (click)="createNewPlaylist()">
+    <mat-icon>add</mat-icon>&nbsp; New ticket
+  </button>
+</mat-dialog-actions>

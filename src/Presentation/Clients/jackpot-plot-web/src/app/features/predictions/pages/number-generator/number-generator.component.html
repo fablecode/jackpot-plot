@@ -53,29 +53,31 @@
           <p>Finding your lucky numbers...</p>
         </div>
 
-        <div *ngIf="searchResults" class="flex flex-wrap items-center gap-5 justify-between">
+        <div *ngIf="searchResults" class="flex flex-wrap items-center gap-5 justify-between pr-[10px]">
           <h3 class="text-lg text-gray-900 font-semibold">
             {{searchResults.numberOfPlays}} play result(s)
           </h3>
+          <app-generated-numbers-menu [plays]="searchResults.predictions"></app-generated-numbers-menu>
         </div>
         <div *ngIf="searchResults" class="card">
             <div class="card-body grid gap-5 p-2.5">
-              <div *ngFor="let play of searchResults.predictions" class="flex items-center flex-wrap gap-3 lg:gap-4">
+              <div *ngFor="let play of searchResults.predictions" class="flex items-center justify-between w-full">
+                <div class="flex flex-wrap items-center gap-3 lg:gap-4">
 
-                <label
-                  *ngFor="let prediction of play.predictions"
-                  class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300"
-                  [ngClass]="{
+                  <label
+                    *ngFor="let prediction of play.predictions"
+                    class="flex items-center justify-center size-8 bg-light rounded-full border border-gray-300"
+                    [ngClass]="{
                     'hot-number': prediction.status === 'hot',
                     'cold-number': prediction.status === 'cold',
                     'neutral-number': prediction.status === 'neutral'
                   }"
-                  title="Frequency: {{prediction.frequency}}"
-                >
-                  {{prediction.number}}
-                </label>
+                    title="Frequency: {{prediction.frequency}}"
+                  >
+                    {{prediction.number}}
+                  </label>
                 </div>
-                <app-save-to-ticket-menu class="ml-auto"></app-save-to-ticket-menu>
+                <app-generated-numbers-menu class="ml-auto" [predictions]="play.predictions"></app-generated-numbers-menu>
               </div>
             </div>
           </div>

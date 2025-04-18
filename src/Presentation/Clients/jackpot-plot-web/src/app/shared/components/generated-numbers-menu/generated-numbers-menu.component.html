@@ -1,0 +1,31 @@
+<!-- Menu container aligned to the right -->
+<div class="menu ml-auto" data-menu="true">
+
+  <!-- Dropdown trigger: three-dot (kebab) button -->
+  <div class="menu-item menu-item-dropdown"
+       data-menu-item-offset="0, 10px"
+       data-menu-item-placement="bottom-end"
+       data-menu-item-placement-rtl="bottom-start"
+       data-menu-item-toggle="dropdown"
+       data-menu-item-trigger="click|lg:click">
+
+    <!-- Trigger Button -->
+    <button class="menu-toggle btn btn-sm btn-icon btn-light btn-clear">
+      <i class="ki-filled ki-dots-vertical"></i>
+    </button>
+
+    <!-- Dropdown Menu -->
+    <div class="menu-dropdown menu-default w-full max-w-[200px]" data-menu-dismiss="true">
+
+      <!-- Dynamic menu items -->
+      <div class="menu-item" *ngFor="let item of menuItems">
+        <a class="menu-link" href="#" (click)="onMenuClick(item, $event)" [attr.data-modal-toggle]="item.modalToggle || null">
+          <span class="menu-icon"><i class="ki-filled" [ngClass]="item.icon"></i></span>
+          <span class="menu-title">{{ item.title }}</span>
+        </a>
+      </div>
+
+    </div> <!-- End of Dropdown Menu -->
+  </div> <!-- End of menu-item-dropdown -->
+
+</div> <!-- End of .menu container -->
