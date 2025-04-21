@@ -9,7 +9,8 @@ import {
 import {MatListOption, MatSelectionList} from '@angular/material/list';
 import {MatIcon} from '@angular/material/icon';
 import {MatButton} from '@angular/material/button';
-import {NgForOf} from '@angular/common';
+import {NgClass, NgForOf, NgIf} from '@angular/common';
+import {FormsModule} from '@angular/forms';
 
 interface Playlist {
   name: string;
@@ -27,22 +28,19 @@ interface Playlist {
     MatDialogContent,
     MatButton,
     MatDialogTitle,
-    NgForOf
+    NgForOf,
+    NgIf,
+    NgClass,
+    FormsModule
   ],
   templateUrl: './save-to-ticket-modal.component.html',
   styleUrl: './save-to-ticket-modal.component.scss'
 })
 export class SaveToTicketModalComponent {
-  playlists: Playlist[] = [
-    { name: 'Watch Later', privacy: 'private', selected: false },
-    { name: 'Life Tips', privacy: 'public', selected: true },
-    { name: 'Games tracks', privacy: 'private', selected: false },
-    { name: 'Funny Clips', privacy: 'private', selected: false },
-    { name: 'Czech Songs', privacy: 'private', selected: false },
-    { name: 'Food Recipes', privacy: 'private', selected: false },
-    { name: 'Anime intros', privacy: 'private', selected: false },
-    { name: 'favourites', privacy: 'private', selected: false }
-  ];
+  playlists: Playlist[] = [];
+
+  addingNew = false;
+  newTicketName = '';
 
   constructor(
     public dialogRef: MatDialogRef<SaveToTicketModalComponent>,
@@ -56,5 +54,27 @@ export class SaveToTicketModalComponent {
   createNewPlaylist(): void {
     // Handle new playlist logic
     alert('Create new playlist clicked!');
+  }
+
+  startAddingTicket(): void {
+    this.addingNew = true;
+    this.newTicketName = '';
+  }
+
+  cancelNewTicket(): void {
+    this.addingNew = false;
+    this.newTicketName = '';
+  }
+
+  addNewTicket(): void {
+    const name = this.newTicketName.trim();
+    if (name) {
+      this.playlists.unshift({
+        name,
+        privacy: 'private',
+        selected: true
+      });
+    }
+    this.cancelNewTicket();
   }
 }

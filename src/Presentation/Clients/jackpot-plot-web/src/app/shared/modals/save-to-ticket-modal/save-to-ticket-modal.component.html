@@ -1,15 +1,55 @@
-<h2 mat-dialog-title class="text-base font-semibold">Save number(s) to...</h2>
+<!-- Modal Title -->
+<div class="p-5 border-b border-gray-200">
+  <h2 class="text-lg font-semibold text-gray-800">Save number(s) to...</h2>
+</div>
 
-<mat-dialog-content class="max-h-80 overflow-auto pr-2">
-  <mat-selection-list>
-    <mat-list-option *ngFor="let playlist of playlists" [(selected)]="playlist.selected">
-      {{ playlist.name }}
-    </mat-list-option>
-  </mat-selection-list>
-</mat-dialog-content>
+<!-- Scrollable Ticket List -->
+<div class="max-h-[320px] overflow-y-auto p-5 space-y-2">
+  <!-- New Ticket Inline Input -->
+  <div *ngIf="addingNew" class="flex items-center gap-3">
+    <input
+      type="text"
+      [(ngModel)]="newTicketName"
+      placeholder="Ticket name"
+      class="form-control form-control-sm w-full"
+    />
+    <button class="btn btn-icon btn-sm btn-light-success" (click)="addNewTicket()">
+      <i class="ki-duotone ki-check fs-2 text-success"></i>
+    </button>
+    <button class="btn btn-icon btn-sm btn-light-danger" (click)="cancelNewTicket()">
+      <i class="ki-duotone ki-cross fs-2 text-danger"></i>
+    </button>
+  </div>
 
-<mat-dialog-actions align="end" class="flex justify-between mt-4">
-  <button mat-stroked-button color="primary" class="w-full rounded-full" (click)="createNewPlaylist()">
-    <mat-icon>add</mat-icon>&nbsp; New ticket
+  <!-- Ticket Items -->
+  <div
+    *ngFor="let playlist of playlists"
+    class="d-flex justify-content-between align-items-center border rounded px-4 py-2 hover:bg-light"
+  >
+    <div class="form-check form-check-custom form-check-solid">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        [(ngModel)]="playlist.selected"
+      />
+      <label class="form-check-label text-gray-700 ms-3">
+        {{ playlist.name }}
+      </label>
+    </div>
+  </div>
+  <div class="text-center text-gray-500 italic" *ngIf="playlists.length == 0 && !addingNew">
+    No tickets found. Start by adding one.
+  </div>
+</div>
+
+<!-- Modal Footer -->
+<div class="p-5 border-t border-gray-200 d-flex justify-content-between">
+  <button
+    class="btn btn-primary w-100 rounded-pill"
+    *ngIf="!addingNew"
+    (click)="startAddingTicket()"
+  >
+    <i class="ki-duotone ki-plus fs-2 me-1"></i>
+    New ticket
   </button>
-</mat-dialog-actions>
+</div>
