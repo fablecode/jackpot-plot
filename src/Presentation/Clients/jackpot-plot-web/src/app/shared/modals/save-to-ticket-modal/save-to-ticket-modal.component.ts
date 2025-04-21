@@ -1,15 +1,9 @@
 import {Component, ElementRef, Inject, ViewChild} from '@angular/core';
 import {
   MAT_DIALOG_DATA,
-  MatDialogActions,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle
+  MatDialogRef
 } from '@angular/material/dialog';
-import {MatListOption, MatSelectionList} from '@angular/material/list';
-import {MatIcon} from '@angular/material/icon';
-import {MatButton} from '@angular/material/button';
-import {NgClass, NgForOf, NgIf} from '@angular/common';
+import {NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 
 interface Playlist {
@@ -21,16 +15,8 @@ interface Playlist {
 @Component({
   selector: 'app-save-to-ticket-modal',
   imports: [
-    MatSelectionList,
-    MatListOption,
-    MatIcon,
-    MatDialogActions,
-    MatDialogContent,
-    MatButton,
-    MatDialogTitle,
     NgForOf,
     NgIf,
-    NgClass,
     FormsModule
   ],
   templateUrl: './save-to-ticket-modal.component.html',
