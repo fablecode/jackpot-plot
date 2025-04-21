@@ -1,4 +1,4 @@
-import {Component, Inject} from '@angular/core';
+import {Component, ElementRef, Inject, ViewChild} from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -37,6 +37,8 @@ interface Playlist {
   styleUrl: './save-to-ticket-modal.component.scss'
 })
 export class SaveToTicketModalComponent {
+  @ViewChild('scrollContainer') scrollContainer!: ElementRef;
+
   playlists: Playlist[] = [];
 
   addingNew = false;
@@ -59,6 +61,13 @@ export class SaveToTicketModalComponent {
   startAddingTicket(): void {
     this.addingNew = true;
     this.newTicketName = '';
+
+    // Scroll to top of the container
+    setTimeout(() => {
+      if (this.scrollContainer) {
+        this.scrollContainer.nativeElement.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, 0);
   }
 
   cancelNewTicket(): void {

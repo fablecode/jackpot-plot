@@ -1,10 +1,17 @@
 <!-- Modal Title -->
-<div class="p-5 border-b border-gray-200">
+<div class="p-5 border-b border-gray-200 position-relative">
   <h2 class="text-lg font-semibold text-gray-800">Save number(s) to...</h2>
+
+  <!-- Close Button -->
+  <button type="button" class="btn btn-sm btn-icon btn-active-light-primary" style="
+    position: absolute;
+    top: 0;
+    right: 0;
+" (click)="close()"><i class="ki-duotone ki-cross fs-2"></i></button>
 </div>
 
 <!-- Scrollable Ticket List -->
-<div class="max-h-[320px] overflow-y-auto p-5 space-y-2">
+<div #scrollContainer class="max-h-[320px] overflow-y-auto p-5 space-y-2">
   <!-- New Ticket Inline Input -->
   <div *ngIf="addingNew" class="flex items-center gap-3">
     <input
@@ -37,6 +44,8 @@
       </label>
     </div>
   </div>
+
+  <!-- Empty State -->
   <div class="text-center text-gray-500 italic" *ngIf="playlists.length == 0 && !addingNew">
     No tickets found. Start by adding one.
   </div>
