@@ -35,7 +35,7 @@
             </select>
           </div>
           <div class="flex justify-end gap-2.5">
-            <button class="btn btn-light" [disabled]="generateNumbersForm.invalid">
+            <button type="button" class="btn btn-light" (click)="clearForm()">
               Clear
             </button>
             <button type="submit" class="btn btn-primary" [disabled]="generateNumbersForm.invalid">

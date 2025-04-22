@@ -91,6 +91,19 @@ export class NumberGeneratorComponent implements OnInit {
     })
   }
 
+  clearForm() {
+    this.generateNumbersForm.reset();
+
+    // Optional: If you want to reset specific default values
+    this.generateNumbersForm.setValue({
+      selectedLottery: '',
+      selectedNumberOfPlays: 5,
+      selectedStrategy: 'random'
+    });
+
+    this.isShaking = false;
+  }
+
   onSearch() {
     if (this.generateNumbersForm.valid) {
       this.isLoadingPredictions = true;
