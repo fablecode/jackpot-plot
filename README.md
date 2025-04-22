@@ -171,16 +171,16 @@ volumes:
 Each microservice connects to its dedicated Postgres instance:
 
 # Lottery Service DB
-Host: lottery-db
-Port: 5432
-User: lotteryuser
-Password: lotterypassword
+- **Host**: `lottery-db`
+- **Port**: `5432`
+- **User**: `lotteryuser`
+- **Password**: `lotterypassword`
 
 # Prediction Service DB
-Host: prediction-db
-Port: 5432
-User: predictionuser
-Password: predictionpassword
+- **Host**: `prediction-db`
+- **Port**: `5432`
+- **User**: `predictionuser`
+- **Password**: `predictionpassword`
 
 ---
 
