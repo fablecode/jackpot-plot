@@ -80,7 +80,7 @@ export class MenuService {
       icon: 'ki-setting-2',
       link: `/${ROUTE_PATHS.USER_TOOLS}`,
       children: [
-        { title: 'Saved Predictions', link: '/overview'},
+        { title: 'My Tickets', link: '/overview'},
         { title: 'Kanban Board', link: `/${ROUTE_PATHS.USER_TOOLS}/${ROUTE_PATHS.KANBAN_BOARD}`},
         { title: 'Custom Number Picker', link: '/overview'},
         { title: 'Favorite Numbers, link: ', link: '/overview'},
