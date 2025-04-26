@@ -1,6 +1,6 @@
 ﻿using JackpotPlot.Lottery.API.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
-#nullable disable
+
 namespace JackpotPlot.Lottery.API.Infrastructure.Databases;
 
 public partial class LotteryDbContext : DbContext
@@ -30,7 +30,9 @@ public partial class LotteryDbContext : DbContext
 
     public virtual DbSet<Schemaversion> Schemaversions { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder){}
+    public virtual DbSet<UserTicket> UserTickets { get; set; }
+
+    public virtual DbSet<UserTicketPlay> UserTicketPlays { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -239,6 +241,54 @@ public partial class LotteryDbContext : DbContext
             entity.Property(e => e.Scriptname)
                 .HasMaxLength(255)
                 .HasColumnName("scriptname");
+        });
+
+        modelBuilder.Entity<UserTicket>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("user_tickets_pkey");
+
+            entity.ToTable("user_tickets");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("gen_random_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Description)
+                .HasMaxLength(255)
+                .HasColumnName("description");
+            entity.Property(e => e.IsDeleted)
+                .HasDefaultValue(false)
+                .HasColumnName("is_deleted");
+            entity.Property(e => e.IsPublic)
+                .HasDefaultValue(false)
+                .HasColumnName("is_public");
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .HasColumnName("name");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+        });
+
+        modelBuilder.Entity<UserTicketPlay>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("user_ticket_plays_pkey");
+
+            entity.ToTable("user_ticket_plays");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("gen_random_uuid()")
+                .HasColumnName("id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
+            entity.Property(e => e.LineIndex).HasColumnName("line_index");
+            entity.Property(e => e.Numbers).HasColumnName("numbers");
+            entity.Property(e => e.TicketId).HasColumnName("ticket_id");
+
+            entity.HasOne(d => d.Ticket).WithMany(p => p.UserTicketPlays)
+                .HasForeignKey(d => d.TicketId)
+                .HasConstraintName("user_ticket_plays_ticket_id_fkey");
         });
 
         OnModelCreatingPartial(modelBuilder);
