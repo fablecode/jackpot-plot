@@ -101,6 +101,7 @@ export class NumberGeneratorComponent implements OnInit {
       selectedStrategy: 'random'
     });
 
+    this.searchResults = null;
     this.isShaking = false;
   }
 
