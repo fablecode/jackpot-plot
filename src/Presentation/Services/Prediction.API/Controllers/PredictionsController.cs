@@ -2,19 +2,18 @@
 using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Services.PredictionStrategies.Attributes;
 using JackpotPlot.Prediction.API.Application.Features.GetHotAndColdNumbersByLotteryId;
+using JackpotPlot.Prediction.API.Application.Features.GetLuckyPair;
+using JackpotPlot.Prediction.API.Application.Features.GetNumberSpread;
 using JackpotPlot.Prediction.API.Application.Features.GetPredictionSuccessRate;
 using JackpotPlot.Prediction.API.Application.Features.GetTrendingNumbers;
+using JackpotPlot.Prediction.API.Application.Features.GetWinningNumberFrequency;
 using JackpotPlot.Prediction.API.Application.Features.PredictNext;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Immutable;
 using System.Reflection;
-using System.Text.RegularExpressions;
-using JackpotPlot.Prediction.API.Application.Features.GetLuckyPair;
-using JackpotPlot.Prediction.API.Application.Features.GetNumberSpread;
-using JackpotPlot.Prediction.API.Application.Features.GetWinningNumberFrequency;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
+using System.Text.RegularExpressions;
 
 namespace Prediction.API.Controllers;
 
@@ -61,10 +60,6 @@ public class PredictionsController : ControllerBase
                 request = request with { UserId = userGuid };
             }
         }
-        else
-        {
-            _logger.LogError("User is not authentication.");
-        }
 
         var result = await _mediator.Send(request);
 
@@ -76,7 +71,7 @@ public class PredictionsController : ControllerBase
             return CreatedAtAction(nameof(Post), new { count = predictions.Predictions.Length }, predictions);
         }
 
-        return BadRequest(result.Errors);
+        return BadRequest(new { errors = result.Errors });
     }
 
     [HttpGet("strategies")]
