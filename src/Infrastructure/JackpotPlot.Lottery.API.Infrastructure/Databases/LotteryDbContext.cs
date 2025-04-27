@@ -30,9 +30,9 @@ public partial class LotteryDbContext : DbContext
 
     public virtual DbSet<Schemaversion> Schemaversions { get; set; }
 
-    public virtual DbSet<UserTicket> UserTickets { get; set; }
+    public virtual DbSet<Ticket> Tickets { get; set; }
 
-    public virtual DbSet<UserTicketPlay> UserTicketPlays { get; set; }
+    public virtual DbSet<TicketPlay> TicketPlays { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -243,11 +243,11 @@ public partial class LotteryDbContext : DbContext
                 .HasColumnName("scriptname");
         });
 
-        modelBuilder.Entity<UserTicket>(entity =>
+        modelBuilder.Entity<Ticket>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("user_tickets_pkey");
 
-            entity.ToTable("user_tickets");
+            entity.ToTable("tickets");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("gen_random_uuid()")
@@ -270,11 +270,11 @@ public partial class LotteryDbContext : DbContext
             entity.Property(e => e.UserId).HasColumnName("user_id");
         });
 
-        modelBuilder.Entity<UserTicketPlay>(entity =>
+        modelBuilder.Entity<TicketPlay>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("user_ticket_plays_pkey");
 
-            entity.ToTable("user_ticket_plays");
+            entity.ToTable("ticket_plays");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("gen_random_uuid()")
@@ -286,7 +286,7 @@ public partial class LotteryDbContext : DbContext
             entity.Property(e => e.Numbers).HasColumnName("numbers");
             entity.Property(e => e.TicketId).HasColumnName("ticket_id");
 
-            entity.HasOne(d => d.Ticket).WithMany(p => p.UserTicketPlays)
+            entity.HasOne(d => d.Ticket).WithMany(p => p.TicketPlays)
                 .HasForeignKey(d => d.TicketId)
                 .HasConstraintName("user_ticket_plays_ticket_id_fkey");
         });

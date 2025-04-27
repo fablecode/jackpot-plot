@@ -1,6 +1,6 @@
 ﻿namespace JackpotPlot.Lottery.API.Infrastructure.Models;
 
-public partial class UserTicketPlay
+public partial class TicketPlay
 {
     public Guid Id { get; set; }
 
@@ -12,5 +12,5 @@ public partial class UserTicketPlay
 
     public DateTime CreatedAt { get; set; }
 
-    public virtual UserTicket Ticket { get; set; } = null!;
+    public virtual Ticket Ticket { get; set; } = null!;
 }
