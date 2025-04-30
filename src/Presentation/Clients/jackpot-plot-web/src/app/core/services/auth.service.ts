@@ -2,15 +2,17 @@ import {effect, inject, Injectable} from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import {KEYCLOAK_EVENT_SIGNAL, KeycloakEventType, ReadyArgs, typeEventArgs} from 'keycloak-angular';
 import Keycloak from 'keycloak-js';
+import {Router} from '@angular/router';
+import {AUTH_CONSTANTS} from '../constants/auth.constants';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private keycloak = inject(Keycloak);
   private readonly keycloakSignal = inject(KEYCLOAK_EVENT_SIGNAL);
 
-  public authState$ = new BehaviorSubject<boolean>(false);
+  private authState$ = new BehaviorSubject<boolean>(false);
 
-  constructor() {
+  constructor(private router: Router) {
 
     effect(() => {
       const keycloakEvent = this.keycloakSignal();
@@ -26,15 +28,23 @@ export class AuthService {
   }
 
   async login() {
-    await this.keycloak.login();
+    // Save the current URL
+    const currentUrl = this.router.url;
+
+    sessionStorage.removeItem(AUTH_CONSTANTS.REDIRECT_AFTER_LOGIN);
+    await this.keycloak.login({ redirectUri: window.location.origin + currentUrl });
   }
 
   async logout() {
     await this.keycloak.logout();
   }
 
-  isLoggedIn() {
+  loggedInStatus$() {
     return this.authState$.asObservable();
+  }
+
+  isAuthenticated() {
+    return this.authState$.getValue();
   }
 
   async hasRole(role: string): Promise<boolean> {
