@@ -16,6 +16,25 @@
             }
         },
         {
+            "DownstreamPathTemplate": "/api/tickets/{everything}",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "lottery-service",
+                    "Port": 5001
+                }
+            ],
+            "UpstreamPathTemplate": "/api/tickets/{everything}",
+            "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+            "AddHeadersToRequest": {
+                "Authorization": "{Authorization}"
+            },
+            "AuthenticationOptions": {
+                "AuthenticationProviderKey": "KeycloakJWT",
+                "AllowedScopes": []
+            }
+        },
+        {
             "DownstreamPathTemplate": "/api/predictions/{everything}",
             "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
