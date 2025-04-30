@@ -7,7 +7,6 @@ import {Strategy} from '../models/strategy.model';
 
 import {LotterySearchResult} from '../models/lotterySearchResult';
 import {HotColdNumbers} from '../models/hot-cold-numbers';
-import {PredictionSuccessRate} from '../models/prediction-success-rate.model';
 import {NumberSpread} from '../models/numberSpread';
 import {LuckyPair} from '../models/lucky-pair';
 import {WinningNumberFrequency} from '../models/winning-number-frequency.model';
