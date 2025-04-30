@@ -4,6 +4,7 @@ import {Play} from '../../../core/models/play';
 import {Prediction} from '../../../core/models/prediction';
 import { MatDialog } from '@angular/material/dialog';
 import {SaveToTicketModalComponent} from '../../modals/save-to-ticket-modal/save-to-ticket-modal.component';
+import {AuthService} from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-generated-numbers-menu',
@@ -18,7 +19,7 @@ export class GeneratedNumbersMenuComponent implements OnInit {
   @Input() plays: Play[] | null = null;
   @Input() predictions: Prediction[] | null = null;
 
-  constructor(private dialog: MatDialog) {}
+  constructor(private dialog: MatDialog, private authService: AuthService) {}
 
   menuItems = [
     {
@@ -38,11 +39,16 @@ export class GeneratedNumbersMenuComponent implements OnInit {
   onMenuClick(item: any, event: MouseEvent): void {
     event.preventDefault(); // Prevent default anchor behavior
 
-    if (item.title === 'Save to ticket') {
-      this.openSaveModal();
+    if(!this.authService.isAuthenticated()) {
+      this.authService.login().then(() => {
+        // Redirect will happen in Keycloak
+      });
+    } else {
+      if (item.title === 'Save to ticket') {
+        this.openSaveModal();
+      }
+      // Handle other actions here
     }
-
-    // Handle other actions here
   }
 
   openSaveModal(): void {
