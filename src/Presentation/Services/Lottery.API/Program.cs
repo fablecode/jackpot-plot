@@ -21,7 +21,9 @@ builder.Host.UseSerilog((context, services, loggerConfig) =>
     loggerConfig
         .ReadFrom.Configuration(context.Configuration)
         .ReadFrom.Services(services) // optional but recommended for DI context
-        .Enrich.WithExceptionDetails(); // still needed here for Serilog.Exceptions to hook properly
+        .Enrich.WithExceptionDetails() // still needed here for Serilog.Exceptions to hook properly
+        .Enrich.WithProperty("ApplicationName", typeof(Program).Assembly.GetName().Name)
+        .Enrich.WithProperty("Environment", context.HostingEnvironment);
 });
 
 // Global exception handlers
