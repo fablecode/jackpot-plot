@@ -5,6 +5,9 @@ import {
   provideKeycloak, UserActivityService,
   withAutoRefreshToken
 } from 'keycloak-angular';
+import {HTTP_INTERCEPTORS} from '@angular/common/http';
+import {AuthInterceptor} from './core/interceptors/auth.interceptor';
+import {AUTH_CONSTANTS} from './core/constants/auth.constants';
 
 const allUrlsCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
   urlPattern: /.*/ // Match all URLs
@@ -34,6 +37,7 @@ export const provideKeycloakAngular = () =>
       {
         provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
         useValue: [allUrlsCondition] // 🔥 Add Bearer token to all HTTP requests
-      }
+      },
+      { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
     ]
   });
