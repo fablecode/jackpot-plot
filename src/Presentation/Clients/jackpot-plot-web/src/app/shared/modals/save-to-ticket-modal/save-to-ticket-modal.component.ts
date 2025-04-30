@@ -1,16 +1,13 @@
-import {Component, ElementRef, Inject, ViewChild} from '@angular/core';
+import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogRef
 } from '@angular/material/dialog';
 import {NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-
-interface Playlist {
-  name: string;
-  privacy: 'private' | 'public';
-  selected: boolean;
-}
+import {TicketService} from '../../../core/services/ticket.service';
+import {Ticket} from '../../../core/models/ticket.model';
+import {AuthService} from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-save-to-ticket-modal',
@@ -22,18 +19,24 @@ interface Playlist {
   templateUrl: './save-to-ticket-modal.component.html',
   styleUrl: './save-to-ticket-modal.component.scss'
 })
-export class SaveToTicketModalComponent {
+export class SaveToTicketModalComponent implements OnInit {
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
 
-  playlists: Playlist[] = [];
+  tickets: Ticket[] = [];
 
   addingNew = false;
   newTicketName = '';
 
   constructor(
     public dialogRef: MatDialogRef<SaveToTicketModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private ticketService: TicketService,
+    private authService: AuthService,
   ) {}
+
+  ngOnInit(): void {
+        this.loadTickets();
+    }
 
   close(): void {
     this.dialogRef.close();
@@ -64,12 +67,24 @@ export class SaveToTicketModalComponent {
   addNewTicket(): void {
     const name = this.newTicketName.trim();
     if (name) {
-      this.playlists.unshift({
+      this.tickets.unshift({
+        id: "werwrw",
         name,
-        privacy: 'private',
-        selected: true
+        isPublic: false
       });
     }
     this.cancelNewTicket();
+  }
+
+  loadTickets(): void {
+    // Load user tickets
+    this.ticketService.getUserTickets().subscribe({
+      next: (data : Ticket[]) => {
+        this.tickets = data;
+      },
+      error: (error) => {
+        console.error('Error fetching user tickets data:', error);
+      }
+    });
   }
 }

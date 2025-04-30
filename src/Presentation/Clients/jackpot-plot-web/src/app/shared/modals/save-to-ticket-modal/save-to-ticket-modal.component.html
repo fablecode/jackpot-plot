@@ -30,23 +30,22 @@
 
   <!-- Ticket Items -->
   <div
-    *ngFor="let playlist of playlists"
+    *ngFor="let ticket of tickets"
     class="d-flex justify-content-between align-items-center border rounded px-4 py-2 hover:bg-light"
   >
     <div class="form-check form-check-custom form-check-solid">
       <input
         class="form-check-input"
-        type="checkbox"
-        [(ngModel)]="playlist.selected"
+        type="checkbox"style="margin-top: 0; margin-bottom: 0; transform: translateY(1px);"
       />
       <label class="form-check-label text-gray-700 ms-3">
-        {{ playlist.name }}
+        {{ ticket.name }}
       </label>
     </div>
   </div>
 
   <!-- Empty State -->
-  <div class="text-center text-gray-500 italic" *ngIf="playlists.length == 0 && !addingNew">
+  <div class="text-center text-gray-500 italic" *ngIf="tickets.length == 0 && !addingNew">
     No tickets found. Start by adding one.
   </div>
 </div>
