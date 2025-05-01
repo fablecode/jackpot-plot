@@ -68,7 +68,7 @@ public class PredictionsController : ControllerBase
             var predictions = result.Value;
 
             // If multiple predictions, return 201 with all predictions
-            return CreatedAtAction(nameof(Post), new { count = predictions.Predictions.Length }, predictions);
+            return CreatedAtAction(nameof(Post), new { count = predictions.Plays.Length }, predictions);
         }
 
         return BadRequest(new { errors = result.Errors });

@@ -22,7 +22,7 @@ public sealed class PredictNextRequestHandler : IRequestHandler<PredictNextReque
     {
         var predictionStrategy = _predictionStrategies.Single(ps => ps.Handles(request.Strategy));
 
-        var predictions = new List<PredictionOutput>();
+        var predictions = new List<PlayOutput>();
 
         for (var i = 0; i < request.NumberOfPlays; i++)
         {
@@ -37,7 +37,7 @@ public sealed class PredictNextRequestHandler : IRequestHandler<PredictNextReque
                 var classifiedMainNumbers = await _lotteryStatisticsRepository.GetHotColdNumbers(request.LotteryId, predictionResult.Value.PredictedNumbers.ToList(), timeRage, "main");
                 var classifiedBonusNumbers = await _lotteryStatisticsRepository.GetHotColdNumbers(request.LotteryId, predictionResult.Value.BonusNumbers.ToList(), timeRage, "bonus");
 
-                var prediction = new PredictionOutput(i+1,
+                var prediction = new PlayOutput(i+1,
                     classifiedMainNumbers.AddRange(classifiedBonusNumbers)
                         .Select(n => new PredictionNumberOutput(n.Number, n.Frequency, n.Status, n.NumberType))
                         .ToArray());
