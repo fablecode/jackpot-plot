@@ -68,6 +68,7 @@ services:
           - RabbitMqSettings__Username=admin
           - RabbitMqSettings__Password=jackpotplot
           - RabbitMqSettings__Exchange=lottery-exchange
+          - Serilog__WriteTo__1__Args__serverUrl=http://seq
       ports:
           - "5001:5001"
       depends_on:
@@ -117,6 +118,8 @@ services:
           - RabbitMqSettings__Password=jackpotplot
           - RabbitMqSettings__Exchange=lottery-exchange
           - ApiSettings__LotteryServiceUrl=http://gateway:8080
+          - Keycloak__Authority=http://keycloak:8080/realms/jackpotplot
+          - Serilog__WriteTo__1__Args__serverUrl=http://seq
       ports:
           - "5002:5002"
       depends_on:
