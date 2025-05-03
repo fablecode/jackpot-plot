@@ -19,6 +19,6 @@ public sealed class GetAllUserTicketsQueryHandler : IRequestHandler<GetAllUserTi
     {
         var result = await _ticketRepository.GetAllUserTickets(request.UserId);
 
-        return Result<ImmutableArray<TicketOutput>>.Success([..result.Select(t => new TicketOutput(t.Id, t.Name, t.IsPublic))]);
+        return Result<ImmutableArray<TicketOutput>>.Success([..result.Select(t => new TicketOutput(t.Id, t.Name, t.IsPublic, t.UserTicketPlays.Count))]);
     }
 }
