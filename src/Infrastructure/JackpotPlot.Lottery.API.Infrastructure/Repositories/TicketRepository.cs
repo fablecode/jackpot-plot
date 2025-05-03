@@ -95,6 +95,8 @@ public class TicketRepository : ITicketRepository
                 .ToList()
             };
 
+            await context.Tickets.AddAsync(newTicket);
+
             await context.SaveChangesAsync();
 
             return newTicket.Id;
