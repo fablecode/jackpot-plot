@@ -3,6 +3,7 @@ import {ConfigService} from './config.service';
 import {HttpClient} from '@angular/common/http';
 import {Ticket} from '../models/ticket.model';
 import {Observable} from 'rxjs';
+import {TicketInput} from '../models/input/ticket.input';
 
 @Injectable({
   providedIn: 'root' // Makes this service available throughout the app
@@ -19,5 +20,12 @@ export class TicketService {
    */
   getUserTickets(): Observable<Ticket[]> {
     return this.http.get<Ticket[]>(this.BASE_URL);
+  }
+
+  /**
+   * Create user ticket
+   */
+  addTicket(ticket: TicketInput) {
+    return this.http.post(this.BASE_URL, ticket, { observe: 'response' });
   }
 }

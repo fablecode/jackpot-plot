@@ -49,5 +49,4 @@ public class LotteriesController : ControllerBase
 
         return NoContent();
     }
-
 }
