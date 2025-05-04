@@ -53,7 +53,11 @@ export class GeneratedNumbersMenuComponent implements OnInit {
 
   openSaveModal(): void {
     this.dialog.open(SaveToTicketModalComponent, {
-      width: '400px'
+      width: '400px',
+      data: {
+        plays: this.plays,
+        predictions: this.predictions
+      }
     });
   }
 
