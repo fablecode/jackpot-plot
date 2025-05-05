@@ -7,10 +7,10 @@ import {NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {TicketService} from '../../../core/services/ticket.service';
 import {Ticket} from '../../../core/models/ticket.model';
-import {AuthService} from '../../../core/services/auth.service';
 import {Play} from '../../../core/models/play';
 import {Prediction} from '../../../core/models/prediction';
 import {TicketInput} from '../../../core/models/input/ticket.input';
+import {TicketPlaysService} from '../../../core/services/ticket.plays.service';
 
 @Component({
   selector: 'app-save-to-ticket-modal',
@@ -30,12 +30,14 @@ export class SaveToTicketModalComponent implements OnInit {
 
   addingNew = false;
   newTicketName = '';
+  checkedTicketIds = new Set<string>();
+  ticketPlayMap = new Map<string, string[]>();
 
   constructor(
     public dialogRef: MatDialogRef<SaveToTicketModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { plays: Play[]; predictions: Prediction[] },
     private ticketService: TicketService,
-    private authService: AuthService,
+    private ticketPlaysService: TicketPlaysService
   ) {}
 
   ngOnInit(): void {
@@ -71,8 +73,7 @@ export class SaveToTicketModalComponent implements OnInit {
     const name = this.newTicketName.trim();
     if (name) {
       const newTicket: TicketInput = {
-        name: name//,
-        //plays : this.createTicketInputPlays()
+        name: name
       };
 
       this.ticketService.addTicket(newTicket).subscribe({
@@ -117,6 +118,52 @@ export class SaveToTicketModalComponent implements OnInit {
         console.error('Error fetching user tickets data:', error);
       }
     });
+  }
+
+  onTicketCheckboxChange(ticket: Ticket, event: Event): void {
+    const checkbox = event.target as HTMLInputElement;
+
+    const plays = this.createTicketInputPlays();
+
+    if (checkbox.checked) {
+      this.ticketPlaysService.addPlaysToTicket(ticket.id, plays).subscribe({
+        next: (createdPlayIds: string[]) => {
+          this.checkedTicketIds.add(ticket.id);
+          this.ticketPlayMap.set(ticket.id, createdPlayIds);
+
+          const updatedTicket = this.tickets.find(t => t.id === ticket.id);
+          if (updatedTicket) {
+            updatedTicket.playCount += createdPlayIds.length;
+          }
+        },
+        error: (err) => console.error('Failed to add plays', err)
+      });
+    } else {
+      const playIds = this.ticketPlayMap.get(ticket.id) || [];
+
+      this.ticketPlaysService.removePlaysFromTicket(ticket.id, playIds).subscribe({
+        next: () => {
+          this.checkedTicketIds.delete(ticket.id);
+          this.ticketPlayMap.delete(ticket.id);
+
+          const updatedTicket = this.tickets.find(t => t.id === ticket.id);
+          if (updatedTicket) {
+            updatedTicket.playCount -= playIds.length;
+          }
+        },
+        error: (err) => console.error('Failed to remove plays', err)
+      });
+    }
+  }
+
+  isTicketChecked(ticketId: string): boolean {
+    return this.checkedTicketIds.has(ticketId);
+  }
+
+  getCheckboxTooltip(ticketId: string): string {
+    return this.isTicketChecked(ticketId)
+      ? 'Remove plays from this ticket'
+      : 'Add plays to this ticket';
   }
 }
 
