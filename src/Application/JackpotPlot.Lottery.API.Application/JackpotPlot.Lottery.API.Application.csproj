@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <Folder Include="Extensions\" />
+    <Folder Include="Features\DeleteTicketPlays\" />
     <Folder Include="Features\CreateUserTicket\" />
     <Folder Include="Features\GetLotteries\" />
     <Folder Include="Messaging\Handlers\" />
