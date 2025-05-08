@@ -18,6 +18,7 @@
     <None Remove="Scripts\Migrations\2025\2025-04-25 - 0.0.0.1\Script0001 - Add_UserTickets_Table.sql" />
     <None Remove="Scripts\Migrations\2025\2025-04-25 - 0.0.0.1\Script0002 - Add_UserTicketPlays_Table.sql" />
     <None Remove="Scripts\Migrations\2025\2025-04-27 - 0.0.0.1\Script0001 - Rename_UserTickets_And_UserTicketPlays_Tables.sql" />
+    <None Remove="Scripts\Migrations\2025\2025-05-08 - 0.0.0.1\Script0001 - Add_Lottery_Id_Foreign_Key_Column_To_Tickets_Table.sql" />
     <None Remove="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0001 - Insert_Continents.sql" />
     <None Remove="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0002 - Insert_Countries.sql" />
     <None Remove="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0003 - Insert_Eurojackpot.sql" />
@@ -37,6 +38,7 @@
     <EmbeddedResource Include="Scripts\Migrations\2025\2025-04-25 - 0.0.0.1\Script0002 - Add_UserTicketPlays_Table.sql" />
     <EmbeddedResource Include="Scripts\Migrations\2025\2025-04-25 - 0.0.0.1\Script0001 - Add_UserTickets_Table.sql" />
     <EmbeddedResource Include="Scripts\Migrations\2025\2025-04-27 - 0.0.0.1\Script0001 - Rename_UserTickets_And_UserTicketPlays_Tables.sql" />
+    <EmbeddedResource Include="Scripts\Migrations\2025\2025-05-08 - 0.0.0.1\Script0001 - Add_Lottery_Id_Foreign_Key_Column_To_Tickets_Table.sql" />
     <EmbeddedResource Include="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0004 - Eurojackpot_Participating_Countries_And_Associate_them.sql" />
     <EmbeddedResource Include="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0003 - Insert_Eurojackpot.sql" />
     <EmbeddedResource Include="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0002 - Insert_Countries.sql" />
