@@ -16,6 +16,7 @@ import {AuthService} from '../../../core/services/auth.service';
   styleUrl: './generated-numbers-menu.component.scss'
 })
 export class GeneratedNumbersMenuComponent implements OnInit {
+  @Input() lotteryId: number;
   @Input() plays: Play[] | null = null;
   @Input() predictions: Prediction[] | null = null;
 
@@ -55,6 +56,7 @@ export class GeneratedNumbersMenuComponent implements OnInit {
     this.dialog.open(SaveToTicketModalComponent, {
       width: '400px',
       data: {
+        lotteryId: this.lotteryId,
         plays: this.plays,
         predictions: this.predictions
       }

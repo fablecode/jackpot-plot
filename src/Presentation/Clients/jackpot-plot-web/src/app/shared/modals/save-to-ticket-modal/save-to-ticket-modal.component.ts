@@ -37,7 +37,7 @@ export class SaveToTicketModalComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<SaveToTicketModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { plays: Play[]; predictions: Prediction[] },
+    @Inject(MAT_DIALOG_DATA) public data: { lotteryId: number, plays: Play[]; predictions: Prediction[] },
     private ticketService: TicketService,
     private ticketPlaysService: TicketPlaysService,
     private snackBar: MatSnackBar
@@ -74,9 +74,11 @@ export class SaveToTicketModalComponent implements OnInit {
 
   addNewTicket(): void {
     const name = this.newTicketName.trim();
+    const lotteryId = this.data.lotteryId;
     if (name) {
       const newTicket: TicketInput = {
-        name: name
+        name: name,
+        lotteryId: lotteryId
       };
 
       this.ticketService.addTicket(newTicket).subscribe({
@@ -178,7 +180,7 @@ export class SaveToTicketModalComponent implements OnInit {
 
   showUndoSnackbar(message: string, undoAction: () => void): void {
     const snackBarRef = this.snackBar.open(message, 'Undo', {
-      duration: 4000,
+      duration: 3000,
       horizontalPosition: 'start',
       verticalPosition: 'bottom',
       panelClass: ['custom-snackbar']

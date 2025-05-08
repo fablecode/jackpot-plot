@@ -77,6 +77,8 @@ export class NumberGeneratorComponent implements OnInit {
 
   showCharts = false;
 
+  selectedLotteryId: number = 0;
+
   constructor(
     private lotteryService: LotteryService, private predictionService: PredictionService,
     private hotColdNumbersService: HotColdNumbersService,
@@ -207,7 +209,11 @@ export class NumberGeneratorComponent implements OnInit {
 
     // Populate static number of plays list (1–10, 15, 20, 25)
     this.numberOfPlaysOptions = [...Array(10).keys()].map(i => i + 1).concat([15, 20, 25]);
-    }
+
+    this.generateNumbersForm.get('selectedLottery')?.valueChanges.subscribe(val => {
+      this.selectedLotteryId = val;
+    });
+  }
 
   isFieldInvalid(field: string): boolean {
     const control = this.generateNumbersForm.get(field);
