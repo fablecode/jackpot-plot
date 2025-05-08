@@ -21,4 +21,6 @@ public partial class Lottery
     public virtual ICollection<LotteriesCountry> LotteriesCountries { get; set; } = new List<LotteriesCountry>();
 
     public virtual ICollection<LotteryConfiguration> LotteryConfigurations { get; set; } = new List<LotteryConfiguration>();
+
+    public virtual ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
 }

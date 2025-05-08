@@ -81,6 +81,7 @@ public class TicketRepository : ITicketRepository
             var newTicket = new Ticket
             {
                 UserId = ticket.UserId,
+                LotteryId = ticket.LotteryId,
                 Name = ticket.Name,
                 Description = ticket.Description,
                 IsPublic = ticket.IsPublic,

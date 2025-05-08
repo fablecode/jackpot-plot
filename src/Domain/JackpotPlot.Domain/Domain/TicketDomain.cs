@@ -6,6 +6,8 @@ public class TicketDomain
 
     public Guid UserId { get; set; }
 
+    public int LotteryId { get; set; }
+
     public string Name { get; set; } = null!;
 
     public string? Description { get; set; }

@@ -19,6 +19,7 @@ public sealed class CreateUserTicketRequestHandler : IRequestHandler<CreateUserT
         var newTicketId = await _ticketRepository.Add(new TicketDomain
         {
             UserId = request.UserId,
+            LotteryId = request.Ticket.LotteryId,
             Name = request.Ticket.Name,
             UserTicketPlays = request.Ticket.Plays.Select(play => new TicketPlayDomain
             {

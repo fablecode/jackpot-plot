@@ -264,10 +264,16 @@ public partial class LotteryDbContext : DbContext
             entity.Property(e => e.IsPublic)
                 .HasDefaultValue(false)
                 .HasColumnName("is_public");
+            entity.Property(e => e.LotteryId).HasColumnName("lottery_id");
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
                 .HasColumnName("name");
             entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.Lottery).WithMany(p => p.Tickets)
+                .HasForeignKey(d => d.LotteryId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_tickets_lottery");
         });
 
         modelBuilder.Entity<TicketPlay>(entity =>

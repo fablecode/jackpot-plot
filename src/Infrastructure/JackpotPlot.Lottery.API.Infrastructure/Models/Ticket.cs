@@ -16,5 +16,9 @@ public partial class Ticket
 
     public DateTime CreatedAt { get; set; }
 
+    public int LotteryId { get; set; }
+
+    public virtual Lottery Lottery { get; set; } = null!;
+
     public virtual ICollection<TicketPlay> TicketPlays { get; set; } = new List<TicketPlay>();
 }
