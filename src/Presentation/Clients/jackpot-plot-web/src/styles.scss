@@ -21,3 +21,45 @@
   font-size: 0.65rem;
   color: #888; // optional: makes it visually distinct/subtle
 }
+
+.custom-snackbar {
+  z-index: 1400 !important;
+  background-color: #212121;
+  color: #fff;
+  font-weight: 500;
+  border-radius: 8px;
+
+  .mat-mdc-snack-bar-action {
+    color: #42a5f5;
+    background-color: transparent !important;
+  }
+
+  .mat-mdc-snack-bar-action:hover,
+  .mat-mdc-snack-bar-action:focus {
+    background-color: transparent !important;
+    color: #90caf9;
+  }
+
+  .mat-mdc-button,
+  .mat-mdc-button-base {
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .mdc-button__ripple,
+  .mat-mdc-button-ripple,
+  .mat-mdc-button-touch-target,
+  .mat-ripple-element {
+    background-color: transparent !important;
+    display: none !important;
+  }
+
+  .mat-focus-indicator {
+    background-color: transparent !important;
+  }
+}
+
+.mdc-button__label {
+  color: #42a5f5; // Material Blue 400 — great contrast, familiar feel
+}
+

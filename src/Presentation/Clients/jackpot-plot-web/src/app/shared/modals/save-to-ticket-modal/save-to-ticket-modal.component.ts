@@ -11,13 +11,15 @@ import {Play} from '../../../core/models/play';
 import {Prediction} from '../../../core/models/prediction';
 import {TicketInput} from '../../../core/models/input/ticket.input';
 import {TicketPlaysService} from '../../../core/services/ticket.plays.service';
+import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-save-to-ticket-modal',
   imports: [
     NgForOf,
     NgIf,
-    FormsModule
+    FormsModule,
+    MatSnackBarModule
   ],
   templateUrl: './save-to-ticket-modal.component.html',
   styleUrl: './save-to-ticket-modal.component.scss'
@@ -37,7 +39,8 @@ export class SaveToTicketModalComponent implements OnInit {
     public dialogRef: MatDialogRef<SaveToTicketModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { plays: Play[]; predictions: Prediction[] },
     private ticketService: TicketService,
-    private ticketPlaysService: TicketPlaysService
+    private ticketPlaysService: TicketPlaysService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -122,7 +125,6 @@ export class SaveToTicketModalComponent implements OnInit {
 
   onTicketCheckboxChange(ticket: Ticket, event: Event): void {
     const checkbox = event.target as HTMLInputElement;
-
     const plays = this.createTicketInputPlays();
 
     if (checkbox.checked) {
@@ -130,6 +132,10 @@ export class SaveToTicketModalComponent implements OnInit {
         next: (createdPlayIds: string[]) => {
           this.checkedTicketIds.add(ticket.id);
           this.ticketPlayMap.set(ticket.id, createdPlayIds);
+
+          this.showUndoSnackbar(`Added to ${ticket.name}`, () => {
+            this.removePlays(ticket, createdPlayIds);
+          });
 
           const updatedTicket = this.tickets.find(t => t.id === ticket.id);
           if (updatedTicket) {
@@ -145,6 +151,10 @@ export class SaveToTicketModalComponent implements OnInit {
         next: () => {
           this.checkedTicketIds.delete(ticket.id);
           this.ticketPlayMap.delete(ticket.id);
+
+          this.showUndoSnackbar(`Removed from ${ticket.name}`, () => {
+            this.addPlays(ticket);
+          });
 
           const updatedTicket = this.tickets.find(t => t.id === ticket.id);
           if (updatedTicket) {
@@ -164,6 +174,50 @@ export class SaveToTicketModalComponent implements OnInit {
     return this.isTicketChecked(ticketId)
       ? 'Remove plays from this ticket'
       : 'Add plays to this ticket';
+  }
+
+  showUndoSnackbar(message: string, undoAction: () => void): void {
+    const snackBarRef = this.snackBar.open(message, 'Undo', {
+      duration: 4000,
+      horizontalPosition: 'start',
+      verticalPosition: 'bottom',
+      panelClass: ['custom-snackbar']
+    });
+
+    snackBarRef.onAction().subscribe(() => {
+      undoAction();
+    });
+  }
+
+  addPlays(ticket: Ticket): void {
+    const plays = this.createTicketInputPlays();
+    this.ticketPlaysService.addPlaysToTicket(ticket.id, plays).subscribe({
+      next: (playIds: string[]) => {
+        this.checkedTicketIds.add(ticket.id); // ✅ re-check the box
+        this.ticketPlayMap.set(ticket.id, playIds);
+
+        const updatedTicket = this.tickets.find(t => t.id === ticket.id);
+        if (updatedTicket) {
+          updatedTicket.playCount += playIds.length;
+        }
+      },
+      error: (err) => console.error('Failed to re-add plays', err)
+    });
+  }
+
+  removePlays(ticket: Ticket, playIds: string[]): void {
+    this.ticketPlaysService.removePlaysFromTicket(ticket.id, playIds).subscribe({
+      next: () => {
+        this.checkedTicketIds.delete(ticket.id); // ✅ uncheck the box
+        this.ticketPlayMap.delete(ticket.id);
+
+        const updatedTicket = this.tickets.find(t => t.id === ticket.id);
+        if (updatedTicket) {
+          updatedTicket.playCount -= playIds.length;
+        }
+      },
+      error: (err) => console.error('Failed to undo add', err)
+    });
   }
 }
 
