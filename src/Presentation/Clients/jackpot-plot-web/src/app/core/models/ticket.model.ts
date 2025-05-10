@@ -3,4 +3,10 @@ export interface Ticket {
   name: string;
   isPublic: boolean;
   playCount: number;
+  lottery: string;
+  status: 'Active' | 'Paused' | 'Excluded';
+  nextDraw: Date | null;
+  entries: number;
+  lastResult: string;
+  confidence: 'High' | 'Medium' | 'Low' | 'None';
 }
