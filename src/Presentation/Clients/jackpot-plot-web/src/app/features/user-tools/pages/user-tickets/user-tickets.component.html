@@ -1,0 +1,122 @@
+<div class="container-fluid">
+  <div class="flex flex-wrap items-center lg:items-end justify-between gap-5 pb-7.5">
+    <div class="flex flex-col justify-center gap-2">
+      <h1 class="text-xl font-medium leading-none text-mono">
+        My Tickets
+      </h1>
+      <div class="text-sm font-normal text-secondary-foreground">
+        Easily manage and organize your saved tickets in one convenient place.
+      </div>
+    </div>
+    <div class="flex items-center gap-2.5">
+      <button class="btn btn-primary">
+        <i class="ki-outline ki-plus fs-2 me-2"></i>
+        New Ticket
+      </button>
+    </div>
+  </div>
+
+  <div class="card mat-elevation-z1">
+    <div class="card-header border-0 pt-6">
+      <div class="card-title text-sm">
+        <h3 class="kt-card-title text-sm">
+          Showing {{ ticketRange }} of {{ totalItems }} tickets
+        </h3>
+
+      </div>
+      <div class="card-toolbar">
+
+        <div class="d-flex align-items-center">
+          <div class="position-relative">
+            <input
+              type="text"
+              class="form-control form-control-solid w-250px ps-10"
+              placeholder="Search..."
+              [(ngModel)]="searchQuery"
+              (ngModelChange)="onSearchChange()"/>
+            <span class="position-absolute top-50 start-0 translate-middle-y ms-4">
+              <i class="ki-duotone ki-magnifier fs-2 text-muted"></i>
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="card-body py-0">
+      <table *ngIf="!loading" class="table text-left align-middle table-row-dashed fs-6 gy-5">
+        <thead>
+        <tr class="text-muted fw-bold fs-7 text-uppercase gs-0">
+          <th class="min-w-150px">Ticket Name</th>
+          <th class="min-w-125px">Lottery</th>
+          <th class="min-w-100px">Status</th>
+          <th class="min-w-120px">Next Draw</th>
+          <th class="min-w-80px">Entries</th>
+          <th class="min-w-100px">Last Result</th>
+          <th class="min-w-120px">Confidence</th>
+          <th class="min-w-100px">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let ticket of tickets">
+          <td>{{ ticket.name }}</td>
+          <td>{{ ticket.lottery }}</td>
+          <td>
+              <span [ngClass]="getBadgeClass(ticket.status)">
+                {{ ticket.status }}
+              </span>
+          </td>
+          <td>
+            {{ ticket.nextDraw ? (ticket.nextDraw | date: 'EEE, MMM d') : '—' }}
+          </td>
+          <td>{{ ticket.entries }}</td>
+          <td>{{ ticket.lastResult }}</td>
+          <td>
+            <i [class]="getConfidenceIcon(ticket.confidence) + ' ki-outline fs-2'"></i>
+            <span class="ms-1">{{ ticket.confidence }}</span>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-icon btn-light me-1" title="View">
+              <i class="ki-outline ki-eye fs-2"></i>
+            </button>
+            <button class="btn btn-sm btn-icon btn-light me-1" title="Edit">
+              <i class="ki-outline ki-pencil fs-2"></i>
+            </button>
+            <button class="btn btn-sm btn-icon btn-light" title="Delete">
+              <i class="ki-outline ki-trash fs-2 text-danger"></i>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <!-- Ripple loader shown when loading -->
+      <div *ngIf="loading" class="loading-container">
+        <div class="ripple-loader">
+          <div></div>
+          <div></div>
+        </div>
+        <p class="mt-3 fw-semibold text-muted">Loading tickets...</p>
+      </div>
+
+      <div *ngIf="!loading && tickets.length === 0" class="text-center text-muted py-5">
+        No tickets found.
+      </div>
+    </div>
+
+    <!-- 👇 Pagination and page size controls -->
+    <!-- Pagination Footer -->
+    <div class="card-footer px-0 py-0 d-flex justify-content-end">
+      <div class="ms-auto">
+        <mat-paginator
+          [length]="totalItems"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="pageSizes"
+          (page)="onMaterialPageChange($event)">
+        </mat-paginator>
+      </div>
+    </div>
+
+  </div>
+</div>
