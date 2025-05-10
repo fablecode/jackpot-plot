@@ -71,7 +71,9 @@
             {{ ticket.nextDraw ? (ticket.nextDraw | date: 'EEE, MMM d') : '—' }}
           </td>
           <td>{{ ticket.entries }}</td>
-          <td>{{ ticket.lastResult }}</td>
+          <td>
+            {{ ticket.lastResult?.description || '—' }}
+          </td>
           <td>
             <i [class]="getConfidenceIcon(ticket.confidence) + ' ki-outline fs-2'"></i>
             <span class="ms-1">{{ ticket.confidence }}</span>
@@ -110,6 +112,7 @@
     <div class="card-footer px-0 py-0 d-flex justify-content-end">
       <div class="ms-auto">
         <mat-paginator
+          [showFirstLastButtons]="true"
           [length]="totalItems"
           [pageSize]="pageSize"
           [pageSizeOptions]="pageSizes"

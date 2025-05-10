@@ -16,30 +16,44 @@ export class TicketService {
   }
 
   private generateMockTickets(): Ticket[] {
-    const allTickets: Ticket[] = [];
+    const tickets: Ticket[] = [];
 
     const lotteries = ['Eurojackpot', 'Powerball', 'MegaMillions'];
     const statuses = ['Active', 'Paused', 'Excluded'];
     const confidences = ['High', 'Medium', 'Low', 'None'];
-    const results = ['Win', 'Miss', 'Awaiting', '—'];
+
+    const resultTiers = [
+      null,
+      { tier: 1, description: '🎯 Jackpot! Matched 5 + 2' },
+      { tier: 2, description: '🥈 2nd Prize – Matched 5 + 1' },
+      { tier: 3, description: '🥉 3rd Prize – Matched 5' },
+      { tier: 4, description: '💵 Small Win – Matched 4 + 2' },
+      { tier: 5, description: '🪙 Token Win – Matched 2 + 1' },
+      null, // higher chance of miss
+      null,
+      null
+    ];
 
     for (let i = 1; i <= 120; i++) {
       const drawDate = new Date(Date.now() + Math.random() * 7 * 86400000);
-      allTickets.push({
-        isPublic: false,
-        playCount: 0,
+
+      const lastResult = resultTiers[Math.floor(Math.random() * resultTiers.length)];
+
+      tickets.push({
         id: this.generateUUIDv4(),
         name: `Ticket ${i}`,
         lottery: lotteries[i % lotteries.length],
         status: statuses[i % statuses.length] as Ticket['status'],
         nextDraw: i % 3 === 0 ? null : drawDate,
         entries: Math.floor(Math.random() * 20),
-        lastResult: results[i % results.length],
-        confidence: confidences[i % confidences.length] as Ticket['confidence']
+        lastResult: lastResult,
+        confidence: confidences[i % confidences.length] as Ticket['confidence'],
+        isPublic: false,
+        playCount: 0
       });
     }
 
-    return allTickets;
+    return tickets;
   }
 
   private generateUUIDv4(): string {

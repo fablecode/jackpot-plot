@@ -7,6 +7,9 @@ export interface Ticket {
   status: 'Active' | 'Paused' | 'Excluded';
   nextDraw: Date | null;
   entries: number;
-  lastResult: string;
+  lastResult: {
+    tier: number;
+    description: string;
+  } | null;
   confidence: 'High' | 'Medium' | 'Low' | 'None';
 }

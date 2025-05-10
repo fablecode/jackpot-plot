@@ -112,4 +112,19 @@ export class UserTicketsComponent implements OnInit {
       default: return 'ki-question-circle text-muted';
     }
   }
+
+  formatLastResult(result: string | null): string {
+    switch (result) {
+      case 'Win':
+        return '🎉 You matched a few numbers — small win!';
+      case 'Miss':
+        return '😞 No luck this time';
+      case 'Awaiting':
+        return '⏳ Waiting for draw results';
+      case '—':
+      case null:
+      default:
+        return '—';
+    }
+  }
 }
