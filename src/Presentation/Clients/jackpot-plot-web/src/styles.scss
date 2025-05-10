@@ -64,3 +64,30 @@
   color: #42a5f5; // Material Blue 400 — great contrast, familiar feel
 }
 
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(27.4% .006 286.033);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(27.4% .006 286.033);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(27.4% .006 286.033);
+  --primary: #1379f0;
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(96.7% .003 264.542);
+  --secondary-foreground: oklch(44.6% .03 256.802);
+  --muted: oklch(96.7% .003 264.542);
+  --muted-foreground: oklch(70.5% .015 286.067);
+  --accent: oklch(96.7% .003 264.542);
+  --accent-foreground: oklch(21% .006 285.885);
+  --destructive: oklch(57.7% .245 27.325);
+  --destructive-foreground: oklch(1 0 0);
+  --mono: oklch(14.1% .005 285.823);
+  --mono-foreground: oklch(1 0 0);
+  --border: oklch(94% .004 286.32);
+  --input: oklch(92% .004 286.32);
+  --ring: oklch(87.1% .006 286.286);
+  --radius: .5rem;
+  --spacing: .25rem;
+}
+
+
