@@ -230,10 +230,10 @@
   dependencies:
     tslib "^2.3.0"
 
-"@angular/material@^19.2.10":
-  version "19.2.10"
-  resolved "https://registry.yarnpkg.com/@angular/material/-/material-19.2.10.tgz#69444f5f7c5c0fdbadca7eee47983eb487fbc32b"
-  integrity sha512-PZH05IyzzvinQI1mkk2ST6SIyWh/XxCeik10yOQxQmVgJv07qX5z6C2d5nkIG7Ijm2ZmHOJofgATT2KrB75H5Q==
+"@angular/material@^19.2.15":
+  version "19.2.15"
+  resolved "https://registry.yarnpkg.com/@angular/material/-/material-19.2.15.tgz#0fc3a79f6d96fcf06de9f6ef1edef1b252241b85"
+  integrity sha512-5IRzspYwzG58nz9/uJwGpaeFymaVveylIg8A+7SyYjAASFkdDUdI2hQn8TPRiP3AhGRSSx80BShYrcYwTZseYA==
   dependencies:
     tslib "^2.3.0"
 
