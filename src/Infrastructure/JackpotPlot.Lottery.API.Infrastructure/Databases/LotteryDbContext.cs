@@ -32,10 +32,16 @@ public partial class LotteryDbContext : DbContext
 
     public virtual DbSet<Ticket> Tickets { get; set; }
 
+    public virtual DbSet<TicketOverview> TicketOverviews { get; set; }
+
     public virtual DbSet<TicketPlay> TicketPlays { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder
+            .HasPostgresEnum("confidence_level", new[] { "high", "medium", "low", "none" })
+            .HasPostgresEnum("ticket_status", new[] { "active", "paused", "excluded" });
+
         modelBuilder.Entity<Continent>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("continents_pkey");
@@ -204,6 +210,10 @@ public partial class LotteryDbContext : DbContext
                 .HasDefaultValueSql("now()")
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("created_at");
+            entity.Property(e => e.DrawDays).HasColumnName("draw_days");
+            entity.Property(e => e.DrawFrequency)
+                .HasMaxLength(50)
+                .HasColumnName("draw_frequency");
             entity.Property(e => e.DrawType)
                 .HasMaxLength(50)
                 .HasDefaultValueSql("'regular'::character varying")
@@ -211,6 +221,7 @@ public partial class LotteryDbContext : DbContext
             entity.Property(e => e.EndDate)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("end_date");
+            entity.Property(e => e.IntervalDays).HasColumnName("interval_days");
             entity.Property(e => e.LotteryId).HasColumnName("lottery_id");
             entity.Property(e => e.MainNumbersCount).HasColumnName("main_numbers_count");
             entity.Property(e => e.MainNumbersRange).HasColumnName("main_numbers_range");
@@ -274,6 +285,23 @@ public partial class LotteryDbContext : DbContext
                 .HasForeignKey(d => d.LotteryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_tickets_lottery");
+        });
+
+        modelBuilder.Entity<TicketOverview>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("ticket_overview");
+
+            entity.Property(e => e.Entries).HasColumnName("entries");
+            entity.Property(e => e.LotteryName)
+                .HasMaxLength(255)
+                .HasColumnName("lottery_name");
+            entity.Property(e => e.TicketId).HasColumnName("ticket_id");
+            entity.Property(e => e.TicketName)
+                .HasMaxLength(100)
+                .HasColumnName("ticket_name");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
         });
 
         modelBuilder.Entity<TicketPlay>(entity =>

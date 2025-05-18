@@ -24,5 +24,11 @@ public partial class LotteryConfiguration
 
     public DateTime? UpdatedAt { get; set; }
 
+    public string? DrawFrequency { get; set; }
+
+    public int? IntervalDays { get; set; }
+
+    public List<string>? DrawDays { get; set; }
+
     public virtual Lottery Lottery { get; set; } = null!;
 }

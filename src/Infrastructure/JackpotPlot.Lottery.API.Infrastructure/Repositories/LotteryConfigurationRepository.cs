@@ -34,7 +34,10 @@ public sealed class LotteryConfigurationRepository : ILotteryConfigurationReposi
                     StartDate = lc.StartDate,
                     EndDate = lc.EndDate,
                     CreatedAt = lc.CreatedAt,
-                    UpdatedAt = lc.UpdatedAt
+                    UpdatedAt = lc.UpdatedAt,
+                    DrawFrequency = lc.DrawFrequency,
+                    IntervalDays = lc.IntervalDays,
+                    DrawDays = lc.DrawDays
                 })
                 .FirstOrDefaultAsync();
         }
