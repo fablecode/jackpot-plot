@@ -27,6 +27,9 @@
     <None Remove="Scripts\Migrations\2025\2025-05-15 - 0.0.0.1\Script0006 - Modify_Confidence_Column_In_Table_To_Enum_Type.sql" />
     <None Remove="Scripts\Migrations\2025\2025-05-15 - 0.0.0.1\Script0007 - Remove_NextDraw_And_LastResult_From_TicketOverviewRow.sql" />
     <None Remove="Scripts\Migrations\2025\2025-05-15 - 0.0.0.1\Script0008 - Create_Get_Paginated_Ticket_Overview_Function.sql" />
+    <None Remove="Scripts\Migrations\2025\2025-05-15 - 0.0.0.1\Script0009 - Add_UserFilter_To_Get_Paginated_Ticket_Overview.sql" />
+    <None Remove="Scripts\Migrations\2025\2025-05-15 - 0.0.0.1\Script0010 - Add_UserId_To_TicketOverview_View.sql" />
+    <None Remove="Scripts\Migrations\2025\2025-05-18 - 0.0.0.1\Script0001 - Add_Draw_Schedule_Columns_To_LotteryConfiguration.sql" />
     <None Remove="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0001 - Insert_Continents.sql" />
     <None Remove="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0002 - Insert_Countries.sql" />
     <None Remove="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0003 - Insert_Eurojackpot.sql" />
@@ -55,6 +58,9 @@
     <EmbeddedResource Include="Scripts\Migrations\2025\2025-05-15 - 0.0.0.1\Script0002 - Add_Get_Ticket_Confidence_Function.sql" />
     <EmbeddedResource Include="Scripts\Migrations\2025\2025-05-15 - 0.0.0.1\Script0004 - Add_Paginated_Ticket_Overview_Type.sql" />
     <EmbeddedResource Include="Scripts\Migrations\2025\2025-05-15 - 0.0.0.1\Script0003 - Add_Ticket_Overview_Row_Type.sql" />
+    <EmbeddedResource Include="Scripts\Migrations\2025\2025-05-15 - 0.0.0.1\Script0010 - Add_UserId_To_TicketOverview_View.sql" />
+    <EmbeddedResource Include="Scripts\Migrations\2025\2025-05-15 - 0.0.0.1\Script0009 - Add_UserFilter_To_Get_Paginated_Ticket_Overview.sql" />
+    <EmbeddedResource Include="Scripts\Migrations\2025\2025-05-18 - 0.0.0.1\Script0001 - Add_Draw_Schedule_Columns_To_LotteryConfiguration.sql" />
     <EmbeddedResource Include="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0004 - Eurojackpot_Participating_Countries_And_Associate_them.sql" />
     <EmbeddedResource Include="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0003 - Insert_Eurojackpot.sql" />
     <EmbeddedResource Include="Scripts\PostDeployment\2024\2024-12-01 - 0.0.0.1\Script0002 - Insert_Countries.sql" />
