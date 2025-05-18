@@ -60,19 +60,21 @@
         </thead>
         <tbody>
         <tr *ngFor="let ticket of tickets">
-          <td>{{ ticket.name }}</td>
-          <td>{{ ticket.lottery }}</td>
+          <td>{{ ticket.ticketName }}</td>
+          <td>{{ ticket.lotteryName }}</td>
           <td>
               <span [ngClass]="getBadgeClass(ticket.status)">
                 {{ ticket.status }}
               </span>
           </td>
           <td>
-            {{ ticket.nextDraw ? (ticket.nextDraw | date: 'EEE, MMM d') : '—' }}
+<!--            {{ ticket.nextDraw ? (ticket.nextDraw | date: 'EEE, MMM d') : '—' }}-->
+            —
           </td>
           <td>{{ ticket.entries }}</td>
           <td>
-            {{ ticket.lastResult?.description || '—' }}
+<!--            {{ ticket.lastResult?.description || '—' }}-->
+            —
           </td>
           <td>
             <i [class]="getConfidenceIcon(ticket.confidence) + ' ki-outline fs-2'"></i>

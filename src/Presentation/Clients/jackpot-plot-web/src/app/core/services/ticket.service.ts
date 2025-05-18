@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ConfigService} from './config.service';
 import {HttpClient} from '@angular/common/http';
-import {Ticket} from '../models/ticket.model';
+import {PagedTickets, Ticket} from '../models/ticket.model';
 import {delay, Observable, of} from 'rxjs';
 import {TicketInput} from '../models/input/ticket.input';
 
@@ -79,18 +79,25 @@ export class TicketService {
     return this.http.post(this.BASE_URL, ticket, { observe: 'response' });
   }
 
-  getTickets(page: number, pageSize: number): Observable<{ paginatedTickets: Ticket[], total: number }> {
-    console.log(`Fetching tickets - Page: ${page}, Page Size: ${pageSize}`);
+  /**
+   * Fetches paginated tickets from the backend via /api/tickets/search.
+   *
+   * @param page - The current page number (1-based).
+   * @param pageSize - The number of tickets to retrieve per page.
+   * @param searchTerm - (Optional) A search keyword to filter tickets.
+   * @param sortColumn - (Optional) Column to sort by (default: 'ticket_id').
+   * @param sortDirection - (Optional) Sort direction: 'asc' or 'desc' (default: 'asc').
+   * @returns An observable containing tickets and pagination metadata.
+   */
+  getTickets(page: number, pageSize: number, searchTerm: string = '', sortColumn: string = 'ticket_id', sortDirection: string = 'asc'): Observable<PagedTickets> {
+    const params = {
+      pageNumber: page.toString(),
+      pageSize: pageSize.toString(),
+      searchTerm,
+      sortColumn,
+      sortDirection
+    };
 
-    // Always generate fresh tickets
-    const allTickets = this.generateMockTickets();
-
-    const start = (page - 1) * pageSize;
-    const end = start + pageSize;
-    return of({
-      paginatedTickets: allTickets.slice(start, end),
-      total: allTickets.length
-    })
-      .pipe(delay(1000));
+    return this.http.get<PagedTickets>(`${this.BASE_URL}/search`, { params });
   }
 }

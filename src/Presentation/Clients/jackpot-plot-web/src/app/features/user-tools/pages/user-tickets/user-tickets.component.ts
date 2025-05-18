@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {Ticket} from '../../../../core/models/ticket.model';
+import {PagedTicket, PagedTickets, Ticket} from '../../../../core/models/ticket.model';
 import {TicketService} from '../../../../core/services/ticket.service';
 import {trigger, transition, style, animate} from '@angular/animations';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
@@ -28,11 +28,11 @@ import { PageEvent } from '@angular/material/paginator';
 })
 export class UserTicketsComponent implements OnInit {
 
-  tickets: Ticket[] = [];
+  tickets: PagedTicket[] = [];
   totalItems = 0;
 
   page = 1;
-  pageSize = 5;
+  pageSize = 10;
   pageSizes = [5, 10, 25, 100];
 
   loading: boolean;
@@ -54,9 +54,9 @@ export class UserTicketsComponent implements OnInit {
     this.loading = true
 
     this.ticketsService.getTickets(this.page, this.pageSize).subscribe({
-      next: (res: { paginatedTickets: Ticket[], total: number })=> {
-          this.tickets = res.paginatedTickets;
-          this.totalItems = res.total;
+      next: (res: PagedTickets)=> {
+          this.tickets = res.tickets;
+          this.totalItems = res.totalFilteredItems;
 
         console.log(`Number of tickets in collection: ${this.tickets.length}`);
       },
@@ -96,19 +96,19 @@ export class UserTicketsComponent implements OnInit {
 
   getBadgeClass(status: string): string {
     switch (status) {
-      case 'Active': return 'badge badge-success';
-      case 'Paused': return 'badge badge-warning';
-      case 'Excluded': return 'badge badge-secondary';
-      default: return 'badge badge-light';
+      case 'active': return 'badge badge-pill badge-success';
+      case 'paused': return 'badge badge-pill badge-warning';
+      case 'excluded': return 'badge badge-pill badge-secondary';
+      default: return 'badge badge-pill badge-light';
     }
   }
 
   getConfidenceIcon(conf: string): string {
     switch (conf) {
-      case 'High': return 'ki-check-circle text-success';
-      case 'Medium': return 'ki-minus-circle text-warning';
-      case 'Low': return 'ki-information-4 text-danger';
-      case 'None': return 'ki-cross-circle text-muted';
+      case 'high': return 'ki-check-circle text-success';
+      case 'medium': return 'ki-minus-circle text-warning';
+      case 'low': return 'ki-information-4 text-danger';
+      case 'none': return 'ki-cross-circle text-muted';
       default: return 'ki-question-circle text-muted';
     }
   }
