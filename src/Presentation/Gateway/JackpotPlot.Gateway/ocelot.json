@@ -16,6 +16,21 @@
             }
         },
         {
+            "DownstreamPathTemplate": "/api/tickets/search",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "lottery-service",
+                    "Port": 5001
+                }
+            ],
+            "UpstreamPathTemplate": "/api/tickets/search",
+            "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+            "AddHeadersToRequest": {
+                "Authorization": "{Authorization}"
+            }
+        },
+        {
             "DownstreamPathTemplate": "/api/tickets/{everything}",
             "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
