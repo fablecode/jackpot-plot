@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using JackpotPlot.Lottery.API.Application.Features.GetAllUserTickets;
 using JackpotPlot.Lottery.API.Application.Features.GetTicketById;
+using JackpotPlot.Lottery.API.Application.Features.GetTickets;
 using JackpotPlot.Lottery.API.Application.Models.Input;
+using Lottery.API.Models.Input;
 
 namespace Lottery.API.Controllers;
 
@@ -59,6 +61,37 @@ public class TicketsController : ControllerBase
     }
 
     /// <summary>
+    /// Search for tickets
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    [AllowAnonymous]
+    [HttpGet("search")]
+    public async Task<IActionResult> Get([FromQuery] TicketOverviewInput input)
+    {
+        // Optionally extract user ID from JWT or claims
+        Guid? userId = null;
+
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (Guid.TryParse(userIdStr, out var parsed))
+            {
+                userId = parsed;
+            }
+        }
+
+        var result = await _mediator.Send(new GetTicketsQuery(input.PageNumber, input.PageSize, userId, input.SearchTerm, input.SortColumn, input.SortDirection));
+
+        if (result.IsSuccess)
+        {
+            return Ok(result.Value);
+        }
+
+        return NoContent();
+    }
+
+    /// <summary>
     /// Create new ticket
     /// </summary>
     /// <param name="input"></param>
@@ -79,10 +112,12 @@ public class TicketsController : ControllerBase
     }
 
     #region Helpers
+
     private Guid GetUserId()
     {
         var userIdClaim = User.Claims.FirstOrDefault(c => c.Type is ClaimTypes.NameIdentifier or "sub");
         return userIdClaim != null ? Guid.Parse(userIdClaim.Value) : throw new UnauthorizedAccessException();
-    } 
+    }
+
     #endregion
 }
