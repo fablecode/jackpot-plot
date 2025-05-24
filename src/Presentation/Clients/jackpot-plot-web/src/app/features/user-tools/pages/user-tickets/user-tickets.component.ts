@@ -6,6 +6,7 @@ import {TicketService} from '../../../../core/services/ticket.service';
 import {trigger, transition, style, animate} from '@angular/animations';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import { PageEvent } from '@angular/material/paginator';
+import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
 
 
 
@@ -38,22 +39,33 @@ export class UserTicketsComponent implements OnInit {
   loading: boolean;
 
   searchQuery: string = '';
+  private searchChanged = new Subject<string>();
 
   constructor(private ticketsService: TicketService) {}
 
   ngOnInit() {
     this.loadTickets();
+
+    this.searchChanged
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged()
+      )
+      .subscribe((searchTerm) => {
+        this.page = 1; // reset to first page when filtering
+        this.loadTickets();
+      });
   }
 
   onSearchChange(): void {
     // You can debounce or trigger a filtered API call here
-    console.log('Search:', this.searchQuery);
+    this.searchChanged.next(this.searchQuery);
   }
 
   loadTickets() {
     this.loading = true
 
-    this.ticketsService.getTickets(this.page, this.pageSize).subscribe({
+    this.ticketsService.getTickets(this.page, this.pageSize, this.searchQuery).subscribe({
       next: (res: PagedTickets)=> {
           this.tickets = res.tickets;
           this.totalItems = res.totalFilteredItems;
