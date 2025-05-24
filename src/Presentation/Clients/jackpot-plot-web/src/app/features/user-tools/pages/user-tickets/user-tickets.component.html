@@ -64,7 +64,7 @@
           <td>{{ ticket.lotteryName }}</td>
           <td>
               <span [ngClass]="getBadgeClass(ticket.status)">
-                {{ ticket.status }}
+                {{ ticket.status | titlecase }}
               </span>
           </td>
           <td>
@@ -78,7 +78,7 @@
           </td>
           <td>
             <i [class]="getConfidenceIcon(ticket.confidence) + ' ki-outline fs-2'"></i>
-            <span class="ms-1">{{ ticket.confidence }}</span>
+            <span class="ms-1">{{ ticket.confidence | titlecase }}</span>
           </td>
           <td>
             <button class="btn btn-sm btn-icon btn-light me-1" title="View">
