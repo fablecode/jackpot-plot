@@ -18,6 +18,10 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
+  - checkout: self
+    fetchDepth: 0
+    displayName: 'Checkout Source Code'
+    
   # Ensure .NET SDK (do this BEFORE GitVersion CLI)
   - task: UseDotNet@2
     displayName: 'Use .NET SDK $(DOTNET_SDK)'
