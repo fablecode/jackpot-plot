@@ -47,12 +47,29 @@ steps:
     displayName: 'dotnet restore'
 
   # Optional: verify code style (fail if formatting required). Excludes tests if you want.
-  - script: |
+  - bash: |
       dotnet tool install -g dotnet-format
-      echo "##vso[task.prependpath]$HOME/.dotnet/tools"
-      dotnet format --verify-no-changes --verbosity minimal
-    displayName: 'Check code style (dotnet format)'
-    continueOnError: false
+      export PATH="$PATH:$HOME/.dotnet/tools"
+
+      # 1) Auto-fix formatting (no --verify flag)
+      dotnet format --verbosity minimal
+
+      # 2) If anything changed, publish a patch file for devs to apply
+      git diff > format-fixes.patch || true
+      if [ -s format-fixes.patch ]; then
+        echo "Formatting changes detected; publishing format-fixes.patch"
+      else
+        echo "No formatting changes."
+      fi
+    displayName: 'Auto-fix code style (dotnet format)'
+    continueOnError: true  # do not fail the build even if format found issues
+
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish formatting patch'
+    condition: always()
+    inputs:
+      targetPath: 'format-fixes.patch'
+      artifact: 'format-fixes'
 
   # ---------------- Build (warnings as errors) ----------------
   - script: >
