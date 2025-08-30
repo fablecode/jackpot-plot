@@ -1,0 +1,10 @@
+mode: ContinuousDeployment   # auto-increments on every commit
+branches:
+  main:
+    regex: ^main$
+    increment: Patch         # bump patch version for each commit
+    prevent-increment-of-merged-branch-version: true
+    track-merge-target: false
+    is-release-branch: true
+ignore:
+  sha: []                    # optional, list commits to ignore
