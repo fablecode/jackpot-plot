@@ -21,7 +21,7 @@ steps:
   - checkout: self
     fetchDepth: 0
     displayName: 'Checkout Source Code'
-    
+
   # Ensure .NET SDK (do this BEFORE GitVersion CLI)
   - task: UseDotNet@2
     displayName: 'Use .NET SDK $(DOTNET_SDK)'
@@ -38,8 +38,9 @@ steps:
 
 
   # Set run number to the computed SemVer
-  - bash: echo "##vso[build.updatebuildnumber]$GitVersion_SemVer"
+  - bash: echo "##vso[build.updatebuildnumber]$(GitVersion.SemVer)"
     displayName: 'Set build number from GitVersion'
+
 
   # ---------------- Restore & quality checks ----------------
   - script: dotnet restore "$(SOLUTION)"
