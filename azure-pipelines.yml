@@ -6,7 +6,7 @@ trigger:
 variables:
   DOTNET_SDK: '8.0.x'
   BUILD_CONFIGURATION: 'Release'
-  SOLUTION: '**/*.sln'
+  SOLUTION: 'JackpotPlot.sln'
   SRC_PROJECTS: '**/*.csproj'
   TEST_PROJECTS: '**/*Tests.csproj'
   COVERAGE_THRESHOLD: '80' # fail build if total line coverage < threshold
