@@ -1,0 +1,178 @@
+# .azure-pipelines.yml
+# Jackpot CI: Versioning + Build + Tests + Coverage + Rich publishing
+
+trigger:
+  branches:
+    include: [ main, develop ]
+pr:
+  branches:
+    include: [ "*" ]
+
+variables:
+  DOTNET_SDK: '8.0.x'
+  BUILD_CONFIGURATION: 'Release'
+  SOLUTION: '**/*.sln'
+  SRC_PROJECTS: '**/*.csproj'             # used for warn-as-error & format checks
+  TEST_PROJECTS: '**/*Unit.Tests.csproj'
+  COVERAGE_THRESHOLD: '5'
+  COVERAGE_EXCLUDE_GLOBS: '["**/bin/**","**/obj/**","**/*Migrations*/*"]'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - powershell: git config --global core.longpaths true
+    displayName: 'Git: allow long paths'
+
+  # ---- GitVersion ----
+  - task: gittools.gitversion.gitversion-task.GitVersion@5
+    name: gitVersion
+    displayName: 'GitVersion: calculate version'
+    inputs:
+      runtime: core
+      updateAssemblyInfo: false
+
+  - powershell: |
+      Write-Host "##vso[build.updatebuildnumber]$(gitVersion.SemVer)"
+      Write-Host "SemVer: $(gitVersion.SemVer)"
+    displayName: 'Set build number from GitVersion'
+
+  # ---- .NET + restore cache ----
+  - task: UseDotNet@2
+    inputs: { packageType: sdk, version: '$(DOTNET_SDK)' }
+    displayName: 'Use .NET SDK $(DOTNET_SDK)'
+
+  - script: dotnet restore "$(SOLUTION)"
+    displayName: 'dotnet restore'
+
+  # ---- Quality gates before build (optional but recommended) ----
+  - script: >
+      dotnet format --verify-no-changes
+      --verbosity diagnostic
+      --exclude $(TEST_PROJECTS)
+    displayName: 'Check code style (dotnet format)'
+    continueOnError: false
+
+  # ---- Build (warnings as errors for src) ----
+  - script: >
+      dotnet build "$(SOLUTION)"
+      -c $(BUILD_CONFIGURATION)
+      --no-restore
+      /p:TreatWarningsAsErrors=true
+      /p:ContinuousIntegrationBuild=true
+      /p:Version=$(gitVersion.SemVer)
+      /p:AssemblyVersion=$(gitVersion.AssemblySemVer)
+      /p:FileVersion=$(gitVersion.AssemblySemFileVer)
+      /p:InformationalVersion=$(gitVersion.InformationalVersion)
+    displayName: 'dotnet build (warn-as-error)'
+
+  # ---- Tests + Coverage (with blame/hang diagnostics) ----
+  - powershell: |
+      $outRoot   = "$(Build.SourcesDirectory)\TestResults"
+      $covRoot   = Join-Path $outRoot "Coverage"
+      $logRoot   = Join-Path $outRoot "Logs"
+      New-Item -ItemType Directory -Force -Path $covRoot,$logRoot | Out-Null
+
+      $excludeGlobs = $(COVERAGE_EXCLUDE_GLOBS)
+      $excludeArg = ""
+      if ($excludeGlobs) {
+        $arr = (ConvertFrom-Json $excludeGlobs)
+        if ($arr.Count -gt 0) { $excludeArg = "/p:ExcludeByFile=`"" + ($arr -join ';') + "`"" }
+      }
+
+      $cmd = @(
+        'dotnet', 'test', '$(TEST_PROJECTS)',
+        '-c', '$(BUILD_CONFIGURATION)',
+        '--no-build',
+        '--logger', "trx;LogFileName=test_results.trx",
+        '--blame-hang', '--blame-hang-timeout', '5m',
+        '--results-directory', "$outRoot",
+        '/p:CollectCoverage=true',
+        '/p:CoverletOutputFormat=cobertura',
+        "/p:CoverletOutput=$covRoot/",
+        '/p:SkipAutoProps=true',
+        "/p:Threshold=$(COVERAGE_THRESHOLD)",
+        '/p:ThresholdType=line',
+        '/p:ThresholdStat=total'
+      ) -join ' '
+      if ($excludeArg -ne '') { $cmd = "$cmd $excludeArg" }
+
+      Write-Host "Running: $cmd"
+      cmd.exe /c $cmd
+    displayName: 'dotnet test + coverage (gate)'
+
+  # ---- Publish test results (TRX) ----
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results'
+    inputs:
+      testResultsFormat: VSTest
+      testResultsFiles: '$(Build.SourcesDirectory)/TestResults/**/*.trx'
+      mergeTestResults: true
+      testRunTitle: 'Unit Tests'
+
+  # ---- Coverage: merge + publish ----
+  - script: dotnet tool install -g dotnet-reportgenerator-globaltool
+    displayName: 'Install ReportGenerator'
+
+  - powershell: |
+      $env:PATH = "$env:PATH;$env:USERPROFILE\.dotnet\tools"
+      $reportsGlob = "$(Build.SourcesDirectory)\TestResults\Coverage\**\coverage.cobertura.xml"
+      $reportOut   = "$(Build.SourcesDirectory)\TestResults\Coverage\Report"
+      reportgenerator -reports:$reportsGlob -targetdir:$reportOut -reporttypes:'HtmlInline_AzurePipelines;Cobertura'
+    displayName: 'Generate merged coverage report'
+
+  - task: PublishCodeCoverageResults@2
+    displayName: 'Publish Code Coverage'
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(Build.SourcesDirectory)/TestResults/Coverage/Report/Cobertura.xml'
+      reportDirectory: '$(Build.SourcesDirectory)/TestResults/Coverage/Report'
+      failIfCoverageEmpty: true
+
+  # ---- Human-friendly CI summary ----
+  - powershell: |
+      $summary = @"
+      # CI Summary
+
+      **Version:** $(gitVersion.SemVer)  
+      **Branch:** $(Build.SourceBranchName)  
+      **Commit:** $(Build.SourceVersion)
+
+      - Build configuration: $(BUILD_CONFIGURATION)
+      - Coverage threshold: $(COVERAGE_THRESHOLD)%
+      - SDK: $(DOTNET_SDK)
+
+      **Artifacts**
+      - Coverage HTML: _Artifacts_ → `coverage-report`
+      - TRX & raw logs: _Artifacts_ → `test-assets`
+      "@
+      $path = "$(Build.SourcesDirectory)\ci-summary.md"
+      $summary | Out-File -FilePath $path -Encoding utf8
+      Write-Host "##vso[task.uploadsummary]$path"
+    displayName: 'Publish CI summary'
+
+  # ---- Publish artifacts for later debugging / badges / downloads ----
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish coverage HTML artifact'
+    inputs:
+      targetPath: '$(Build.SourcesDirectory)/TestResults/Coverage/Report'
+      artifact: 'coverage-report'
+
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish raw test assets (trx, cobertura, logs)'
+    inputs:
+      targetPath: '$(Build.SourcesDirectory)/TestResults'
+      artifact: 'test-assets'
+
+  # ---- OPTIONAL: Security analysis & SARIF publishing (uncomment if you want) ----
+  # - task: MicrosoftSecurityDevOps@1
+  #   displayName: 'Microsoft Security DevOps (code & dependency scanning)'
+  #   inputs:
+  #     tools: 'binskim,credscan,eslint,templateanalyzer,trivy'
+  #
+  # - task: PublishBuildArtifacts@1
+  #   displayName: 'Publish SARIF (if produced)'
+  #   inputs:
+  #     PathtoPublish: '$(Build.SourcesDirectory)/.gdn/.logs'
+  #     ArtifactName: 'security-sarif'
+  #     publishLocation: 'Container'
