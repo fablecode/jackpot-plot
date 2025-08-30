@@ -28,9 +28,10 @@ steps:
   # ---------------- GitVersion via CLI (no marketplace task needed) ----------------
   - bash: |
       dotnet tool install -g GitVersion.Tool --version 6.*
-      echo "##vso[task.prependpath]$HOME/.dotnet/tools"
-      gitversion /output buildserver /config GitVersion.yml /verbosity minimal
+      export PATH="$PATH:$HOME/.dotnet/tools"    # <-- make shims available now
+      dotnet-gitversion /output buildserver /config GitVersion.yml /verbosity minimal
     displayName: 'GitVersion (global tool)'
+
 
   # Set run number to the computed SemVer
   - bash: echo "##vso[build.updatebuildnumber]$GitVersion_SemVer"
