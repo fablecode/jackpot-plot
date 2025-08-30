@@ -25,16 +25,6 @@ steps:
       packageType: sdk
       version: '$(DOTNET_SDK)'
 
-  # Cache NuGet (Linux-friendly path)
-  - task: Cache@2
-    displayName: 'Cache NuGet packages'
-    inputs:
-      key: 'nuget | "$(Agent.OS)" | $(DOTNET_SDK) | **/packages.lock.json'
-      restoreKeys: |
-        nuget | "$(Agent.OS)" | $(DOTNET_SDK)
-        nuget | "$(Agent.OS)"
-      path: '$(NUGET_PACKAGES)'
-
   # ---------------- GitVersion via CLI (no marketplace task needed) ----------------
   - bash: |
       dotnet tool install -g GitVersion.Tool --version 6.*
