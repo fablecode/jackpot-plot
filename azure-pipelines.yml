@@ -37,6 +37,21 @@ steps:
       dotnet-gitversion /output buildserver /config GitVersion.yml /verbosity minimal
     displayName: 'Fetch tags + GitVersion'
 
+  - bash: |
+      echo "SemVer: $(GitVersion.SemVer)"
+      echo "FullSemVer: $(GitVersion.FullSemVer)"
+      echo "Major: $(GitVersion.Major)"
+      echo "Minor: $(GitVersion.Minor)"
+      echo "Patch: $(GitVersion.Patch)"
+      echo "PreReleaseTag: $(GitVersion.PreReleaseTag)"
+      echo "InformationalVersion: $(GitVersion.InformationalVersion)"
+      echo "AssemblySemVer: $(GitVersion.AssemblySemVer)"
+      echo "AssemblySemFileVer: $(GitVersion.AssemblySemFileVer)"
+      echo "NuGetVersionV2: $(GitVersion.NuGetVersionV2)"
+      echo "NuGetVersion: $(GitVersion.NuGetVersion)"
+      echo "MajorMinorPatch: $(GitVersion.MajorMinorPatch)"
+    displayName: 'Output GitVersion variables'
+
 
   # Set run number to the computed SemVer
   - bash: echo "##vso[build.updatebuildnumber]$(GitVersion.SemVer)"
