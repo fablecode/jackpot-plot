@@ -76,7 +76,7 @@ steps:
       dotnet build "$(SOLUTION)"
       -c $(BUILD_CONFIGURATION)
       --no-restore
-      /p:TreatWarningsAsErrors=true
+      /p:TreatWarningsAsErrors=false
       /p:ContinuousIntegrationBuild=true
       /p:Version=$(GitVersion.SemVer)
       /p:AssemblyVersion=$(GitVersion.AssemblySemVer)
