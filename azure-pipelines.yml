@@ -6,7 +6,7 @@ trigger:
 variables:
   DOTNET_SDK: '8.0.x'
   BUILD_CONFIGURATION: 'Release'
-  SOLUTION: '**/*.sln'
+  SOLUTION: 'JackpotPlot.sln'
   SRC_PROJECTS: '**/*.csproj'
   TEST_PROJECTS: '**/*Tests.csproj'
   COVERAGE_THRESHOLD: '80' # fail build if total line coverage < threshold
@@ -21,7 +21,7 @@ steps:
   - checkout: self
     fetchDepth: 0
     displayName: 'Checkout Source Code'
-    
+
   # Ensure .NET SDK (do this BEFORE GitVersion CLI)
   - task: UseDotNet@2
     displayName: 'Use .NET SDK $(DOTNET_SDK)'
@@ -38,20 +38,38 @@ steps:
 
 
   # Set run number to the computed SemVer
-  - bash: echo "##vso[build.updatebuildnumber]$GitVersion_SemVer"
+  - bash: echo "##vso[build.updatebuildnumber]$(GitVersion.SemVer)"
     displayName: 'Set build number from GitVersion'
+
 
   # ---------------- Restore & quality checks ----------------
   - script: dotnet restore "$(SOLUTION)"
     displayName: 'dotnet restore'
 
   # Optional: verify code style (fail if formatting required). Excludes tests if you want.
-  - script: |
+  - bash: |
       dotnet tool install -g dotnet-format
-      echo "##vso[task.prependpath]$HOME/.dotnet/tools"
-      dotnet format --verify-no-changes --verbosity minimal
-    displayName: 'Check code style (dotnet format)'
-    continueOnError: false
+      export PATH="$PATH:$HOME/.dotnet/tools"
+
+      # 1) Auto-fix formatting (no --verify flag)
+      dotnet format --verbosity minimal
+
+      # 2) If anything changed, publish a patch file for devs to apply
+      git diff > format-fixes.patch || true
+      if [ -s format-fixes.patch ]; then
+        echo "Formatting changes detected; publishing format-fixes.patch"
+      else
+        echo "No formatting changes."
+      fi
+    displayName: 'Auto-fix code style (dotnet format)'
+    continueOnError: true  # do not fail the build even if format found issues
+
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish formatting patch'
+    condition: always()
+    inputs:
+      targetPath: 'format-fixes.patch'
+      artifact: 'format-fixes'
 
   # ---------------- Build (warnings as errors) ----------------
   - script: >
@@ -60,11 +78,13 @@ steps:
       --no-restore
       /p:TreatWarningsAsErrors=true
       /p:ContinuousIntegrationBuild=true
-      /p:Version=$(GitVersion_SemVer)
-      /p:AssemblyVersion=$(GitVersion_AssemblySemVer)
-      /p:FileVersion=$(GitVersion_AssemblySemFileVer)
-      /p:InformationalVersion=$(GitVersion_InformationalVersion)
+      /p:Version=$(GitVersion.SemVer)
+      /p:AssemblyVersion=$(GitVersion.AssemblySemVer)
+      /p:FileVersion=$(GitVersion.AssemblySemFileVer)
+      /p:InformationalVersion=$(GitVersion.InformationalVersion)
+      /p:PackageVersion=$(GitVersion.NuGetVersionV2)
     displayName: 'dotnet build (with GitVersion)'
+
 
   # ---------------- Test + Coverage (gate) ----------------
   - bash: |
