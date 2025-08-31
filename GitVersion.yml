@@ -3,5 +3,4 @@ branches:
   main:
     regex: ^main$
     increment: Patch
-    tag: ''          # no pre-release tag on main
     source-branches: []  # treat only 'main' as a valid source
