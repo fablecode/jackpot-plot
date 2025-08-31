@@ -78,11 +78,13 @@ steps:
       --no-restore
       /p:TreatWarningsAsErrors=true
       /p:ContinuousIntegrationBuild=true
-      /p:Version=$(GitVersion_SemVer)
-      /p:AssemblyVersion=$(GitVersion_AssemblySemVer)
-      /p:FileVersion=$(GitVersion_AssemblySemFileVer)
-      /p:InformationalVersion=$(GitVersion_InformationalVersion)
+      /p:Version=$(GitVersion.SemVer)
+      /p:AssemblyVersion=$(GitVersion.AssemblySemVer)
+      /p:FileVersion=$(GitVersion.AssemblySemFileVer)
+      /p:InformationalVersion=$(GitVersion.InformationalVersion)
+      /p:PackageVersion=$(GitVersion.NuGetVersionV2)
     displayName: 'dotnet build (with GitVersion)'
+
 
   # ---------------- Test + Coverage (gate) ----------------
   - bash: |
