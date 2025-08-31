@@ -89,18 +89,23 @@ steps:
   # ---------------- Test + Coverage (gate) ----------------
   - bash: |
       set -euo pipefail
+
+      if ! command -v jq >/dev/null 2>&1; then
+        sudo apt-get update -y
+        sudo apt-get install -y jq
+      fi
+
       OUT_ROOT="$(Build.SourcesDirectory)/TestResults"
       COV_ROOT="$OUT_ROOT/Coverage"
-      mkdir -p "$COV_ROOT"
+      mkdir -p "$OUT_ROOT" "$COV_ROOT"
 
-      # Convert coverage exclude globs into coverlet arg
       EXCLUDE_ARG=""
       if [ -n "$(COVERAGE_EXCLUDE_GLOBS)" ]; then
         EXCL=$(echo '$(COVERAGE_EXCLUDE_GLOBS)' | jq -r 'join(";")')
-        if [ -n "$EXCL" ]; then EXCLUDE_ARG="/p:ExcludeByFile=\"$EXCL\""; fi
+        [ -n "$EXCL" ] && EXCLUDE_ARG="/p:ExcludeByFile=\"$EXCL\""
       fi
 
-      dotnet test '$(TEST_PROJECTS)' \
+      dotnet test "$(SOLUTION)" \
         -c '$(BUILD_CONFIGURATION)' \
         --no-build \
         --logger "trx;LogFileName=test_results.trx" \
@@ -108,13 +113,14 @@ steps:
         --results-directory "$OUT_ROOT" \
         /p:CollectCoverage=true \
         /p:CoverletOutputFormat=cobertura \
-        /p:CoverletOutput="$COV_ROOT/" \
+        /p:CoverletOutput="$COV_ROOT/\$\(MSBuildProjectName\)/" \
         /p:SkipAutoProps=true \
         /p:Threshold=$(COVERAGE_THRESHOLD) \
         /p:ThresholdType=line \
         /p:ThresholdStat=total \
         $EXCLUDE_ARG
     displayName: 'dotnet test + coverage (with gate)'
+
 
   # Publish TRX to test tab
   - task: PublishTestResults@2
