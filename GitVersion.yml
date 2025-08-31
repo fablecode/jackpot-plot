@@ -1,9 +1,7 @@
-mode: ContinuousDeployment   # auto-increments on every commit
+mode: ContinuousDeployment
 branches:
   main:
     regex: ^main$
-    increment: Patch         # bump patch version for each commit
-    track-merge-target: false
-    is-release-branch: true
-ignore:
-  sha: []                    # optional, list commits to ignore
+    increment: Patch
+    tag: ''          # no pre-release tag on main
+    source-branches: []  # treat only 'main' as a valid source
