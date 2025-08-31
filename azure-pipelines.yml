@@ -119,7 +119,6 @@ steps:
       /p:AssemblyVersion=$(GitVersion.AssemblySemVer)
       /p:FileVersion=$(GitVersion.AssemblySemFileVer)
       /p:InformationalVersion=$(GitVersion.InformationalVersion)
-      /p:PackageVersion=$(GitVersion.NuGetVersionV2)
     displayName: 'dotnet build (with GitVersion)'
 
 
