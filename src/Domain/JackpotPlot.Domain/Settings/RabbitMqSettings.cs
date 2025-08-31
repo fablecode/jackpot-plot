@@ -1,10 +1,11 @@
-﻿namespace JackpotPlot.Domain.Settings;
+﻿// RabbitMqSettings.cs
+namespace JackpotPlot.Domain.Settings;
 
 public record RabbitMqSettings
 {
-    public string Host { get; init; }
-    public int Port { get; init; }
-    public string Username { get; init; }
-    public string Password { get; init; }
-    public string Exchange { get; init; }
+    public required string Host { get; init; }
+    public int Port { get; init; }  // value type already non-nullable
+    public required string Username { get; init; }
+    public required string Password { get; init; }
+    public required string Exchange { get; init; }
 }

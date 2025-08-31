@@ -1,6 +1,7 @@
-﻿namespace JackpotPlot.Domain.Settings;
+﻿// ApiSettings.cs
+namespace JackpotPlot.Domain.Settings;
 
 public record ApiSettings
 {
-    public string LotteryServiceUrl { get; init; }
+    public required string LotteryServiceUrl { get; init; }
 }
