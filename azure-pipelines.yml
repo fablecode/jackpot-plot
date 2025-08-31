@@ -90,7 +90,6 @@ steps:
   - bash: |
       set -euo pipefail
 
-      # Ensure jq is available for parsing COVERAGE_EXCLUDE_GLOBS (JSON array)
       if ! command -v jq >/dev/null 2>&1; then
         sudo apt-get update -y
         sudo apt-get install -y jq
@@ -100,14 +99,12 @@ steps:
       COV_ROOT="$OUT_ROOT/Coverage"
       mkdir -p "$OUT_ROOT" "$COV_ROOT"
 
-      # Build coverlet exclude-by-file argument from JSON array (-> semicolon list)
       EXCLUDE_ARG=""
       if [ -n "$(COVERAGE_EXCLUDE_GLOBS)" ]; then
         EXCL=$(echo '$(COVERAGE_EXCLUDE_GLOBS)' | jq -r 'join(";")')
-        if [ -n "$EXCL" ]; then EXCLUDE_ARG="/p:ExcludeByFile=\"$EXCL\""; fi
+        [ -n "$EXCL" ] && EXCLUDE_ARG="/p:ExcludeByFile=\"$EXCL\""
       fi
 
-      # Run tests from the solution; write coverage into per-project folders
       dotnet test "$(SOLUTION)" \
         -c '$(BUILD_CONFIGURATION)' \
         --no-build \
@@ -116,7 +113,7 @@ steps:
         --results-directory "$OUT_ROOT" \
         /p:CollectCoverage=true \
         /p:CoverletOutputFormat=cobertura \
-        /p:CoverletOutput="$COV_ROOT/$(MSBuildProjectName)/" \
+        /p:CoverletOutput="$COV_ROOT/\$\(MSBuildProjectName\)/" \
         /p:SkipAutoProps=true \
         /p:Threshold=$(COVERAGE_THRESHOLD) \
         /p:ThresholdType=line \
