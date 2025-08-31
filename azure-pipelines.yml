@@ -8,7 +8,7 @@ variables:
   BUILD_CONFIGURATION: 'Release'
   SOLUTION: 'JackpotPlot.sln'
   SRC_PROJECTS: '**/*.csproj'
-  TEST_PROJECTS: '**/*Unit.Tests.csproj'
+  TEST_PROJECTS: '**/*Tests.csproj'
   COVERAGE_THRESHOLD: '80' # fail build if total line coverage < threshold
   COVERAGE_EXCLUDE_GLOBS: '["**/bin/**","**/obj/**","**/*Migrations*/*"]'
   # Use a stable, cached NuGet folder across jobs
@@ -100,7 +100,7 @@ steps:
         if [ -n "$EXCL" ]; then EXCLUDE_ARG="/p:ExcludeByFile=\"$EXCL\""; fi
       fi
 
-      dotnet test '$(TEST_PROJECTS)' \
+      dotnet test '$(SOLUTION)' \
         -c '$(BUILD_CONFIGURATION)' \
         --no-build \
         --logger "trx;LogFileName=test_results.trx" \
