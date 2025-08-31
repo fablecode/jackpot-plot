@@ -31,10 +31,11 @@ steps:
 
   # ---------------- GitVersion via CLI (no marketplace task needed) ----------------
   - bash: |
+      git fetch --force --tags --prune
       dotnet tool install -g GitVersion.Tool --version 6.*
-      export PATH="$PATH:$HOME/.dotnet/tools"    # <-- make shims available now
+      export PATH="$PATH:$HOME/.dotnet/tools"
       dotnet-gitversion /output buildserver /config GitVersion.yml /verbosity minimal
-    displayName: 'GitVersion (global tool)'
+    displayName: 'Fetch tags + GitVersion'
 
 
   # Set run number to the computed SemVer
