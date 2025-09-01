@@ -42,7 +42,7 @@ public class EurojackpotJobsTests
     }
 
     [Test]
-    public async Task Given_3_Results_When__Is_Invoked_FetchDrawHistory_Then_All_RoutingKeys_Are_Correct()
+    public async Task Given_3_Results_When_Is_Invoked_FetchDrawHistory_Then_All_RoutingKeys_Are_Correct()
     {
         // Arrange
         var logger = Substitute.For<ILogger<EurojackpotJobs>>();
