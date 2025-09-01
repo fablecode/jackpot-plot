@@ -20,5 +20,9 @@
 	  <ProjectReference Include="..\..\..\src\Domain\JackpotPlot.Domain\JackpotPlot.Domain.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="SchedulingTests\" />
+	</ItemGroup>
+
 
 </Project>
