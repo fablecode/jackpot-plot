@@ -27,10 +27,7 @@ public sealed class EurojackpotResultMessageProcessor : IMessageProcessor<Messag
             await _drawRepository.Add(_lotteryId.Value, message.Data);
             return Result<Message<EurojackpotResult>>.Success(message);
         }
-        else
-        {
-            //_logger.LogError("For Eurojackpot event {MessageEvent}, with lottery id {LotteryId}, draw already exists.", message.Event, _lotteryId);
-            return Result<Message<EurojackpotResult>>.Failure($"For Eurojackpot event {message.Event}, with lottery id {_lotteryId}, draw already exists.");
-        }
+
+        return Result<Message<EurojackpotResult>>.Failure($"For Eurojackpot event {message.Event}, with lottery id {_lotteryId}, draw already exists.");
     }
 }

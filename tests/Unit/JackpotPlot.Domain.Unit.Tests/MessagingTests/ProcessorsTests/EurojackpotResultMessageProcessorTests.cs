@@ -22,13 +22,12 @@ public class EurojackpotResultMessageProcessorTests
         return new EurojackpotResult
         {
             Date = date ?? new DateTime(2024, 1, 5),
-            MainNumbers = (main ?? new[] { 1, 2, 3, 4, 5 }).ToImmutableArray(),
-            EuroNumbers = (euro ?? new[] { 6, 7 }).ToImmutableArray(),
+            MainNumbers = (main ?? [1, 2, 3, 4, 5]).ToImmutableArray(),
+            EuroNumbers = (euro ?? [6, 7]).ToImmutableArray(),
         };
     }
 
-    private static Message<EurojackpotResult> Wrap(EurojackpotResult r)
-        => new Message<EurojackpotResult>("Eurojackpot.Draw", r);
+    private static Message<EurojackpotResult> Wrap(EurojackpotResult r) => new("Eurojackpot.Draw", r);
 
     // ---------------- Success path: draw does NOT exist ----------------
 
