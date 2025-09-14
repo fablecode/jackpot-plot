@@ -67,7 +67,7 @@ public class ConsecutiveNumbersPredictionStrategy : IPredictionStrategy
 
     public bool Handles(string strategy)
     {
-        return strategy.Equals(PredictionStrategyType.ConsecutiveNumbers, StringComparison.OrdinalIgnoreCase);
+        return !string.IsNullOrWhiteSpace(strategy) && strategy.Equals(PredictionStrategyType.ConsecutiveNumbers, StringComparison.OrdinalIgnoreCase);
     }
 
     #region Private Helpers
