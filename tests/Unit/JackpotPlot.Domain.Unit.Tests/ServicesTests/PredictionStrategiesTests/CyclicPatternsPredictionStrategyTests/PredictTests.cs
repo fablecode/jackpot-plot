@@ -78,7 +78,7 @@ public class PredictTests
 
         // Act
         var result = await _sut.Predict(lotteryId);
-        var prediction = result.Value!;
+        var prediction = result.Value;
 
         // Assert
         prediction.PredictedNumbers.Count().Should().BeGreaterThan(0);
@@ -108,7 +108,7 @@ public class PredictTests
 
         // Act
         var result = await _sut.Predict(lotteryId);
-        var prediction = result.Value!;
+        var prediction = result.Value;
 
         // Assert
         prediction.BonusNumbers.Count().Should().Be(config.BonusNumbersCount);
@@ -138,7 +138,7 @@ public class PredictTests
 
         // Act
         var result = await _sut.Predict(lotteryId);
-        var prediction = result.Value!;
+        var prediction = result.Value;
 
         // Assert
         prediction.ConfidenceScore.Should().BeGreaterOrEqualTo(0.0).And.BeLessOrEqualTo(1.0);
@@ -170,7 +170,7 @@ public class PredictTests
 
         // Act
         var result = await _sut.Predict(lotteryId);
-        var prediction = result.Value!;
+        var prediction = result.Value;
 
         // Assert
         prediction.PredictedNumbers.Count().Should().BeLessOrEqualTo(config.MainNumbersCount);
@@ -200,7 +200,7 @@ public class PredictTests
 
         // Act
         var result = await _sut.Predict(lotteryId);
-        var prediction = result.Value!;
+        var prediction = result.Value;
 
         // Assert
         prediction.PredictedNumbers.Should().OnlyContain(n => n >= 1 && n <= config.MainNumbersRange);
@@ -230,7 +230,7 @@ public class PredictTests
 
         // Act
         var result = await _sut.Predict(lotteryId);
-        var prediction = result.Value!;
+        var prediction = result.Value;
 
         // Assert
         prediction.BonusNumbers.Count().Should().BeLessOrEqualTo(config.BonusNumbersCount);
@@ -260,7 +260,7 @@ public class PredictTests
 
         // Act
         var result = await _sut.Predict(lotteryId);
-        var prediction = result.Value!;
+        var prediction = result.Value;
 
         // Assert
         prediction.BonusNumbers.Should().OnlyContain(n => n >= 1 && n <= config.BonusNumbersRange);
@@ -290,7 +290,7 @@ public class PredictTests
 
         // Act
         var result = await _sut.Predict(lotteryId);
-        var prediction = result.Value!;
+        var prediction = result.Value;
 
         // Assert
         prediction.ConfidenceScore.Should().BeGreaterOrEqualTo(0.0).And.BeLessOrEqualTo(1.0);
