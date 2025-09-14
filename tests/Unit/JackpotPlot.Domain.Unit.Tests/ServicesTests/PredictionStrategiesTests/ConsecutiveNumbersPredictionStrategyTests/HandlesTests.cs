@@ -6,6 +6,7 @@ using NUnit.Framework;
 
 namespace JackpotPlot.Domain.Unit.Tests.ServicesTests.PredictionStrategiesTests.ConsecutiveNumbersPredictionStrategyTests;
 
+[TestFixture]
 public class HandlesTests
 {
     private ILotteryConfigurationRepository _configRepo = null!;
