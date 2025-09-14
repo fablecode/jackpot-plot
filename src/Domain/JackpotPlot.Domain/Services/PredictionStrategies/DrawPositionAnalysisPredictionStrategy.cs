@@ -58,7 +58,7 @@ public class DrawPositionAnalysisPredictionStrategy : IPredictionStrategy
 
     public bool Handles(string strategy)
     {
-        return strategy.Equals(PredictionStrategyType.DrawPositionAnalysis, StringComparison.OrdinalIgnoreCase);
+        return !string.IsNullOrWhiteSpace(strategy) && strategy.Equals(PredictionStrategyType.DrawPositionAnalysis, StringComparison.OrdinalIgnoreCase);
     }
 
     #region Private Helpers
