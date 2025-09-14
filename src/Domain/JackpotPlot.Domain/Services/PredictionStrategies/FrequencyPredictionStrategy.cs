@@ -66,7 +66,7 @@ public sealed class FrequencyPredictionStrategy : IPredictionStrategy
 
     public bool Handles(string strategy)
     {
-        return strategy.Equals(PredictionStrategyType.FrequencyBased, StringComparison.OrdinalIgnoreCase);
+        return !string.IsNullOrWhiteSpace(strategy) && strategy.Equals(PredictionStrategyType.FrequencyBased, StringComparison.OrdinalIgnoreCase);
     }
 
     #region Private Helpers
