@@ -20,6 +20,7 @@ namespace JackpotPlot.Domain.Unit.Tests.ServicesTests.PredictionStrategiesTests.
         [TestCase(null)]
         [TestCase("")]
         [TestCase(" ")]
+        [TestCase("SomeOtherStrategy")]
         public void Given_An_Invalid_Strategy_Should_Return_False(string strategy)
         {
             // Arrange
@@ -29,5 +30,19 @@ namespace JackpotPlot.Domain.Unit.Tests.ServicesTests.PredictionStrategiesTests.
             // Assert
             result.Should().BeFalse();
         }
+
+        [TestCase("clustering-analysis")]
+        [TestCase("CLUSTERING-ANALYSIS")]
+        [TestCase("ClUsTeRiNg-AnAlYsIs")]
+        public void Given_A_Valid_Strategy_Should_Return_True(string strategy)
+        {
+            // Arrange
+            // Act
+            var result = _sut.Handles(strategy);
+
+            // Assert
+            result.Should().BeTrue();
+        }
     }
 }
+
