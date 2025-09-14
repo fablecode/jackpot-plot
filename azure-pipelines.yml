@@ -193,7 +193,7 @@ steps:
       cat > $(Build.SourcesDirectory)/ci-summary.md <<'EOF'
       # CI Summary
 
-      **Version:** $(GitVersion_SemVer)  
+      **Version:** $(GitVersion.SemVer)  
       **Branch:** $(Build.SourceBranchName)  
       **Commit:** $(Build.SourceVersion)
 
