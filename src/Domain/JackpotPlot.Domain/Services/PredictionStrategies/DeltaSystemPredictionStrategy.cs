@@ -54,7 +54,7 @@ public class DeltaSystemPredictionStrategy : IPredictionStrategy
 
     public bool Handles(string strategy)
     {
-        return strategy.Equals(PredictionStrategyType.DeltaSystem, StringComparison.OrdinalIgnoreCase);
+        return !string.IsNullOrWhiteSpace(strategy) && strategy.Equals(PredictionStrategyType.DeltaSystem, StringComparison.OrdinalIgnoreCase);
     }
 
     #region Private Helpers
