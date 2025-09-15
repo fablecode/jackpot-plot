@@ -58,7 +58,7 @@ public class InvertedFrequencyPredictionStrategy : IPredictionStrategy
 
     public bool Handles(string strategy)
     {
-        return strategy.Equals(PredictionStrategyType.InvertedFrequency, StringComparison.OrdinalIgnoreCase);
+        return !string.IsNullOrWhiteSpace(strategy) && strategy.Equals(PredictionStrategyType.InvertedFrequency, StringComparison.OrdinalIgnoreCase);
     }
 
     #region Private Helpers
