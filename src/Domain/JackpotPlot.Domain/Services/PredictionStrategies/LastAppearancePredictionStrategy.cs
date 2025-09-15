@@ -58,7 +58,7 @@ public class LastAppearancePredictionStrategy : IPredictionStrategy
 
     public bool Handles(string strategy)
     {
-        return strategy.Equals(PredictionStrategyType.LastAppearance, StringComparison.OrdinalIgnoreCase);
+        return !string.IsNullOrWhiteSpace(strategy) && strategy.Equals(PredictionStrategyType.LastAppearance, StringComparison.OrdinalIgnoreCase);
     }
 
     #region Private Helpers
