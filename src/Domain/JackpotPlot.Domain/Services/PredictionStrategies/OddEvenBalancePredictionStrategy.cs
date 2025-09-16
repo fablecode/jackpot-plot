@@ -66,7 +66,7 @@ public class OddEvenBalancePredictionStrategy : IPredictionStrategy
 
     public bool Handles(string strategy)
     {
-        return strategy.Equals(PredictionStrategyType.OddEvenBalance, StringComparison.OrdinalIgnoreCase);
+        return !string.IsNullOrWhiteSpace(strategy) && strategy.Equals(PredictionStrategyType.OddEvenBalance, StringComparison.OrdinalIgnoreCase);
     }
 
     #region Private Helpers

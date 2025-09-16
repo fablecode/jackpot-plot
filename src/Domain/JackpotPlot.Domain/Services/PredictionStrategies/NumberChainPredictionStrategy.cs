@@ -58,7 +58,7 @@ public class NumberChainPredictionStrategy : IPredictionStrategy
 
     public bool Handles(string strategy)
     {
-        return strategy.Equals(PredictionStrategyType.NumberChain, StringComparison.OrdinalIgnoreCase);
+        return !string.IsNullOrWhiteSpace(strategy) && strategy.Equals(PredictionStrategyType.NumberChain, StringComparison.OrdinalIgnoreCase);
     }
 
     #region Private Helpers

@@ -58,7 +58,7 @@ public class NumberSumPredictionStrategy : IPredictionStrategy
 
     public bool Handles(string strategy)
     {
-        return strategy.Equals(PredictionStrategyType.NumberSum, StringComparison.OrdinalIgnoreCase);
+        return !string.IsNullOrWhiteSpace(strategy) && strategy.Equals(PredictionStrategyType.NumberSum, StringComparison.OrdinalIgnoreCase);
     }
 
     private static double CalculateTargetSum(ICollection<HistoricalDraw> historicalDraws)

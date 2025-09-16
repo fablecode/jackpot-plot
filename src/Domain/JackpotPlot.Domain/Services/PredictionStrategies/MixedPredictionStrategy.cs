@@ -65,7 +65,7 @@ public class MixedPredictionStrategy : IPredictionStrategy
 
     public bool Handles(string strategy)
     {
-        return strategy.Equals(PredictionStrategyType.Mixed, StringComparison.OrdinalIgnoreCase);
+        return !string.IsNullOrWhiteSpace(strategy) && strategy.Equals(PredictionStrategyType.Mixed, StringComparison.OrdinalIgnoreCase);
     }
 
     #region Private Helpers
