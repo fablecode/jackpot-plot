@@ -1,6 +1,9 @@
-﻿using JackpotPlot.Domain.Repositories;
+﻿using JackpotPlot.Domain.Messaging;
+using JackpotPlot.Domain.Models;
+using JackpotPlot.Domain.Repositories;
 using JackpotPlot.Infrastructure;
 using JackpotPlot.Lottery.API.Infrastructure.Databases;
+using JackpotPlot.Lottery.API.Infrastructure.HostedServices;
 using JackpotPlot.Lottery.API.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -12,7 +15,9 @@ namespace JackpotPlot.Lottery.API.Infrastructure
     {
         public static IServiceCollection AddLotteryApiInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
+
             return services
+                .AddHostedServices()
                 .AddMessagingServices()
                 .AddDatabase(configuration)
                 .AddRepositories();
@@ -33,6 +38,13 @@ namespace JackpotPlot.Lottery.API.Infrastructure
         {
             services.AddDbContextFactory<LotteryDbContext>(options =>
                 options.UseNpgsql(configuration.GetConnectionString("LotteryApiDatabase")));
+
+            return services;
+        }
+        public static IServiceCollection AddHostedServices(this IServiceCollection services)
+        {
+            // Register the background service that will consume RabbitMQ messages
+            services.AddHostedService<LotteryResultsBackgroundService<Message<EurojackpotResult>>>();
 
             return services;
         }

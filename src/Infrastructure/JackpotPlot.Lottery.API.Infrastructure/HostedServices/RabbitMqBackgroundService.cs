@@ -1,10 +1,12 @@
-﻿using JackpotPlot.Domain.Messaging;
-using MediatR;
-using System.Threading.Channels;
+﻿using System.Threading.Channels;
+using JackpotPlot.Domain.Messaging;
 using JackpotPlot.Domain.Models;
 using JackpotPlot.Lottery.API.Application.Messaging.Handlers;
+using MediatR;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
-namespace Lottery.API.HostedServices;
+namespace JackpotPlot.Lottery.API.Infrastructure.HostedServices;
 
 public abstract class RabbitMqBackgroundService<T> : BackgroundService
 {

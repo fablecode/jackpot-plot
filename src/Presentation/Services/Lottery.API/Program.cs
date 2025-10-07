@@ -4,7 +4,6 @@ using JackpotPlot.Domain.Settings;
 using JackpotPlot.Lottery.API.Application;
 using JackpotPlot.Lottery.API.DatabaseMigration;
 using JackpotPlot.Lottery.API.Infrastructure;
-using Lottery.API.HostedServices;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -89,9 +88,6 @@ try
 
     // Infrastructure Installer
     builder.Services.AddLotteryApiInfrastructureServices(builder.Configuration);
-
-    // Register the background service that will consume RabbitMQ messages
-    builder.Services.AddHostedService<LotteryResultsBackgroundService<Message<EurojackpotResult>>>();
 
     builder.Services.AddHttpContextAccessor();
 

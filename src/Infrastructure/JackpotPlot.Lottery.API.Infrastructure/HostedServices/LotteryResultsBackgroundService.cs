@@ -1,7 +1,8 @@
 ﻿using JackpotPlot.Domain.Messaging;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
-namespace Lottery.API.HostedServices;
+namespace JackpotPlot.Lottery.API.Infrastructure.HostedServices;
 
 public class LotteryResultsBackgroundService<T> : RabbitMqBackgroundService<T>
 {
