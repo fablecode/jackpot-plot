@@ -3,8 +3,10 @@ using JackpotPlot.Domain.Messaging;
 using JackpotPlot.Domain.Models;
 using JackpotPlot.Prediction.API.Application.Messaging.Handlers;
 using MediatR;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
-namespace Prediction.API.HostedServices;
+namespace JackpotPlot.Prediction.API.Infrastructure.HostedServices;
 
 public abstract class RabbitMqBackgroundService<T> : BackgroundService
 {

@@ -6,8 +6,8 @@ using JackpotPlot.Prediction.API.DatabaseMigration;
 using JackpotPlot.Prediction.API.Infrastructure;
 using Microsoft.OpenApi.Models;
 using Microsoft.IdentityModel.Tokens;
-using Prediction.API.HostedServices;
 using System.Reflection;
+using JackpotPlot.Prediction.API.Infrastructure.HostedServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Serilog;
@@ -136,8 +136,6 @@ try
     builder.Services.AddPredictionApiDatabaseMigrationServices(builder.Configuration.GetConnectionString("PredictionApiDatabase"));
     builder.Services.AddPredictionApiApplicationServices();
     builder.Services.AddPredictionApiInfrastructureServices(builder.Configuration);
-
-    builder.Services.AddHostedService<LotteryDrawnBackgroundService<Message<LotteryDrawnEvent>>>();
 
     // ─────────────────────────────────────────────────────
     // 4. Build & Run Pipeline

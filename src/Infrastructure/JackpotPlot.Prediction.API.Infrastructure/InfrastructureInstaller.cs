@@ -1,14 +1,17 @@
-﻿using JackpotPlot.Domain.Repositories;
+﻿using JackpotPlot.Domain.Messaging;
+using JackpotPlot.Domain.Models;
+using JackpotPlot.Domain.Repositories;
 using JackpotPlot.Infrastructure;
 using JackpotPlot.Prediction.API.Infrastructure.Databases;
+using JackpotPlot.Prediction.API.Infrastructure.HostedServices;
 using JackpotPlot.Prediction.API.Infrastructure.Repositories;
 using JackpotPlot.Prediction.API.Infrastructure.Services.LotteryApi;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using Refit;
 
 namespace JackpotPlot.Prediction.API.Infrastructure
@@ -18,6 +21,7 @@ namespace JackpotPlot.Prediction.API.Infrastructure
         public static IServiceCollection AddPredictionApiInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
             return services
+                .AddHostedServices()
                 .AddMessagingServices()
                 .AddDatabase(configuration)
                 .AddRepositories()
@@ -55,6 +59,13 @@ namespace JackpotPlot.Prediction.API.Infrastructure
 
             services.AddRefitClient<ILotteryService>(refitSettings)
                 .ConfigureHttpClient(c => c.BaseAddress = new Uri(baseUrl));
+
+            return services;
+        }
+
+        public static IServiceCollection AddHostedServices(this IServiceCollection services)
+        {
+            services.AddHostedService<LotteryDrawnBackgroundService<Message<LotteryDrawnEvent>>>();
 
             return services;
         }
