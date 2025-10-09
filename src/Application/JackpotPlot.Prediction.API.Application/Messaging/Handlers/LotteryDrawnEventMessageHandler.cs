@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using JackpotPlot.Domain.Messaging;
+using JackpotPlot.Application.Abstractions.Messaging;
+using JackpotPlot.Application.Abstractions.Persistence.Repositories;
 using JackpotPlot.Domain.Models;
-using JackpotPlot.Domain.Repositories;
 using MediatR;
 
 namespace JackpotPlot.Prediction.API.Application.Messaging.Handlers;

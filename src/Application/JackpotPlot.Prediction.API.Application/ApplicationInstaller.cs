@@ -1,8 +1,10 @@
 ﻿using FluentValidation;
+using JackpotPlot.Application.Abstractions.Persistence.Repositories;
 using JackpotPlot.Domain.Constants;
 using JackpotPlot.Domain.Interfaces;
-using JackpotPlot.Domain.Repositories;
-using JackpotPlot.Domain.Services.PredictionStrategies;
+using JackpotPlot.Domain.Predictions;
+using JackpotPlot.Domain.Predictions.Algorithms;
+using JackpotPlot.Primitives.Algorithms;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace JackpotPlot.Prediction.API.Application;
@@ -13,7 +15,7 @@ public static class ApplicationInstaller
     {
         return services
             .AddValidations()
-            .AddStrategies()
+            .AddAlgorithms()
             .AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
     }
 
@@ -22,73 +24,63 @@ public static class ApplicationInstaller
         return services
             .AddValidatorsFromAssemblyContaining(typeof(ApplicationInstaller), ServiceLifetime.Transient);
     }
-    public static IServiceCollection AddStrategies(this IServiceCollection services)
+
+    public static IServiceCollection AddAlgorithms(this IServiceCollection services)
     {
-        services.AddScoped<IPredictionStrategy, ClusteringAnalysisPredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, ConsecutiveNumbersPredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, DeltaSystemPredictionStrategy>();
-        services.AddScoped<FrequencyPredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, FrequencyPredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, HighLowNumberSplitPredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, LastAppearancePredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, OddEvenBalancePredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, PatternMatchingPredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, RandomPredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, StatisticalAveragingPredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, WeightedProbabilityPredictionStrategy>();
+        // 1: one-to-one algorithms (keyed DI)
+        services.AddKeyedScoped<IPredictionAlgorithm, ClusteringAnalysisAlgorithm>(PredictionAlgorithmKeys.ClusteringAnalysis);
+        services.AddKeyedScoped<IPredictionAlgorithm, ConsecutiveNumbersAlgorithm>(PredictionAlgorithmKeys.ConsecutiveNumbers);
+        services.AddKeyedScoped<IPredictionAlgorithm, CyclicPatternsAlgorithm>(PredictionAlgorithmKeys.CyclicPatterns);
+        services.AddKeyedScoped<IPredictionAlgorithm, DeltaSystemAlgorithm>(PredictionAlgorithmKeys.DeltaSystem);
+        services.AddKeyedScoped<IPredictionAlgorithm, DrawPositionAnalysisAlgorithm>(PredictionAlgorithmKeys.DrawPositionAnalysis);
+        services.AddKeyedScoped<IPredictionAlgorithm, FrequencyAlgorithm>(PredictionAlgorithmKeys.FrequencyBased);
+        services.AddKeyedScoped<IPredictionAlgorithm, GapAnalysisAlgorithm>(PredictionAlgorithmKeys.GapAnalysis);
+        services.AddKeyedScoped<IPredictionAlgorithm, GroupSelectionAlgorithm>(PredictionAlgorithmKeys.GroupSelection);
+        services.AddKeyedScoped<IPredictionAlgorithm, HighLowNumberSplitAlgorithm>(PredictionAlgorithmKeys.HighLowNumberSplit);
+        services.AddKeyedScoped<IPredictionAlgorithm, InvertedFrequencyAlgorithm>(PredictionAlgorithmKeys.InvertedFrequency);
+        services.AddKeyedScoped<IPredictionAlgorithm, LastAppearanceAlgorithm>(PredictionAlgorithmKeys.LastAppearance);
+        services.AddKeyedScoped<IPredictionAlgorithm, NumberChainAlgorithm>(PredictionAlgorithmKeys.NumberChain);
+        services.AddKeyedScoped<IPredictionAlgorithm, NumberSumAlgorithm>(PredictionAlgorithmKeys.NumberSum);
+        services.AddKeyedScoped<IPredictionAlgorithm, OddEvenBalanceAlgorithm>(PredictionAlgorithmKeys.OddEvenBalance);
+        services.AddKeyedScoped<IPredictionAlgorithm, PatternMatchingAlgorithm>(PredictionAlgorithmKeys.PatternMatching);
+        services.AddKeyedScoped<IPredictionAlgorithm, QuadrantAnalysisAlgorithm>(PredictionAlgorithmKeys.QuadrantAnalysis);
+        services.AddKeyedScoped<IPredictionAlgorithm, RandomAlgorithm>(PredictionAlgorithmKeys.Random);
+        services.AddKeyedScoped<IPredictionAlgorithm, RarePatternsAlgorithm>(PredictionAlgorithmKeys.RarePatterns);
+        services.AddKeyedScoped<IPredictionAlgorithm, ReducedNumberPoolAlgorithm>(PredictionAlgorithmKeys.ReducedNumberPool);
+        services.AddKeyedScoped<IPredictionAlgorithm, RepeatingNumbersAlgorithm>(PredictionAlgorithmKeys.RepeatingNumbers);
+        services.AddKeyedScoped<IPredictionAlgorithm, SeasonalPatternsAlgorithm>(PredictionAlgorithmKeys.SeasonalPatterns);
+        services.AddKeyedScoped<IPredictionAlgorithm, SkewnessAnalysisAlgorithm>(PredictionAlgorithmKeys.SkewnessAnalysis);
+        services.AddKeyedScoped<IPredictionAlgorithm, StandardDeviationAlgorithm>(PredictionAlgorithmKeys.StandardDeviation);
+        services.AddKeyedScoped<IPredictionAlgorithm, StatisticalAveragingAlgorithm>(PredictionAlgorithmKeys.StatisticalAveraging);
+        services.AddKeyedScoped<IPredictionAlgorithm, SymmetryAnalysisAlgorithm>(PredictionAlgorithmKeys.SymmetryAnalysis);
+        services.AddKeyedScoped<IPredictionAlgorithm, TimeDecayAlgorithm>(PredictionAlgorithmKeys.TimeDecay);
+        services.AddKeyedScoped<IPredictionAlgorithm, WeightDistributionAlgorithm>(PredictionAlgorithmKeys.WeightDistribution);
+        services.AddKeyedScoped<IPredictionAlgorithm, WeightedProbabilityAlgorithm>(PredictionAlgorithmKeys.WeightedProbability);
 
-        // Mathematical and Statistical Strategies
-        services.AddScoped<IPredictionStrategy, NumberSumPredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, GapAnalysisPredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, SkewnessAnalysisPredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, StandardDeviationPredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, WeightDistributionPredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, QuadrantAnalysisPredictionStrategy>();
-
-        // Time-Based and Temporal Strategies
-        services.AddScoped<IPredictionStrategy, TimeDecayPredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, SeasonalPatternsPredictionStrategy>();
-        services.AddScoped<CyclicPatternsPredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, CyclicPatternsPredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, DrawPositionAnalysisPredictionStrategy>();
-
-        // Combination-Based Strategies
-        services.AddScoped<ReducedNumberPoolPredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, ReducedNumberPoolPredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, GroupSelectionPredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, MixedPredictionStrategy>(provider =>
+        // 2: Mixed algorithm (composes other keyed algos) — factory registration
+        services.AddKeyedScoped<IPredictionAlgorithm>(PredictionAlgorithmKeys.Mixed, (sp, _) =>
         {
-            var frequencyPredictionStrategy = provider.GetRequiredService<FrequencyPredictionStrategy>();
-            var reducedNumberPoolPredictionStrategy = provider.GetRequiredService<ReducedNumberPoolPredictionStrategy>();
-            var cyclicPatternsPredictionStrategy = provider.GetRequiredService<CyclicPatternsPredictionStrategy>();
-
-            var lotteryConfigurationRepository = provider.GetRequiredService<ILotteryConfigurationRepository>();
-            var lotteryHistoryRepository = provider.GetRequiredService<ILotteryHistoryRepository>();
-
-            var strategies = new List<IPredictionStrategy>
-            {
-                frequencyPredictionStrategy,
-                reducedNumberPoolPredictionStrategy,
-                cyclicPatternsPredictionStrategy
-            };
-
+            // Example weights — swap to IOptions if you want config-driven values
             var weights = new Dictionary<string, double>
             {
-                { PredictionStrategyType.FrequencyBased, 0.5 },
-                { PredictionStrategyType.ReducedNumberPool, 0.3 },
-                { PredictionStrategyType.CyclicPatterns, 0.2 }
+                { PredictionAlgorithmKeys.FrequencyBased,     0.5 },
+                { PredictionAlgorithmKeys.InvertedFrequency,  0.2 },
+                { PredictionAlgorithmKeys.GapAnalysis,        0.1 },
+                { PredictionAlgorithmKeys.HighLowNumberSplit, 0.1 },
+                { PredictionAlgorithmKeys.OddEvenBalance,     0.1 },
             };
 
-            return new MixedPredictionStrategy(strategies, weights, lotteryConfigurationRepository, lotteryHistoryRepository);
+            var components = new List<(IPredictionAlgorithm Algo, double Weight)>
+            {
+                (sp.GetRequiredKeyedService<IPredictionAlgorithm>(PredictionAlgorithmKeys.FrequencyBased),     weights[PredictionAlgorithmKeys.FrequencyBased]),
+                (sp.GetRequiredKeyedService<IPredictionAlgorithm>(PredictionAlgorithmKeys.InvertedFrequency),  weights[PredictionAlgorithmKeys.InvertedFrequency]),
+                (sp.GetRequiredKeyedService<IPredictionAlgorithm>(PredictionAlgorithmKeys.GapAnalysis),        weights[PredictionAlgorithmKeys.GapAnalysis]),
+                (sp.GetRequiredKeyedService<IPredictionAlgorithm>(PredictionAlgorithmKeys.HighLowNumberSplit), weights[PredictionAlgorithmKeys.HighLowNumberSplit]),
+                (sp.GetRequiredKeyedService<IPredictionAlgorithm>(PredictionAlgorithmKeys.OddEvenBalance),     weights[PredictionAlgorithmKeys.OddEvenBalance]),
+            };
+
+            return new MixedAlgorithm(components);
         });
-
-        services.AddScoped<IPredictionStrategy, InvertedFrequencyPredictionStrategy>();
-
-        // Pattern-Based Strategies
-        services.AddScoped<IPredictionStrategy, SymmetryAnalysisPredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, NumberChainPredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, RepeatingNumbersPredictionStrategy>();
-        services.AddScoped<IPredictionStrategy, RarePatternsPredictionStrategy>();
 
         return services;
     }

@@ -1,57 +1,66 @@
-﻿using JackpotPlot.Domain.Interfaces;
+﻿using System.Collections.ObjectModel;
+using JackpotPlot.Application.Abstractions.Common;
+using JackpotPlot.Application.Abstractions.Persistence.Repositories;
 using JackpotPlot.Domain.Models;
-using JackpotPlot.Domain.Repositories;
+using JackpotPlot.Domain.Predictions;
 using JackpotPlot.Prediction.API.Application.Models.Output;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace JackpotPlot.Prediction.API.Application.Features.PredictNext;
 
 public sealed class PredictNextRequestHandler : IRequestHandler<PredictNextRequest, Result<PredictNextResponse>>
 {
-    private readonly IEnumerable<IPredictionStrategy> _predictionStrategies;
-    private readonly IPredictionRepository _predictionRepository;
-    private readonly ILotteryStatisticsRepository _lotteryStatisticsRepository;
+    private readonly ILotteryConfigurationRepository _config;
+    private readonly ILotteryHistoryRepository _history;
+    private readonly IPredictionRepository _predictions;
+    private readonly ILotteryStatisticsRepository _stats;
+    private readonly IRandomProvider _random;
+    private readonly IServiceProvider _sp; // for keyed resolution
 
-    public PredictNextRequestHandler(IEnumerable<IPredictionStrategy> predictionStrategies, IPredictionRepository predictionRepository, ILotteryStatisticsRepository lotteryStatisticsRepository)
+    public PredictNextRequestHandler(ILotteryConfigurationRepository config,
+        ILotteryHistoryRepository history,
+        IPredictionRepository predictions,
+        ILotteryStatisticsRepository stats,
+        IRandomProvider random,
+        IServiceProvider sp)
     {
-        _predictionStrategies = predictionStrategies;
-        _predictionRepository = predictionRepository;
-        _lotteryStatisticsRepository = lotteryStatisticsRepository;
+        _config = config;
+        _history = history;
+        _predictions = predictions;
+        _stats = stats;
+        _random = random;
+        _sp = sp;
     }
-    public async Task<Result<PredictNextResponse>> Handle(PredictNextRequest request, CancellationToken cancellationToken)
+    public async Task<Result<PredictNextResponse>> Handle(PredictNextRequest request, CancellationToken ct)
     {
-        var predictionStrategy = _predictionStrategies.Single(ps => ps.Handles(request.Strategy));
+        // load inputs
+        var cfg = await _config.GetActiveConfigurationAsync(request.LotteryId);
+        if (cfg is null) return Result<PredictNextResponse>.Failure("Config not found.");
 
-        var predictions = new List<PlayOutput>();
+        var draws = await _history.GetHistoricalDraws(request.LotteryId);
+        if (draws.Count == 0) return Result<PredictNextResponse>.Failure("No history found.");
 
+        // choose algorithm by key (no Handles(string))
+        var algo = _sp.GetRequiredKeyedService<IPredictionAlgorithm>(request.Strategy);
+
+        var plays = new List<PlayOutput>(request.NumberOfPlays);
         for (var i = 0; i < request.NumberOfPlays; i++)
         {
-            var predictionResult = await predictionStrategy.Predict(request.LotteryId);
+            var result = algo.Predict(cfg, new ReadOnlyCollection<HistoricalDraw>((IList<HistoricalDraw>)draws), _random.Get());
+            await _predictions.Add(request.UserId, result);
 
-            if (predictionResult.IsSuccess)
-            {
-                var newPrediction = await _predictionRepository.Add(request.UserId, predictionResult.Value);
+            // classify (if you keep this repo-based)
+            var main = await _stats.GetHotColdNumbers(request.LotteryId, result.PredictedNumbers.ToList(), TimeSpan.Zero, "main");
+            var bonus = await _stats.GetHotColdNumbers(request.LotteryId, result.BonusNumbers.ToList(), TimeSpan.Zero, "bonus");
 
-                var timeRage = new DateTime(1900, 1, 1, 0, 0, 0).TimeOfDay;
-
-                var classifiedMainNumbers = await _lotteryStatisticsRepository.GetHotColdNumbers(request.LotteryId, predictionResult.Value.PredictedNumbers.ToList(), timeRage, "main");
-                var classifiedBonusNumbers = await _lotteryStatisticsRepository.GetHotColdNumbers(request.LotteryId, predictionResult.Value.BonusNumbers.ToList(), timeRage, "bonus");
-
-                var prediction = new PlayOutput(i+1,
-                    classifiedMainNumbers.AddRange(classifiedBonusNumbers)
-                        .Select(n => new PredictionNumberOutput(n.Number, n.Frequency, n.Status, n.NumberType))
-                        .ToArray());
-
-                predictions.Add(prediction);
-            }
-            else
-            {
-                return Result<PredictNextResponse>.Failure(predictionResult.Errors);
-            }
+            plays.Add(new PlayOutput(i + 1,
+                main.AddRange(bonus)
+                    .Select(n => new PredictionNumberOutput(n.Number, n.Frequency, n.Status, n.NumberType))
+                    .ToArray()));
         }
 
-        var response = new PredictNextResponse(request.LotteryId, request.NumberOfPlays, request.Strategy, [..predictions]);
-
-        return Result<PredictNextResponse>.Success(response);
+        return Result<PredictNextResponse>.Success(
+            new PredictNextResponse(request.LotteryId, request.NumberOfPlays, request.Strategy, [.. plays]));
     }
 }

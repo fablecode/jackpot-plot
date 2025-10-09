@@ -14,6 +14,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Domain\JackpotPlot.Domain\JackpotPlot.Domain.csproj" />
+	  <ProjectReference Include="..\JackpotPlot.Application.Abstractions\JackpotPlot.Application.Abstractions.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

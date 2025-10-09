@@ -1,7 +1,7 @@
 ﻿using JackpotPlot.Domain.Models;
-using JackpotPlot.Domain.Repositories;
 using MediatR;
 using System.Collections.Immutable;
+using JackpotPlot.Application.Abstractions.Persistence.Repositories;
 
 namespace JackpotPlot.Prediction.API.Application.Features.GetPredictionSuccessRate;
 
