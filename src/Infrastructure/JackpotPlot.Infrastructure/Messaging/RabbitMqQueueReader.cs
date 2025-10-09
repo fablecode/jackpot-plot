@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using System.Threading.Channels;
-using JackpotPlot.Domain.Messaging;
+using JackpotPlot.Application.Abstractions.Messaging;
 using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Settings;
 using Microsoft.Extensions.Logging;

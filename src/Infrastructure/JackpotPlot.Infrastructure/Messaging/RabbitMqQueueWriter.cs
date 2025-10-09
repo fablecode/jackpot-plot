@@ -1,9 +1,9 @@
-﻿using JackpotPlot.Domain.Messaging;
-using JackpotPlot.Domain.Settings;
+﻿using JackpotPlot.Domain.Settings;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using System.Text;
+using JackpotPlot.Application.Abstractions.Messaging;
 
 namespace JackpotPlot.Infrastructure.Messaging;
 
