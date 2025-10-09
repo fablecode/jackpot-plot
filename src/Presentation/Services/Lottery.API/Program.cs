@@ -1,18 +1,17 @@
-﻿using JackpotPlot.Domain.Messaging;
-using JackpotPlot.Domain.Models;
+﻿using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using JackpotPlot.Domain.Settings;
 using JackpotPlot.Lottery.API.Application;
 using JackpotPlot.Lottery.API.DatabaseMigration;
 using JackpotPlot.Lottery.API.Infrastructure;
-using Microsoft.OpenApi.Models;
-using System.Reflection;
+using Lottery.API;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Exceptions;
-using System.Text.Json.Serialization;
-using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -191,28 +190,31 @@ finally
 
 
 // Middleware class
-public class ExceptionHandlingMiddleware
+namespace Lottery.API
 {
-    private readonly RequestDelegate _next;
-    private readonly ILogger<ExceptionHandlingMiddleware> _logger;
-
-    public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
+    public class ExceptionHandlingMiddleware
     {
-        _next = next;
-        _logger = logger;
-    }
+        private readonly RequestDelegate _next;
+        private readonly ILogger<ExceptionHandlingMiddleware> _logger;
 
-    public async Task Invoke(HttpContext context)
-    {
-        try
+        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
         {
-            await _next(context);
+            _next = next;
+            _logger = logger;
         }
-        catch (Exception ex)
+
+        public async Task Invoke(HttpContext context)
         {
-            _logger.LogError(ex, "Unhandled exception caught by middleware.");
-            context.Response.StatusCode = 500;
-            await context.Response.WriteAsync("An unexpected error occurred.");
+            try
+            {
+                await _next(context);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception caught by middleware.");
+                context.Response.StatusCode = 500;
+                await context.Response.WriteAsync("An unexpected error occurred.");
+            }
         }
     }
 }
