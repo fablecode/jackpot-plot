@@ -1,9 +1,9 @@
 ﻿using JackpotPlot.Domain.Domain;
-using JackpotPlot.Domain.Repositories;
 using JackpotPlot.Prediction.API.Infrastructure.Databases;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using System.Collections.Immutable;
+using JackpotPlot.Application.Abstractions.Persistence.Repositories;
 
 namespace JackpotPlot.Prediction.API.Infrastructure.Repositories;
 

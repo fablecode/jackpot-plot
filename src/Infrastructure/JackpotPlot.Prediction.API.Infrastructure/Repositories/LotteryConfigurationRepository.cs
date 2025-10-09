@@ -1,5 +1,5 @@
-﻿using JackpotPlot.Domain.Domain;
-using JackpotPlot.Domain.Repositories;
+﻿using JackpotPlot.Application.Abstractions.Persistence.Repositories;
+using JackpotPlot.Domain.Domain;
 using JackpotPlot.Prediction.API.Infrastructure.Services.LotteryApi;
 
 namespace JackpotPlot.Prediction.API.Infrastructure.Repositories;

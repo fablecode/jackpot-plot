@@ -1,5 +1,5 @@
-﻿using JackpotPlot.Domain.Domain;
-using JackpotPlot.Domain.Repositories;
+﻿using JackpotPlot.Application.Abstractions.Persistence.Repositories;
+using JackpotPlot.Domain.Domain;
 using JackpotPlot.Lottery.API.Infrastructure.Databases;
 using Microsoft.EntityFrameworkCore;
 

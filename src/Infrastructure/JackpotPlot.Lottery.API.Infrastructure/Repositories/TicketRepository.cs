@@ -1,12 +1,12 @@
 ﻿using JackpotPlot.Domain.Domain;
 using JackpotPlot.Domain.Models;
-using JackpotPlot.Domain.Repositories;
 using JackpotPlot.Lottery.API.Infrastructure.Databases;
 using JackpotPlot.Lottery.API.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using System.Collections.Immutable;
 using System.Text.Json;
+using JackpotPlot.Application.Abstractions.Persistence.Repositories;
 using JackpotPlot.Lottery.API.Infrastructure.Results;
 using Newtonsoft.Json;
 

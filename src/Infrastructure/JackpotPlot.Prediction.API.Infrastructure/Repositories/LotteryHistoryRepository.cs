@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.Threading;
+using JackpotPlot.Application.Abstractions.Persistence.Repositories;
 using JackpotPlot.Domain.Models;
-using JackpotPlot.Domain.Repositories;
 using JackpotPlot.Prediction.API.Infrastructure.Databases;
 using JackpotPlot.Prediction.API.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
