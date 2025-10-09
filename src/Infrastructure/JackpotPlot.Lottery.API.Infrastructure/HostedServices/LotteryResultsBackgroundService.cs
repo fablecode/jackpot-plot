@@ -1,4 +1,4 @@
-﻿using JackpotPlot.Domain.Messaging;
+﻿using JackpotPlot.Application.Abstractions.Messaging;
 using MediatR;
 using Microsoft.Extensions.Logging;
 

@@ -1,5 +1,5 @@
 ﻿using System.Threading.Channels;
-using JackpotPlot.Domain.Messaging;
+using JackpotPlot.Application.Abstractions.Messaging;
 using JackpotPlot.Domain.Models;
 using JackpotPlot.Prediction.API.Application.Messaging.Handlers;
 using MediatR;

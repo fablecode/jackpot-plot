@@ -1,5 +1,5 @@
-﻿using JackpotPlot.Domain.Constants;
-using JackpotPlot.Domain.Messaging;
+﻿using JackpotPlot.Application.Abstractions.Messaging;
+using JackpotPlot.Domain.Constants;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
