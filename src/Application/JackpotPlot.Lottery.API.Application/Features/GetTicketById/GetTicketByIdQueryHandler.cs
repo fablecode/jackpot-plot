@@ -1,5 +1,5 @@
-﻿using JackpotPlot.Domain.Models;
-using JackpotPlot.Domain.Repositories;
+﻿using JackpotPlot.Application.Abstractions.Persistence.Repositories;
+using JackpotPlot.Domain.Models;
 using JackpotPlot.Lottery.API.Application.Extensions;
 using JackpotPlot.Lottery.API.Application.Models.Output;
 using MediatR;

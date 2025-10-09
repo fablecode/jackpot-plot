@@ -1,6 +1,6 @@
-﻿using JackpotPlot.Domain.Domain;
+﻿using JackpotPlot.Application.Abstractions.Persistence.Repositories;
+using JackpotPlot.Domain.Domain;
 using JackpotPlot.Domain.Models;
-using JackpotPlot.Domain.Repositories;
 using MediatR;
 
 namespace JackpotPlot.Lottery.API.Application.Features.CreateUserTicket;

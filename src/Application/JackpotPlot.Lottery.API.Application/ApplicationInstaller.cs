@@ -19,5 +19,4 @@ public static class ApplicationInstaller
 
         return services;
     }
-
 }
