@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. Core", "1. Core", "{F2C868A7-B407-433D-9006-E5465C5727B9}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. Foundation", "1. Foundation", "{F2C868A7-B407-433D-9006-E5465C5727B9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2. Domain", "2. Domain", "{0933F217-7FE8-47F3-BF67-BD01017E5032}"
 EndProject
@@ -41,8 +41,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JackpotPlot.Lottery.API.Inf
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JackpotPlot.Lottery.API.Application", "src\Application\JackpotPlot.Lottery.API.Application\JackpotPlot.Lottery.API.Application.csproj", "{E9CE7157-7D4F-4365-903E-997EA8DE59BE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LotteryDataCollector.Service.Application", "src\Application\LotteryDataCollector.Service.Application\LotteryDataCollector.Service.Application.csproj", "{9FE98038-ED98-445F-BFA8-CC42D0FD9F66}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LotteryDataCollector.Service.Infrastructure", "src\Infrastructure\LotteryDataCollector.Service.Infrastructure\LotteryDataCollector.Service.Infrastructure.csproj", "{1D953F19-9BAE-4989-8087-60ABA605CCB3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JackpotPlot.Prediction.API.DatabaseMigration", "src\Infrastructure\JackpotPlot.Prediction.API.DatabaseMigration\JackpotPlot.Prediction.API.DatabaseMigration.csproj", "{C7FC5476-ABCA-41A7-AFD0-79561B7B6496}"
@@ -58,6 +56,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JackpotPlot.Gateway", "src\Presentation\Gateway\JackpotPlot.Gateway\JackpotPlot.Gateway.csproj", "{014631E8-03EE-4A76-AED9-883F1875F8A7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JackpotPlot.Domain.Unit.Tests", "tests\Unit\JackpotPlot.Domain.Unit.Tests\JackpotPlot.Domain.Unit.Tests.csproj", "{453A9970-2D1C-4B75-9838-55A3870AEE46}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JackpotPlot.Application.Abstractions", "src\Application\JackpotPlot.Application.Abstractions\JackpotPlot.Application.Abstractions.csproj", "{786A5B98-8D06-4207-8ED3-45F2D823F57C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JackpotPlot.Primitives", "src\Foundation\JackpotPlot.Primitives\JackpotPlot.Primitives.csproj", "{7F304407-476A-431D-8663-ABD6A6D30D1C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,10 +99,6 @@ Global
 		{E9CE7157-7D4F-4365-903E-997EA8DE59BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9CE7157-7D4F-4365-903E-997EA8DE59BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9CE7157-7D4F-4365-903E-997EA8DE59BE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9FE98038-ED98-445F-BFA8-CC42D0FD9F66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9FE98038-ED98-445F-BFA8-CC42D0FD9F66}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9FE98038-ED98-445F-BFA8-CC42D0FD9F66}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9FE98038-ED98-445F-BFA8-CC42D0FD9F66}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1D953F19-9BAE-4989-8087-60ABA605CCB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1D953F19-9BAE-4989-8087-60ABA605CCB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D953F19-9BAE-4989-8087-60ABA605CCB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -129,6 +127,14 @@ Global
 		{453A9970-2D1C-4B75-9838-55A3870AEE46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{453A9970-2D1C-4B75-9838-55A3870AEE46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{453A9970-2D1C-4B75-9838-55A3870AEE46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{786A5B98-8D06-4207-8ED3-45F2D823F57C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{786A5B98-8D06-4207-8ED3-45F2D823F57C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{786A5B98-8D06-4207-8ED3-45F2D823F57C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{786A5B98-8D06-4207-8ED3-45F2D823F57C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F304407-476A-431D-8663-ABD6A6D30D1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F304407-476A-431D-8663-ABD6A6D30D1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F304407-476A-431D-8663-ABD6A6D30D1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F304407-476A-431D-8663-ABD6A6D30D1C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -147,7 +153,6 @@ Global
 		{AF870BAB-3581-41B2-94E0-13A2241D0D02} = {EDF84145-655E-4064-8A7C-B5A896A3A2C9}
 		{9E1E3437-36E3-4859-88DC-E231517C75C5} = {EDF84145-655E-4064-8A7C-B5A896A3A2C9}
 		{E9CE7157-7D4F-4365-903E-997EA8DE59BE} = {BA1D4398-6C79-4D93-8784-5678A3201AAC}
-		{9FE98038-ED98-445F-BFA8-CC42D0FD9F66} = {BA1D4398-6C79-4D93-8784-5678A3201AAC}
 		{1D953F19-9BAE-4989-8087-60ABA605CCB3} = {EDF84145-655E-4064-8A7C-B5A896A3A2C9}
 		{C7FC5476-ABCA-41A7-AFD0-79561B7B6496} = {AF870BAB-3581-41B2-94E0-13A2241D0D02}
 		{4275285B-121A-445A-90D7-3425A11C3DC7} = {EDF84145-655E-4064-8A7C-B5A896A3A2C9}
@@ -156,6 +161,8 @@ Global
 		{186C5CA5-DC66-4AF0-B4B6-A6761A4A3897} = {D5E393DE-DBAD-4AEF-B2F0-9CA894DA794E}
 		{014631E8-03EE-4A76-AED9-883F1875F8A7} = {186C5CA5-DC66-4AF0-B4B6-A6761A4A3897}
 		{453A9970-2D1C-4B75-9838-55A3870AEE46} = {9DE4F7D6-502B-43A0-83D7-EE17B2B93815}
+		{786A5B98-8D06-4207-8ED3-45F2D823F57C} = {BA1D4398-6C79-4D93-8784-5678A3201AAC}
+		{7F304407-476A-431D-8663-ABD6A6D30D1C} = {F2C868A7-B407-433D-9006-E5465C5727B9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5ABC289-BAD2-4CF2-BF68-3189382251AB}
