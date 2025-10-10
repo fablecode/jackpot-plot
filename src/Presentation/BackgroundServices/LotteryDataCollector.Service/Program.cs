@@ -1,8 +1,10 @@
 ﻿using Coravel;
 using JackpotPlot.Domain.Settings;
-using LotteryDataCollector.Service.Application;
+using JackpotPlot.Infrastructure;
 using LotteryDataCollector.Service.Infrastructure;
 using LotteryDataCollector.Service.Jobs.Eurojackpot;
+using MassTransit;
+using Microsoft.Extensions.Options;
 using NodaTime;
 using Serilog;
 
@@ -67,6 +69,27 @@ namespace LotteryDataCollector.Service
                 services.Configure<RabbitMqSettings>(context.Configuration.GetRequiredSection(nameof(RabbitMqSettings)));
 
                 // Register services
+                // --- MassTransit (publisher-first) ---
+                services.AddMassTransit(x =>
+                {
+                    // No consumers yet — this service publishes only (for now)
+
+                    x.UsingRabbitMq((ctx, cfg) =>
+                    {
+                        var opts = ctx.GetRequiredService<IOptions<RabbitMqSettings>>().Value;
+                        cfg.Host(opts.Host, "/", h =>
+                        {
+                            h.Username(opts.Username);
+                            h.Password(opts.Password);
+                        });
+
+                        // Optional: basic health + diag
+                        cfg.AutoStart = true;
+
+                        // (Optional) health, diagnostics, concurrency tuning
+                        cfg.PrefetchCount = (ushort)Environment.ProcessorCount;
+                    });
+                });
 
                 // Register Coravel jobs
                 services.AddTransient<FetchEurojackpotDrawHistoryJob>();
