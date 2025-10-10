@@ -17,12 +17,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\..\src\Application\JackpotPlot.Application.Abstractions\JackpotPlot.Application.Abstractions.csproj" />
 	  <ProjectReference Include="..\..\..\src\Domain\JackpotPlot.Domain\JackpotPlot.Domain.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="SchedulingTests\DailyDrawStrategyTests\" />
-	  <Folder Include="ServicesTests\PredictionStrategiesTests\PatternMatchingPredictionStrategyTests\" />
 	</ItemGroup>
 
 

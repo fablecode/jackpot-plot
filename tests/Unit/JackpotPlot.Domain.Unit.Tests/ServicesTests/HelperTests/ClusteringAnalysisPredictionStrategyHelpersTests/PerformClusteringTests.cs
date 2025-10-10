@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using JackpotPlot.Domain.Services.PredictionStrategies.Helpers;
+using JackpotPlot.Domain.Predictions.Helpers;
 using NUnit.Framework;
 
 namespace JackpotPlot.Domain.Unit.Tests.ServicesTests.HelperTests.ClusteringAnalysisPredictionStrategyHelpersTests;

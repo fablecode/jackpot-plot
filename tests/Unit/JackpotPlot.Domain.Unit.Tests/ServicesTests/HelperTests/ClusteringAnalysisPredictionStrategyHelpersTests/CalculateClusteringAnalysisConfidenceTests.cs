@@ -1,5 +1,6 @@
-﻿using FluentAssertions;
-using JackpotPlot.Domain.Services.PredictionStrategies.Helpers;
+﻿using System.Collections.Immutable;
+using FluentAssertions;
+using JackpotPlot.Domain.Predictions.Helpers;
 using NUnit.Framework;
 
 namespace JackpotPlot.Domain.Unit.Tests.ServicesTests.HelperTests.ClusteringAnalysisPredictionStrategyHelpersTests;
@@ -17,7 +18,7 @@ public class CalculateClusteringAnalysisConfidenceTests
         var predictedNumbers = new List<int>(predictions);
 
         // Act
-        var confidence = ClusteringAnalysisPredictionStrategyHelpers.CalculateClusteringAnalysisConfidence(clusters, predictedNumbers);
+        var confidence = ClusteringAnalysisPredictionStrategyHelpers.CalculateClusteringAnalysisConfidence(clusters, predictedNumbers.ToImmutableArray());
 
         // Assert
         confidence.Should().Be(expected);
@@ -31,7 +32,7 @@ public class CalculateClusteringAnalysisConfidenceTests
         var predictions = new List<int>();
 
         // Act
-        var confidence = ClusteringAnalysisPredictionStrategyHelpers.CalculateClusteringAnalysisConfidence(clusters, predictions);
+        var confidence = ClusteringAnalysisPredictionStrategyHelpers.CalculateClusteringAnalysisConfidence(clusters, predictions.ToImmutableArray());
 
         // Assert
         confidence.Should().Be(double.NaN);
@@ -45,7 +46,7 @@ public class CalculateClusteringAnalysisConfidenceTests
         var predictions = new List<int> { 1, 1, 3 }; // 2 matches out of 3
 
         // Act
-        var confidence = ClusteringAnalysisPredictionStrategyHelpers.CalculateClusteringAnalysisConfidence(clusters, predictions);
+        var confidence = ClusteringAnalysisPredictionStrategyHelpers.CalculateClusteringAnalysisConfidence(clusters, predictions.ToImmutableArray());
 
         // Assert
         confidence.Should().BeApproximately(2.0 / 3.0, 1e-9);
