@@ -2,5 +2,5 @@
 
 public interface IQueueWriter<in T>
 {
-    Task Publish(T message, string routingKey);
+    Task Publish(T message, string routingKey, CancellationToken ct = default);
 }
