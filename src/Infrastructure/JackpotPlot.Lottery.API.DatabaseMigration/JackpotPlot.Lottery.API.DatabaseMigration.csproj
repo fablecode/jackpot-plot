@@ -56,7 +56,6 @@
     <EmbeddedResource Include="Scripts\Migrations\2025\2025-05-15 - 0.0.0.1\Script0005 - Add_Status_Column_To_Tickets_Table.sql" />
     <EmbeddedResource Include="Scripts\Migrations\2025\2025-05-15 - 0.0.0.1\Script0001 - Add_Confidence_Column_To_Tickets_Table.sql" />
     <EmbeddedResource Include="Scripts\Migrations\2025\2025-05-15 - 0.0.0.1\Script0002 - Add_Get_Ticket_Confidence_Function.sql" />
-    <EmbeddedResource Include="Scripts\Migrations\2025\2025-05-15 - 0.0.0.1\Script0004 - Add_Paginated_Ticket_Overview_Type.sql" />
     <EmbeddedResource Include="Scripts\Migrations\2025\2025-05-15 - 0.0.0.1\Script0003 - Add_Ticket_Overview_Row_Type.sql" />
     <EmbeddedResource Include="Scripts\Migrations\2025\2025-05-15 - 0.0.0.1\Script0010 - Add_UserId_To_TicketOverview_View.sql" />
     <EmbeddedResource Include="Scripts\Migrations\2025\2025-05-15 - 0.0.0.1\Script0009 - Add_UserFilter_To_Get_Paginated_Ticket_Overview.sql" />
