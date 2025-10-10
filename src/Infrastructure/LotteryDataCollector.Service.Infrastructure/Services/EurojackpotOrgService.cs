@@ -1,8 +1,8 @@
 ﻿using JackpotPlot.Domain.Models;
-using JackpotPlot.Domain.Services;
 using Newtonsoft.Json;
 using System.Collections.Immutable;
 using System.Data;
+using JackpotPlot.Application.Abstractions.Services;
 
 namespace LotteryDataCollector.Service.Infrastructure.Services;
 

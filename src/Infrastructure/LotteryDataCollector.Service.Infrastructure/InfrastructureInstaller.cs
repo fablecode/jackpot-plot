@@ -1,4 +1,4 @@
-﻿using JackpotPlot.Domain.Services;
+﻿using JackpotPlot.Application.Abstractions.Services;
 using JackpotPlot.Infrastructure;
 using LotteryDataCollector.Service.Infrastructure.Services;
 using LotteryDataCollector.Service.Infrastructure.WebPages;

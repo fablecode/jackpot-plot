@@ -3,8 +3,8 @@ using System.Data;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
+using JackpotPlot.Application.Abstractions.Services;
 using JackpotPlot.Domain.Models;
-using JackpotPlot.Domain.Services;
 using LotteryDataCollector.Service.Infrastructure.WebPages;
 using Microsoft.Extensions.Logging;
 
