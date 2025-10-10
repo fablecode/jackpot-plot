@@ -1,5 +1,5 @@
 ﻿using Coravel.Invocable;
-using LotteryDataCollector.Service.Application.BackgroundServices.Eurojackpot.FetchEurojackpotDrawHistory;
+using JackpotPlot.Infrastructure.Jobs.Eurojackpot.FetchEurojackpotDrawHistory;
 using MediatR;
 
 namespace LotteryDataCollector.Service.Jobs.Eurojackpot;
