@@ -39,9 +39,16 @@ public class EurojackpotNetService : IEurojackpotService
         }
     }
 
-    public IAsyncEnumerable<EurojackpotResult> GetAllDrawHistoryResultsAsync()
+    public async IAsyncEnumerable<EurojackpotResult> GetAllDrawHistoryResultsAsync()
     {
-        throw new NotImplementedException();
+        foreach (var drawDate in EurojackpotHelper.GetEuroJackpotDrawDates())
+        {
+            var url = $"https://www.euro-jackpot.net/results/{drawDate.Date:dd-MM-yyyy}";
+
+            var drawDetails = await Task.FromResult(GetDrawDetails(url));
+
+            yield return drawDetails;
+        }
     }
 
     public EurojackpotResult GetDrawDetails(string drawUrl)

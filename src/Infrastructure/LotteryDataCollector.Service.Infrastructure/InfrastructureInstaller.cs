@@ -21,7 +21,7 @@ namespace LotteryDataCollector.Service.Infrastructure
 
         public static IServiceCollection AddDomainServices(this IServiceCollection services)
         {
-            services.AddTransient<IEurojackpotService, EurojackpotOrgService>();
+            services.AddTransient<IEurojackpotService, EurojackpotNetService>();
 
             return services;
         }

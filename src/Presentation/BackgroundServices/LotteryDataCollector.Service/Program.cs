@@ -5,6 +5,7 @@ using LotteryDataCollector.Service.Infrastructure;
 using LotteryDataCollector.Service.Jobs.Eurojackpot;
 using MassTransit;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using NodaTime;
 using Serilog;
 
@@ -76,6 +77,25 @@ namespace LotteryDataCollector.Service
 
                     x.UsingRabbitMq((ctx, cfg) =>
                     {
+                        // Make Newtonsoft the default serializer
+                        cfg.UseNewtonsoftJsonSerializer();
+
+                        // Optional: customize serializer settings
+                        cfg.ConfigureNewtonsoftJsonSerializer(settings =>
+                        {
+                            settings.NullValueHandling = NullValueHandling.Ignore;
+                            settings.DateParseHandling = DateParseHandling.DateTimeOffset;
+                            // settings.TypeNameHandling = TypeNameHandling.None; // usually keep this off
+                            return settings;
+                        });
+
+                        // Optional: customize deserializer settings (can differ)
+                        cfg.ConfigureNewtonsoftJsonDeserializer(settings =>
+                        {
+                            settings.NullValueHandling = NullValueHandling.Ignore;
+                            return settings;
+                        });
+
                         var opts = ctx.GetRequiredService<IOptions<RabbitMqSettings>>().Value;
                         cfg.Host(opts.Host, "/", h =>
                         {

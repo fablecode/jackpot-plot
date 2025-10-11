@@ -21,7 +21,7 @@ public class EurojackpotOrgService : IEurojackpotService
 
     public async IAsyncEnumerable<EurojackpotResult> GetAllDrawHistoryResultsAsync()
     {
-        foreach (var drawDate in GetEuroJackpotDrawDates())
+        foreach (var drawDate in EurojackpotHelper.GetEuroJackpotDrawDates())
         {
             var url = $"https://www.eurojackpot.org/results?date={drawDate:dd-MM-yyyy}";
 
@@ -50,20 +50,6 @@ public class EurojackpotOrgService : IEurojackpotService
 
     #region Private Helpers
 
-    public static IEnumerable<DateTime> GetEuroJackpotDrawDates()
-    {
-        var startDate = new DateTime(2012, 3, 23); // First Eurojackpot draw (Friday)
-        var secondDrawStartDate = new DateTime(2022, 3, 29); // Tuesday draws started around this time
-        var today = DateTime.Today;
-
-        for (var date = startDate; date <= today; date = date.AddDays(1))
-        {
-            if (date.DayOfWeek == DayOfWeek.Friday || (date >= secondDrawStartDate && date.DayOfWeek == DayOfWeek.Tuesday))
-            {
-                yield return date;
-            }
-        }
-    }
     public async Task<EurojackpotOrgResult> FetchDataAsync(string url)
     {
         using (var client = _factory.CreateClient())
@@ -197,8 +183,8 @@ public class Rank8
 public class Rank9
 {
     public string rank { get; set; }
-    public long winners { get; set; }
-    public long prize { get; set; }
+    public long? winners { get; set; }
+    public long? prize { get; set; }
 }
 
 public class Rank10
