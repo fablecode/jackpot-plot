@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace JackpotPlot.Lottery.API.Infrastructure
 {
@@ -55,6 +56,25 @@ namespace JackpotPlot.Lottery.API.Infrastructure
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
+                    // Make Newtonsoft the default serializer
+                    cfg.UseNewtonsoftJsonSerializer();
+
+                    // Optional: customize serializer settings
+                    cfg.ConfigureNewtonsoftJsonSerializer(settings =>
+                    {
+                        settings.NullValueHandling = NullValueHandling.Ignore;
+                        settings.DateParseHandling = DateParseHandling.DateTimeOffset;
+                        // settings.TypeNameHandling = TypeNameHandling.None; // usually keep this off
+                        return settings;
+                    });
+
+                    // Optional: customize deserializer settings (can differ)
+                    cfg.ConfigureNewtonsoftJsonDeserializer(settings =>
+                    {
+                        settings.NullValueHandling = NullValueHandling.Ignore;
+                        return settings;
+                    });
+
                     var settings = context.GetRequiredService<IOptions<RabbitMqSettings>>().Value;
 
                     cfg.Host(settings.Host, h =>
