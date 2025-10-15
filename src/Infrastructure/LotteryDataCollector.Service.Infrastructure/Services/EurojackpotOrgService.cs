@@ -1,89 +1,218 @@
-﻿using JackpotPlot.Domain.Models;
+﻿using JackpotPlot.Application.Abstractions.Services;
+using JackpotPlot.Domain.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Collections.Immutable;
 using System.Data;
-using JackpotPlot.Application.Abstractions.Services;
+using System.Net;
+using System.Runtime.CompilerServices;
+using Microsoft.Extensions.Logging;
 
 namespace LotteryDataCollector.Service.Infrastructure.Services;
 
 public class EurojackpotOrgService : IEurojackpotService
 {
+    private static readonly EventId EvtFetch = new(1001, nameof(FetchDataAsync));
+    private static readonly EventId EvtIterate = new(1002, nameof(GetAllDrawHistoryResultsAsync));
+    private static readonly EventId EvtMap = new(1003, "MapToDomain");
+
+    private readonly ILogger<EurojackpotOrgService> _logger;
     private readonly IHttpClientFactory _factory;
 
-    public EurojackpotOrgService(IHttpClientFactory factory)
+    public EurojackpotOrgService(ILogger<EurojackpotOrgService> logger, IHttpClientFactory factory)
     {
+        _logger = logger;
         _factory = factory;
     }
-    public IEnumerable<EurojackpotResult> GetAllDrawHistoryResults()
-    {
-        throw new NotImplementedException();
-    }
 
-    public async IAsyncEnumerable<EurojackpotResult> GetAllDrawHistoryResultsAsync()
+    public IEnumerable<EurojackpotResult> GetAllDrawHistoryResults() =>
+        throw new NotImplementedException();
+
+    public async IAsyncEnumerable<EurojackpotResult> GetAllDrawHistoryResultsAsync(
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
+        _logger.LogInformation(EvtIterate, "Starting draw history enumeration.");
+
         foreach (var drawDate in EurojackpotHelper.GetEuroJackpotDrawDates())
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            using var scope = _logger.BeginScope(new Dictionary<string, object?>
+            {
+                ["DrawDate"] = drawDate
+            });
+
             var url = $"https://www.eurojackpot.org/results?date={drawDate:dd-MM-yyyy}";
+            _logger.LogDebug(EvtIterate, "Fetching draw data from {Url}.", url);
 
-            var lotteryData = await FetchDataAsync(url);
+            EurojackpotOrgResult? dto = null;
+            try
+            {
+                dto = await FetchDataAsync(url, cancellationToken);
+            }
+            catch (JsonReaderException ex)
+            {
+                _logger.LogWarning(EvtIterate, ex,
+                    "JSON reader error for {Url}. Skipping this date.", url);
+                continue;
+            }
+            catch (JsonSerializationException ex)
+            {
+                _logger.LogWarning(EvtIterate, ex,
+                    "JSON shape/serialization issue for {Url}. Skipping this date.", url);
+                continue;
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogWarning(EvtIterate, ex,
+                    "HTTP error while fetching {Url}. Skipping this date.", url);
+                continue;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(EvtIterate, ex,
+                    "Unexpected error while fetching {Url}. Skipping this date.", url);
+                continue;
+            }
 
-            yield return GetDetails(lotteryData);
+            if (dto is null)
+            {
+                _logger.LogInformation(EvtIterate,
+                    "No usable payload for {Url} (null/empty/array-of-nulls). Skipping.", url);
+                continue;
+            }
+
+            EurojackpotResult? mapped = null;
+            try
+            {
+                mapped = GetDetails(dto);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(EvtMap, ex,
+                    "Failed to map DTO to domain for {Url}. Skipping.", url);
+                continue;
+            }
+
+            if (mapped is null)
+            {
+                _logger.LogInformation(EvtMap,
+                    "Mapped result is null for {Url}. Skipping.", url);
+                continue;
+            }
+
+            _logger.LogDebug(EvtIterate,
+                "Yielding result for draw {Date}.", mapped.Date);
+            yield return mapped;
         }
+
+        _logger.LogInformation(EvtIterate, "Completed draw history enumeration.");
     }
 
-    private static EurojackpotResult GetDetails(EurojackpotOrgResult eurojackpotOrgResult)
+    private static EurojackpotResult GetDetails(EurojackpotOrgResult dto)
     {
+        var year = int.Parse(dto.date?.year ?? throw new InvalidOperationException("Missing year"));
+        var month = int.Parse(dto.date?.month ?? throw new InvalidOperationException("Missing month"));
+        var day = int.Parse(dto.date?.day ?? throw new InvalidOperationException("Missing day"));
+
+        var main = dto.numbers?.numbers ?? Array.Empty<int>();
+        var extra = dto.numbers?.extraNumbers ?? Array.Empty<int>();
+
         return new EurojackpotResult
         {
-            Date = new DateTime
-            (
-                int.Parse(eurojackpotOrgResult.date.year), 
-                int.Parse(eurojackpotOrgResult.date.month),
-                int.Parse(eurojackpotOrgResult.date.day)
-            ),
-            MainNumbers = [..eurojackpotOrgResult.numbers.numbers],
-            EuroNumbers = [..eurojackpotOrgResult.numbers.extraNumbers],
-            JackpotAmount = eurojackpotOrgResult.jackpot.ToString(),
+            Date = new DateTime(year, month, day),
+            MainNumbers = [.. main],
+            EuroNumbers = [.. extra],
+            JackpotAmount = dto.jackpot.ToString(),
             PrizeBreakdown = ImmutableArray<DataTable>.Empty
         };
     }
 
     #region Private Helpers
 
-    public async Task<EurojackpotOrgResult> FetchDataAsync(string url)
+    public async Task<EurojackpotOrgResult?> FetchDataAsync(string url, CancellationToken ct = default)
     {
-        using (var client = _factory.CreateClient())
+        using var client = _factory.CreateClient();
+
+        _logger.LogDebug(EvtFetch, "GET {Url}", url);
+        var response = await client.GetAsync(url, ct);
+
+        if (response.StatusCode is HttpStatusCode.MovedPermanently or HttpStatusCode.Found)
         {
-            Console.WriteLine($"🔄 Sending request to: {url}");
-
-            var response = await client.GetAsync(url);
-
-            if (response.StatusCode == System.Net.HttpStatusCode.MovedPermanently ||
-                response.StatusCode == System.Net.HttpStatusCode.Found)
+            var redirectUrl = response.Headers.Location?.ToString();
+            if (string.IsNullOrEmpty(redirectUrl))
             {
-                // Capture redirect URL
-                string? redirectUrl = response.Headers.Location?.ToString();
-
-                if (!string.IsNullOrEmpty(redirectUrl))
-                {
-                    Console.WriteLine($"🔀 Redirected to: {redirectUrl}");
-                    return await FetchDataAsync(redirectUrl); // Recursively follow the redirect
-                }
-                else
-                {
-                    throw new Exception("❌ No redirect URL found in headers.");
-                }
+                _logger.LogError(EvtFetch,
+                    "Received redirect from {Url} but no Location header present.", url);
+                throw new InvalidOperationException("No redirect URL found in headers.");
             }
 
-            var json = await response.Content.ReadAsStringAsync();
+            _logger.LogInformation(EvtFetch,
+                "Following redirect from {From} to {To}.", url, redirectUrl);
+            return await FetchDataAsync(redirectUrl!, ct);
+        }
 
-            return JsonConvert.DeserializeObject<EurojackpotOrgResult>(json)!;
+        var json = await response.Content.ReadAsStringAsync(ct);
+        _logger.LogDebug(EvtFetch, "Response {StatusCode} with length {Length} from {Url}.",
+            (int)response.StatusCode, json?.Length ?? 0, url);
+
+        // Normalize odd payloads BEFORE binding to a type
+        var token = JToken.Parse(json ?? "null");
+
+        if (token.Type == JTokenType.Null)
+        {
+            _logger.LogInformation(EvtFetch, "Null payload from {Url}.", url);
+            return null;
+        }
+
+        if (token.Type == JTokenType.Array)
+        {
+            var arr = (JArray)token;
+
+            if (arr.Count == 0 || arr.All(t => t.Type == JTokenType.Null))
+            {
+                _logger.LogInformation(EvtFetch,
+                    "Array payload with no usable items (count={Count}) from {Url}.", arr.Count, url);
+                return null;
+            }
+
+            if (arr.Count == 1 && arr[0].Type == JTokenType.Object)
+            {
+                _logger.LogDebug(EvtFetch,
+                    "Single-object array wrapper detected for {Url}; unwrapping.", url);
+                token = arr[0];
+            }
+            else
+            {
+                _logger.LogWarning(EvtFetch,
+                    "Unexpected array payload shape (count={Count}) from {Url}.", arr.Count, url);
+                throw new JsonSerializationException("Unexpected array payload shape.");
+            }
+        }
+
+        if (token.Type != JTokenType.Object)
+        {
+            _logger.LogWarning(EvtFetch,
+                "Unexpected token type {TokenType} from {Url}.", token.Type, url);
+            throw new JsonSerializationException($"Unexpected token: {token.Type}");
+        }
+
+        try
+        {
+            var dto = token.ToObject<EurojackpotOrgResult>();
+            _logger.LogDebug(EvtFetch, "Successfully deserialized payload from {Url}.", url);
+            return dto;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(EvtFetch, ex,
+                "Deserialization failed for payload from {Url}.", url);
+            throw;
         }
     }
 
     #endregion
 }
-
 
 public class EurojackpotOrgResult
 {
