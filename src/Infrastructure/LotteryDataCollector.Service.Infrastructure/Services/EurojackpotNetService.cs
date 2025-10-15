@@ -1,12 +1,13 @@
-﻿using System.Collections.Immutable;
-using System.Data;
-using System.Globalization;
-using System.Text.RegularExpressions;
-using HtmlAgilityPack;
+﻿using HtmlAgilityPack;
 using JackpotPlot.Application.Abstractions.Services;
 using JackpotPlot.Domain.Models;
 using LotteryDataCollector.Service.Infrastructure.WebPages;
 using Microsoft.Extensions.Logging;
+using System.Collections.Immutable;
+using System.Data;
+using System.Globalization;
+using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 
 namespace LotteryDataCollector.Service.Infrastructure.Services;
 
@@ -39,7 +40,7 @@ public class EurojackpotNetService : IEurojackpotService
         }
     }
 
-    public async IAsyncEnumerable<EurojackpotResult> GetAllDrawHistoryResultsAsync()
+    public async IAsyncEnumerable<EurojackpotResult> GetAllDrawHistoryResultsAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         foreach (var drawDate in EurojackpotHelper.GetEuroJackpotDrawDates())
         {
