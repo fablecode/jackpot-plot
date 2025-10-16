@@ -1,5 +1,4 @@
 ﻿using JackpotPlot.Domain.Models;
-using System.Runtime.CompilerServices;
 
 namespace JackpotPlot.Application.Abstractions.Services;
 
