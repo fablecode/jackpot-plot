@@ -1,6 +1,5 @@
 ﻿using JackpotPlot.Domain.Interfaces;
 using JackpotPlot.Domain.Models;
-using JackpotPlot.Domain.Services.PredictionStrategies.Attributes;
 using JackpotPlot.Prediction.API.Application.Features.GetHotAndColdNumbersByLotteryId;
 using JackpotPlot.Prediction.API.Application.Features.GetLuckyPair;
 using JackpotPlot.Prediction.API.Application.Features.GetNumberSpread;
@@ -14,6 +13,7 @@ using System.Collections.Immutable;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
+using JackpotPlot.Primitives.Algorithms;
 
 namespace Prediction.API.Controllers;
 
@@ -85,9 +85,9 @@ public class PredictionsController : ControllerBase
                         && !t.IsAbstract)
             .Select(t => new
             {
-                t.GetCustomAttribute<PredictionStrategyDescriptionAttribute>()?.Id,
+                t.GetCustomAttribute<PredictionAlgorithmDescriptionAttribute>()?.Id,
                 Name = FormatStrategyName(t.Name),
-                Description = t.GetCustomAttribute<PredictionStrategyDescriptionAttribute>()?.Description
+                Description = t.GetCustomAttribute<PredictionAlgorithmDescriptionAttribute>()?.Description
                               ?? "No description available"
             })
             .ToList();
