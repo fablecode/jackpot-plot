@@ -26,7 +26,7 @@ public sealed class PredictionRepository : IPredictionRepository
             {
                 LotteryId = predictionResult.LotteryId,
                 UserId = userId,
-                Strategy = predictionResult.Strategy,
+                Strategy = predictionResult.AlgorithmKey,
                 PredictedNumbers = predictionResult.PredictedNumbers.ToList(),
                 BonusNumbers = predictionResult.BonusNumbers.ToList(),
                 ConfidenceScore = (decimal?)predictionResult.ConfidenceScore
