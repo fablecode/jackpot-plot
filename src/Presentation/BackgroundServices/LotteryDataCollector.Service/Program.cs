@@ -73,6 +73,9 @@ namespace LotteryDataCollector.Service
                 // --- MassTransit (publisher-first) ---
                 services.AddMassTransit(x =>
                 {
+                    // Consistent kebab naming
+                    x.SetKebabCaseEndpointNameFormatter();
+
                     // No consumers yet — this service publishes only (for now)
 
                     x.UsingRabbitMq((ctx, cfg) =>
@@ -108,6 +111,7 @@ namespace LotteryDataCollector.Service
 
                         // (Optional) health, diagnostics, concurrency tuning
                         cfg.PrefetchCount = (ushort)Environment.ProcessorCount;
+
                     });
                 });
 
