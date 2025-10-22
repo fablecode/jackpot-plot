@@ -51,28 +51,24 @@ namespace JackpotPlot.Lottery.API.Infrastructure
             // Register the background service that will consume RabbitMQ messages
             services.AddMassTransit(x =>
             {
-                // Reuse your existing handler via the generic consumer
                 x.AddConsumer<QueueToMediatorConsumer<Message<EurojackpotResult>>>();
+
+                // Optional: global endpoint naming for auto-mapped endpoints elsewhere
+                x.SetKebabCaseEndpointNameFormatter();
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    // Make Newtonsoft the default serializer
                     cfg.UseNewtonsoftJsonSerializer();
-
-                    // Optional: customize serializer settings
-                    cfg.ConfigureNewtonsoftJsonSerializer(settings =>
+                    cfg.ConfigureNewtonsoftJsonSerializer(s =>
                     {
-                        settings.NullValueHandling = NullValueHandling.Ignore;
-                        settings.DateParseHandling = DateParseHandling.DateTimeOffset;
-                        // settings.TypeNameHandling = TypeNameHandling.None; // usually keep this off
-                        return settings;
+                        s.NullValueHandling = NullValueHandling.Ignore;
+                        s.DateParseHandling = DateParseHandling.DateTimeOffset;
+                        return s;
                     });
-
-                    // Optional: customize deserializer settings (can differ)
-                    cfg.ConfigureNewtonsoftJsonDeserializer(settings =>
+                    cfg.ConfigureNewtonsoftJsonDeserializer(s =>
                     {
-                        settings.NullValueHandling = NullValueHandling.Ignore;
-                        return settings;
+                        s.NullValueHandling = NullValueHandling.Ignore;
+                        return s;
                     });
 
                     var settings = context.GetRequiredService<IOptions<RabbitMqSettings>>().Value;
@@ -83,25 +79,29 @@ namespace JackpotPlot.Lottery.API.Infrastructure
                         h.Password(settings.Password);
                     });
 
-                    // Mirror old queue name from LotteryResultsBackgroundService
+                    // Avoid per-message exchanges from this process
+                    cfg.Publish<Message<EurojackpotResult>>(topologyConfigurator => topologyConfigurator.Exclude = true);
+
                     cfg.ReceiveEndpoint("lottery-results", e =>
                     {
                         e.ConfigureConsumeTopology = false;
-                        e.PrefetchCount = 1;
-                        e.ConcurrentMessageLimit = 1;
 
-                        // Bind to your existing topic exchange & keys (adjust keys to match your publisher)
-                        e.Bind(settings.Exchange, configurator =>
+                        // HA / performance knobs
+                        e.PrefetchCount = 1;               // tune
+                        e.ConcurrentMessageLimit = 1;       // tune
+
+                        // Bind to your topic exchange with explicit keys
+                        e.Bind(settings.Exchange, b =>
                         {
-                            configurator.ExchangeType = "topic";
-                            configurator.RoutingKey = string.Join('.', RoutingKeys.LotteryResults, EventTypes.EurojackpotDraw);
-                            configurator.Durable = true;
+                            b.ExchangeType = "topic";
+                            b.RoutingKey = $"{RoutingKeys.LotteryResults}.{EventTypes.EurojackpotDraw}";
+                            b.Durable = true;
                         });
 
-                        // Retries like your old ack/NACK flow (tune as needed)
-                        e.UseMessageRetry(r => r.Immediate(3));
+                        // Resiliency
+                        e.UseMessageRetry(r => r.Exponential(5, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(3)));
 
-                        // Wire the consumer
+                        // Consumer
                         e.ConfigureConsumer<QueueToMediatorConsumer<Message<EurojackpotResult>>>(context);
                     });
                 });
