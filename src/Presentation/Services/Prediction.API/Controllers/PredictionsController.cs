@@ -1,5 +1,4 @@
-﻿using JackpotPlot.Domain.Interfaces;
-using JackpotPlot.Domain.Models;
+﻿using JackpotPlot.Domain.Models;
 using JackpotPlot.Prediction.API.Application.Features.GetHotAndColdNumbersByLotteryId;
 using JackpotPlot.Prediction.API.Application.Features.GetLuckyPair;
 using JackpotPlot.Prediction.API.Application.Features.GetNumberSpread;
@@ -13,6 +12,7 @@ using System.Collections.Immutable;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
+using JackpotPlot.Domain.Predictions;
 using JackpotPlot.Primitives.Algorithms;
 
 namespace Prediction.API.Controllers;
@@ -80,7 +80,7 @@ public class PredictionsController : ControllerBase
         // Get all loaded assemblies (or limit to a specific assembly if preferred)
         var strategies = AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(a => a.GetTypes())
-            .Where(t => typeof(IPredictionStrategy).IsAssignableFrom(t)
+            .Where(t => typeof(IPredictionAlgorithm).IsAssignableFrom(t)
                         && t.IsClass
                         && !t.IsAbstract)
             .Select(t => new
@@ -183,8 +183,8 @@ public class PredictionsController : ControllerBase
     private string FormatStrategyName(string name)
     {
         // Remove 'PredictionStrategy' suffix if present
-        name = name.EndsWith("PredictionStrategy")
-            ? name.Substring(0, name.Length - "PredictionStrategy".Length)
+        name = name.EndsWith("Algorithm")
+            ? name.Substring(0, name.Length - "Algorithm".Length)
             : name;
 
         // Add spaces between words (convert PascalCase to normal text)
