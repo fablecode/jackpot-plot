@@ -1,14 +1,18 @@
 ﻿using JackpotPlot.Application.Abstractions.Messaging;
 using JackpotPlot.Application.Abstractions.Persistence.Repositories;
+using JackpotPlot.Domain.Constants;
 using JackpotPlot.Domain.Models;
+using JackpotPlot.Domain.Settings;
 using JackpotPlot.Infrastructure;
+using JackpotPlot.Infrastructure.Messaging;
 using JackpotPlot.Prediction.API.Infrastructure.Databases;
-using JackpotPlot.Prediction.API.Infrastructure.HostedServices;
 using JackpotPlot.Prediction.API.Infrastructure.Repositories;
 using JackpotPlot.Prediction.API.Infrastructure.Services.LotteryApi;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
@@ -58,14 +62,72 @@ namespace JackpotPlot.Prediction.API.Infrastructure
             };
 
             services.AddRefitClient<ILotteryService>(refitSettings)
-                .ConfigureHttpClient(c => c.BaseAddress = new Uri(baseUrl));
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri(baseUrl ?? throw new ArgumentNullException(nameof(baseUrl))));
 
             return services;
         }
 
         public static IServiceCollection AddHostedServices(this IServiceCollection services)
         {
-            services.AddHostedService<LotteryDrawnBackgroundService<Message<LotteryDrawnEvent>>>();
+            // Register the background service that will consume RabbitMQ messages
+            services.AddMassTransit(x =>
+            {
+                x.AddConsumer<QueueToMediatorConsumer<Message<LotteryDrawnEvent>>>();
+
+                // Optional: global endpoint naming for auto-mapped endpoints elsewhere
+                x.SetKebabCaseEndpointNameFormatter();
+
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.UseNewtonsoftJsonSerializer();
+                    cfg.ConfigureNewtonsoftJsonSerializer(s =>
+                    {
+                        s.NullValueHandling = NullValueHandling.Ignore;
+                        s.DateParseHandling = DateParseHandling.DateTimeOffset;
+                        return s;
+                    });
+                    cfg.ConfigureNewtonsoftJsonDeserializer(s =>
+                    {
+                        s.NullValueHandling = NullValueHandling.Ignore;
+                        return s;
+                    });
+
+                    var settings = context.GetRequiredService<IOptions<RabbitMqSettings>>().Value;
+
+                    cfg.Host(settings.Host, h =>
+                    {
+                        h.Username(settings.Username);
+                        h.Password(settings.Password);
+                    });
+
+                    // Avoid per-message exchanges from this process
+                    cfg.Publish<Message<LotteryDrawnEvent>>(topologyConfigurator => topologyConfigurator.Exclude = true);
+
+                    cfg.ReceiveEndpoint("lottery-db-update", e =>
+                    {
+                        e.ConfigureConsumeTopology = false;
+
+                        // HA / performance knobs
+                        e.PrefetchCount = 1;               // tune
+                        e.ConcurrentMessageLimit = 1;       // tune
+
+                        // Bind to your topic exchange with explicit keys
+                        e.Bind(settings.Exchange, b =>
+                        {
+                            b.ExchangeType = "topic";
+                            b.RoutingKey = $"{RoutingKeys.LotteryDbUpdate}.{EventTypes.LotteryDrawn}";
+                            b.Durable = true;
+                        });
+
+                        // Resiliency
+                        e.UseMessageRetry(r => r.Exponential(5, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(3)));
+
+                        // Consumer
+                        e.ConfigureConsumer<QueueToMediatorConsumer<Message<LotteryDrawnEvent>>>(context);
+                    });
+                });
+            });
+
 
             return services;
         }
