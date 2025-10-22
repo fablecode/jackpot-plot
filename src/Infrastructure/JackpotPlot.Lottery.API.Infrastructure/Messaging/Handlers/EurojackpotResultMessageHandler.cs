@@ -57,6 +57,7 @@ public sealed class EurojackpotResultMessageHandler : IRequestHandler<JackpotPlo
             return Result<Message<EurojackpotResult>>.Success(request.Message);
         }
 
-        return Result<Message<EurojackpotResult>>.Failure($"For event {request.Message.Event} and lottery {LotteryName} with the id {_lotteryId}, draw already exists.");
+        _logger.LogInformation("Duplicate draw for {Lottery} on {Date} ignored.", LotteryName, request.Message.Data.Date);
+        return Result<Message<EurojackpotResult>>.Success(request.Message); // ✅ ack, no retry
     }
 }
