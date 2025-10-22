@@ -1,7 +1,4 @@
 ﻿using FluentValidation;
-using JackpotPlot.Application.Abstractions.Persistence.Repositories;
-using JackpotPlot.Domain.Constants;
-using JackpotPlot.Domain.Interfaces;
 using JackpotPlot.Domain.Predictions;
 using JackpotPlot.Domain.Predictions.Algorithms;
 using JackpotPlot.Primitives.Algorithms;
