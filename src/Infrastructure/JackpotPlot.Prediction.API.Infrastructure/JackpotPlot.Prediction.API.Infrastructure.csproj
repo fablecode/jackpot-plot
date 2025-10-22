@@ -7,6 +7,7 @@
   </PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="MassTransit.Newtonsoft" Version="8.5.4" />
 		<PackageReference Include="MediatR" Version="13.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.2">
 			<PrivateAssets>all</PrivateAssets>
