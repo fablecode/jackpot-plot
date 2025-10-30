@@ -23,6 +23,7 @@
 
 	<ItemGroup>
 	  <Folder Include="ServicesTests\ClusteringAnalysisAlgorithmTests\" />
+	  <Folder Include="ServicesTests\ConsecutiveNumbersAlgorithmTests\" />
 	</ItemGroup>
 
 
