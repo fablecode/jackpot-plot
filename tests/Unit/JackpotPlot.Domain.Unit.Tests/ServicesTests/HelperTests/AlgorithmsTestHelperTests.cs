@@ -12,4 +12,13 @@ public static class AlgorithmsTestHelperTests
             WinningNumbers: main.ToList(),
             BonusNumbers: new List<int>(),
             CreatedAt: DateTime.UtcNow);
+
+    public static HistoricalDraw Draw(DateTime date, params int[] main) =>
+        new(
+            DrawId: date.Day,
+            LotteryId: 1,
+            DrawDate: date,
+            WinningNumbers: main.ToList(),
+            BonusNumbers: new List<int>(),
+            CreatedAt: date);
 }
