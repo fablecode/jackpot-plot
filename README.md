@@ -1,3 +1,5 @@
+[![Build Status](https://fablecode.visualstudio.com/jackpotplot/_apis/build/status%2Ffablecode.jackpot-plot?branchName=main)](https://fablecode.visualstudio.com/jackpotplot/_build/latest?definitionId=25&branchName=main)
+
 # 🎰 Jackpot Plot
 
 Jackpot Plot is a microservices-based application that predicts lottery outcomes using historical data collection and ML-based prediction services. It features secure authentication with Keycloak, event-driven messaging via RabbitMQ, and centralized logging through Seq — all orchestrated with Docker Compose.
