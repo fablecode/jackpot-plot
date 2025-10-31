@@ -24,6 +24,7 @@
 	<ItemGroup>
 	  <Folder Include="ServicesTests\ClusteringAnalysisAlgorithmTests\" />
 	  <Folder Include="ServicesTests\ConsecutiveNumbersAlgorithmTests\" />
+	  <Folder Include="ServicesTests\DeltaSystemAlgorithmTests\" />
 	</ItemGroup>
 
 
