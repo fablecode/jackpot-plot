@@ -9,12 +9,12 @@ public static class CyclicPatternsAlgorithmHelpers
     {
         var cycles = new Dictionary<int, List<int>>(capacity: numberRange);
 
-        for (int number = 1; number <= numberRange; number++)
+        for (var number = 1; number <= numberRange; number++)
         {
             var gaps = new List<int>();
             var lastIdx = -1;
 
-            for (int i = 0; i < draws.Count; i++)
+            for (var i = 0; i < draws.Count; i++)
             {
                 if (draws[i].WinningNumbers.Contains(number))
                 {
