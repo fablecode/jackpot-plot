@@ -1,5 +1,5 @@
 # ========================== Jackpot CI ==========================
-# Runs: Restore → Build → Test (Unit & Integration) → Coverage Merge + Gate → Publish Reports
+# Runs: Restore → Build → Unit Tests (auto-discovered) → Coverage Merge + Gate → Integration Tests → Publish Reports
 # =================================================================
 
 trigger:
@@ -45,73 +45,72 @@ steps:
     displayName: 'Install coverlet + reportgenerator'
 
   # ---------------- Unit Tests + Coverage + Gate ----------------
-- script: |
-    set -euo pipefail
+  - script: |
+      set -euo pipefail
 
-    OUT_ROOT="$(Build.SourcesDirectory)/TestResults"
-    TRX_DIR="$OUT_ROOT"
-    COV_DIR="$OUT_ROOT/coverage"
-    HTML_DIR="$OUT_ROOT/Coverage/Report"
-    mkdir -p "$TRX_DIR" "$COV_DIR" "$HTML_DIR"
+      OUT_ROOT="$(Build.SourcesDirectory)/TestResults"
+      TRX_DIR="$OUT_ROOT"
+      COV_DIR="$OUT_ROOT/coverage"
+      HTML_DIR="$OUT_ROOT/Coverage/Report"
+      mkdir -p "$TRX_DIR" "$COV_DIR" "$HTML_DIR"
 
-    threshold=$(COVERAGE_THRESHOLD)
-    echo "Coverage threshold (line,total): ${threshold}%"
+      threshold=$(COVERAGE_THRESHOLD)
+      echo "Coverage threshold (line,total): ${threshold}%"
 
-    # Discover Unit test projects
-    mapfile -t UNIT_TESTS < <(git ls-files '**/*Unit.Tests.csproj' | sort)
-    if [ "${#UNIT_TESTS[@]}" -eq 0 ]; then
-      echo "No Unit test projects found."
-      exit 1
-    fi
-
-    MERGED_JSON=""   # path of the first result; used for --merge-with
-
-    for csproj in "${UNIT_TESTS[@]}"; do
-      name="$(basename "$csproj")"            # e.g. JackpotPlot.Domain.Unit.Tests.csproj
-      base="${name%.csproj}"                  # JackpotPlot.Domain.Unit.Tests
-      sut_prefix="${base%.Unit.Tests}"        # JackpotPlot.Domain
-      if [[ "$sut_prefix" == "$base" ]]; then sut_prefix="JackpotPlot"; fi
-
-      include_filter="[${sut_prefix}*]*"
-      test_assembly_glob="$(dirname "$csproj")/bin/$(BUILD_CONFIGURATION)/**/${base}.dll"
-      out_json="$COV_DIR/${base}.json"        # <-- explicit file path
-
-      echo ">>> Running: $name"
-      echo "    SUT Include: $include_filter"
-      echo "    Output JSON: $out_json"
-
-      # Run coverlet wrapping dotnet test
-      if [ -n "$MERGED_JSON" ]; then
-        coverlet $test_assembly_glob \
-          --target "dotnet" \
-          --targetargs "test \"$csproj\" -c $(BUILD_CONFIGURATION) --no-build --logger trx;LogFileName=${base}.trx --results-directory \"$TRX_DIR\"" \
-          --include "$include_filter" \
-          --exclude-by-file "$(COVERAGE_EXCLUDE_BY_FILE)" \
-          --format json \
-          --output "$out_json" \
-          --merge-with "$MERGED_JSON"
-      else
-        coverlet $test_assembly_glob \
-          --target "dotnet" \
-          --targetargs "test \"$csproj\" -c $(BUILD_CONFIGURATION) --no-build --logger trx;LogFileName=${base}.trx --results-directory \"$TRX_DIR\"" \
-          --include "$include_filter" \
-          --exclude-by-file "$(COVERAGE_EXCLUDE_BY_FILE)" \
-          --format json \
-          --output "$out_json"
-        MERGED_JSON="$out_json"   # <-- first file becomes the merge anchor
+      # Discover Unit test projects
+      mapfile -t UNIT_TESTS < <(git ls-files '**/*Unit.Tests.csproj' | sort)
+      if [ "${#UNIT_TESTS[@]}" -eq 0 ]; then
+        echo "No Unit test projects found."
+        exit 1
       fi
-    done
 
-    echo ">>> Enforcing coverage gate on merged json: $MERGED_JSON"
-    coverlet "$MERGED_JSON" --target "true" \
-      --threshold "$threshold" --threshold-type line --threshold-stat total
+      MERGED_JSON=""   # first file becomes the merge anchor
 
-    echo ">>> Generating HTML + Cobertura"
-    reportgenerator \
-      -reports:"$COV_DIR/*.json" \
-      -targetdir:"$HTML_DIR" \
-      -reporttypes:"Cobertura;HtmlInline_AzurePipelines"
-  displayName: 'Unit tests: merge coverage + gate + report'
+      for csproj in "${UNIT_TESTS[@]}"; do
+        name="$(basename "$csproj")"            # e.g. JackpotPlot.Domain.Unit.Tests.csproj
+        base="${name%.csproj}"                  # JackpotPlot.Domain.Unit.Tests
+        sut_prefix="${base%.Unit.Tests}"        # JackpotPlot.Domain
+        if [[ "$sut_prefix" == "$base" ]]; then sut_prefix="JackpotPlot"; fi
+
+        include_filter="[${sut_prefix}*]*"
+        test_assembly_glob="$(dirname "$csproj")/bin/$(BUILD_CONFIGURATION)/**/${base}.dll"
+        out_json="$COV_DIR/${base}.json"        # explicit file path (prevents 'cannot stat' issues)
+
+        echo ">>> Running: $name"
+        echo "    SUT Include: $include_filter"
+        echo "    Output JSON: $out_json"
+
+        if [ -n "$MERGED_JSON" ]; then
+          coverlet $test_assembly_glob \
+            --target "dotnet" \
+            --targetargs "test \"$csproj\" -c $(BUILD_CONFIGURATION) --no-build --logger trx;LogFileName=${base}.trx --results-directory \"$TRX_DIR\"" \
+            --include "$include_filter" \
+            --exclude-by-file "$(COVERAGE_EXCLUDE_BY_FILE)" \
+            --format json \
+            --output "$out_json" \
+            --merge-with "$MERGED_JSON"
+        else
+          coverlet $test_assembly_glob \
+            --target "dotnet" \
+            --targetargs "test \"$csproj\" -c $(BUILD_CONFIGURATION) --no-build --logger trx;LogFileName=${base}.trx --results-directory \"$TRX_DIR\"" \
+            --include "$include_filter" \
+            --exclude-by-file "$(COVERAGE_EXCLUDE_BY_FILE)" \
+            --format json \
+            --output "$out_json"
+          MERGED_JSON="$out_json"
+        fi
+      done
+
+      echo ">>> Enforcing coverage gate on merged json: $MERGED_JSON"
+      coverlet "$MERGED_JSON" --target "true" \
+        --threshold "$threshold" --threshold-type line --threshold-stat total
+
+      echo ">>> Generating HTML + Cobertura"
+      reportgenerator \
+        -reports:"$COV_DIR/*.json" \
+        -targetdir:"$HTML_DIR" \
+        -reporttypes:"Cobertura;HtmlInline_AzurePipelines"
+    displayName: 'Unit tests: merge coverage + gate + report'
 
   # ---------------- Publish Unit Test Results ----------------
   - task: PublishTestResults@2
