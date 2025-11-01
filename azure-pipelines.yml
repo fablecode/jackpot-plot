@@ -1,5 +1,5 @@
 # ========================== Jackpot CI ==========================
-# Runs: Restore → Build → Unit Tests (auto-discovered) → Coverage Merge + Gate → Integration Tests → Publish Reports
+# Runs: Restore → Build → Unit Tests (auto-discovered) → Coverage Merge + Gate (JsonSummary) → Integration Tests → Publish Reports
 # =================================================================
 
 trigger:
@@ -9,7 +9,7 @@ variables:
   DOTNET_SDK: '8.0.x'
   BUILD_CONFIGURATION: 'Release'
   SOLUTION: 'JackpotPlot.sln'
-  COVERAGE_THRESHOLD: '10'                       # Minimum total line % required (gate)
+  COVERAGE_THRESHOLD: '70'                       # Minimum total line % required (gate)
   COVERAGE_EXCLUDE_BY_FILE: '**/Migrations/*.cs;**/Generated/**/*.cs;**/bin/**;**/obj/**'
   NUGET_PACKAGES: '$(Pipeline.Workspace)/.nuget/packages'
 
@@ -28,6 +28,15 @@ steps:
       packageType: 'sdk'
       version: '$(DOTNET_SDK)'
 
+  # ---------------- NuGet Cache ----------------
+  - task: Cache@2
+    displayName: 'Cache NuGet packages'
+    inputs:
+      key: 'nuget | "$(Agent.OS)" | **/packages.lock.json'
+      restoreKeys: |
+        nuget | "$(Agent.OS)"
+      path: '$(NUGET_PACKAGES)'
+
   # ---------------- Restore & Build ----------------
   - script: |
       set -euo pipefail
@@ -44,7 +53,7 @@ steps:
       echo '##vso[task.prependpath]'"$HOME/.dotnet/tools"
     displayName: 'Install coverlet + reportgenerator'
 
-  # ---------------- Unit Tests + Coverage + Gate ----------------
+  # ---------------- Unit Tests + Coverage + Gate (JsonSummary) ----------------
   - script: |
       set -euo pipefail
 
@@ -52,6 +61,7 @@ steps:
       TRX_DIR="$OUT_ROOT"
       COV_DIR="$OUT_ROOT/coverage"
       HTML_DIR="$OUT_ROOT/Coverage/Report"
+      SUMMARY_JSON="$HTML_DIR/Summary.json"
       mkdir -p "$TRX_DIR" "$COV_DIR" "$HTML_DIR"
 
       threshold=$(COVERAGE_THRESHOLD)
@@ -64,7 +74,7 @@ steps:
         exit 1
       fi
 
-      MERGED_JSON=""   # first file becomes the merge anchor
+      MERGED_JSON=""
 
       for csproj in "${UNIT_TESTS[@]}"; do
         name="$(basename "$csproj")"            # e.g. JackpotPlot.Domain.Unit.Tests.csproj
@@ -74,13 +84,13 @@ steps:
 
         include_filter="[${sut_prefix}*]*"
         test_assembly_glob="$(dirname "$csproj")/bin/$(BUILD_CONFIGURATION)/**/${base}.dll"
-        out_json="$COV_DIR/${base}.json"        # explicit file path (prevents 'cannot stat' issues)
+        out_json="$COV_DIR/${base}.json"
 
         echo ">>> Running: $name"
         echo "    SUT Include: $include_filter"
         echo "    Output JSON: $out_json"
 
-        if [ -n "$MERGED_JSON" ]; then
+        if [ -n "${MERGED_JSON}" ]; then
           coverlet $test_assembly_glob \
             --target "dotnet" \
             --targetargs "test \"$csproj\" -c $(BUILD_CONFIGURATION) --no-build --logger trx;LogFileName=${base}.trx --results-directory \"$TRX_DIR\"" \
@@ -97,19 +107,37 @@ steps:
             --exclude-by-file "$(COVERAGE_EXCLUDE_BY_FILE)" \
             --format json \
             --output "$out_json"
-          MERGED_JSON="$out_json"
         fi
+
+        # Always advance the merge anchor to the latest file
+        MERGED_JSON="$out_json"
       done
 
-      echo ">>> Enforcing coverage gate on merged json: $MERGED_JSON"
-      coverlet "$MERGED_JSON" --target "true" \
-        --threshold "$threshold" --threshold-type line --threshold-stat total
-
-      echo ">>> Generating HTML + Cobertura"
+      echo ">>> Generating HTML + Cobertura + JsonSummary"
       reportgenerator \
         -reports:"$COV_DIR/*.json" \
         -targetdir:"$HTML_DIR" \
-        -reporttypes:"Cobertura;HtmlInline_AzurePipelines"
+        -reporttypes:"Cobertura;HtmlInline_AzurePipelines;JsonSummary"
+
+      echo ">>> Gating from JsonSummary: $SUMMARY_JSON"
+      if ! command -v jq >/dev/null 2>&1; then
+        sudo apt-get update -y && sudo apt-get install -y jq
+      fi
+
+      # ReportGenerator JsonSummary -> summary.lineCoverage (e.g., 13.84)
+      line_cov=$(jq -r '.summary.lineCoverage' "$SUMMARY_JSON")
+      echo "Total line coverage: ${line_cov}%"
+
+      # Compare as integers to avoid float quirks
+      lc_int=$(printf "%.0f" "$line_cov")
+      th_int=$(printf "%.0f" "$threshold")
+
+      if [ "$lc_int" -lt "$th_int" ]; then
+        echo "Coverage gate FAILED: ${line_cov}% < ${threshold}%"
+        exit 2
+      else
+        echo "Coverage gate PASSED: ${line_cov}% ≥ ${threshold}%"
+      fi
     displayName: 'Unit tests: merge coverage + gate + report'
 
   # ---------------- Publish Unit Test Results ----------------
