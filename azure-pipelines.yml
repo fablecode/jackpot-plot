@@ -188,10 +188,10 @@ steps:
 
   # ---------------- Verify coverage files for publish ----------------
   - script: |
-    set -euxo pipefail
-    echo "Expecting Cobertura at: $(System.DefaultWorkingDirectory)/TestResults/Coverage/Report/Cobertura.xml"
-    ls -la "$(System.DefaultWorkingDirectory)/TestResults/Coverage/Report" || true
-    test -f "$(System.DefaultWorkingDirectory)/TestResults/Coverage/Report/Cobertura.xml"
+      set -euxo pipefail
+      echo "Expecting Cobertura at: $(System.DefaultWorkingDirectory)/TestResults/Coverage/Report/Cobertura.xml"
+      ls -la "$(System.DefaultWorkingDirectory)/TestResults/Coverage/Report" || true
+      test -f "$(System.DefaultWorkingDirectory)/TestResults/Coverage/Report/Cobertura.xml"
     displayName: 'Verify Cobertura.xml exists for publish'
 
   # ---------------- Publish Code Coverage ----------------
@@ -209,7 +209,7 @@ steps:
       set -euo pipefail
       mapfile -t INTEGRATION_TESTS < <(git ls-files '**/*Integration.Tests.csproj' | sort)
       if [ "${#INTEGRATION_TESTS[@]}" -gt 0 ]; then
-        for csproj in "${INTEGRRATION_TESTS[@]}"; do
+        for csproj in "${INTEGRATION_TESTS[@]}"; do
           dotnet test "$csproj" -c "$(BUILD_CONFIGURATION)" --no-build \
             --logger trx;LogFileName="$(basename "${csproj%.csproj}").trx" \
             --results-directory "$(Build.SourcesDirectory)/TestResults"
