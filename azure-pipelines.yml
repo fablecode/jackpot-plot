@@ -120,31 +120,37 @@ steps:
         exit 3
       fi
 
-      # Extract total line coverage. Try multiple schema variants used by ReportGenerator.
-      # If those fail, derive % from counts (coveredlines / totallines or coverablelines).
-      line_cov="$(
+      # --- Robust coverage extraction: explicit % OR derive from counters ---
+      pct_raw="$(
         jq -r '
-          def asnum: if type=="string" then (try tonumber catch empty) else . end;
-          def pct(x;y): ( (x|asnum) as $x | (y|asnum) as $y | if ($y==0 or $y==null) then empty else (100 * ($x / $y)) end );
-
-          (
-            # Newer schema: metrics array with name "Line"
-            (.report.metrics[]? | select((.name // "") | ascii_downcase == "line") | .coverage) //
-            # Some builds: summary.coverage.line
-            (.summary.coverage?.line) //
-            # Legacy (PascalCase/camelCase/lowercase)
-            (.summary.LineCoverage // .summary.lineCoverage // .summary.linecoverage) //
-            # Derive from counters if explicit % is missing
-            pct(.summary.coveredlines; .summary.totallines) //
-            pct(.summary.coveredlines; .summary.coverablelines)
-          ) | asnum
+          # explicit % in various schemas
+          (.report.metrics[]? | select((.name // "") | ascii_downcase == "line") | .coverage) //
+          (.summary.coverage?.line) //
+          (.summary.LineCoverage // .summary.lineCoverage // .summary.linecoverage) //
+          empty
         ' "$SUMMARY_JSON"
       )"
 
-      if [ -z "${line_cov:-}" ] || [ "$line_cov" = "null" ]; then
-        echo "ERROR: Could not read total line coverage from $SUMMARY_JSON"
-        echo "Schema keys (for debugging):"
-        jq -r 'paths | map(tostring) | join(".")' "$SUMMARY_JSON" | sort -u | sed 's/^/  - /'
+      if [ -n "${pct_raw:-}" ] && [ "$pct_raw" != "null" ]; then
+        line_cov="$pct_raw"
+      else
+        covered=$(jq -r '.summary.coveredlines // .summary.coveredLines // 0' "$SUMMARY_JSON")
+        total=$(jq -r '.summary.totallines // .summary.totalLines // .summary.coverablelines // 0' "$SUMMARY_JSON")
+
+        echo "Coverage counters from Summary.json: coveredlines=$covered, totallines=$total"
+
+        # compute percentage safely in bash (awk)
+        if awk "BEGIN{exit !($total > 0)}"; then
+          line_cov=$(awk -v c="$covered" -v t="$total" 'BEGIN{printf "%.2f", (100.0*c)/t}')
+        else
+          line_cov=""
+        fi
+      fi
+      # --- end robust extraction ---
+
+      if [ -z "${line_cov:-}" ]; then
+        echo "ERROR: Could not read/derive total line coverage from $SUMMARY_JSON"
+        echo "Summary preview:" && jq -r '{linecoverage,coveredlines,totallines,coverablelines}' "$SUMMARY_JSON"
         exit 3
       fi
 
