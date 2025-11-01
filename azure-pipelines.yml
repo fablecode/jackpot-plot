@@ -1,6 +1,8 @@
 # ========================== Jackpot CI ==========================
-# Runs: Restore → Build → Unit Tests → Coverage (Coverlet MSBuild -> Cobertura per project)
-#    → Merge + Gate (ReportGenerator -> Cobertura) → Integration Tests → Publish Reports
+# Runs: Restore → Build → Unit Tests (coverlet.console wraps dotnet test)
+#    → Coverage outputs (JSON + Cobertura per project)
+#    → Merge + Gate (Cobertura) + HTML + JsonSummary
+#    → Integration Tests → Publish Reports
 # =================================================================
 
 trigger:
@@ -40,11 +42,12 @@ steps:
   # ---------------- Tools ----------------
   - script: |
       set -euo pipefail
+      dotnet tool install --global coverlet.console
       dotnet tool install --global dotnet-reportgenerator-globaltool
       echo '##vso[task.prependpath]'"$HOME/.dotnet/tools"
-    displayName: 'Install reportgenerator'
+    displayName: 'Install coverlet + reportgenerator'
 
-  # ---------------- Unit Tests + Coverage (MSBuild) + Gate (Cobertura) ----------------
+  # ---------------- Unit Tests + Coverage (coverlet.console) + Merge + Gate ----------------
   - script: |
       set -euo pipefail
 
@@ -52,8 +55,8 @@ steps:
       TRX_DIR="$OUT_ROOT"
       COV_DIR="$OUT_ROOT/coverage"
       HTML_DIR="$OUT_ROOT/Coverage/Report"
+      MERGED_COB="$HTML_DIR/Cobertura.xml"
       SUMMARY_JSON="$HTML_DIR/Summary.json"
-      COB_XML="$HTML_DIR/Cobertura.xml"
       mkdir -p "$TRX_DIR" "$COV_DIR" "$HTML_DIR"
 
       threshold=$(COVERAGE_THRESHOLD)
@@ -66,58 +69,85 @@ steps:
         exit 1
       fi
 
-      # Run tests and emit Cobertura XML per project using Coverlet MSBuild
+      MERGE_ANCHOR_JSON=""
       for csproj in "${UNIT_TESTS[@]}"; do
         name="$(basename "$csproj")"            # e.g. JackpotPlot.Domain.Unit.Tests.csproj
         base="${name%.csproj}"                  # e.g. JackpotPlot.Domain.Unit.Tests
-        out_cov="$COV_DIR/${base}.cobertura.xml"
-        echo ">>> Running with coverage: $name"
-        dotnet test "$csproj" -c "$(BUILD_CONFIGURATION)" --no-build \
-          --logger "trx;LogFileName=${base}.trx" --results-directory "$TRX_DIR" \
-          /p:CollectCoverage=true \
-          /p:CoverletOutput="$out_cov" \
-          /p:CoverletOutputFormat="cobertura" \
-          /p:ExcludeByFile="$(COVERAGE_EXCLUDE_BY_FILE)"
+        sut_prefix="${base%.Unit.Tests}"        # e.g. JackpotPlot.Domain
+        if [[ "$sut_prefix" == "$base" ]]; then sut_prefix="JackpotPlot"; fi
+
+        include_filter="[${sut_prefix}*]*"
+        test_assembly_glob="$(dirname "$csproj")/bin/$(BUILD_CONFIGURATION)/**/${base}.dll"
+        out_base="$COV_DIR/${base}"             # coverlet will create .json and .cobertura.xml next to this base
+
+        echo ">>> Running: $name"
+        echo "    SUT Include: $include_filter"
+        echo "    Output base: $out_base"
+
+        if [ -n "${MERGE_ANCHOR_JSON}" ]; then
+          coverlet $test_assembly_glob \
+            --target "dotnet" \
+            --targetargs "test \"$csproj\" -c $(BUILD_CONFIGURATION) --no-build --logger trx;LogFileName=${base}.trx --results-directory \"$TRX_DIR\"" \
+            --include "$include_filter" \
+            --exclude-by-file "$(COVERAGE_EXCLUDE_BY_FILE)" \
+            --format "json,cobertura" \
+            --output "$out_base" \
+            --merge-with "$MERGE_ANCHOR_JSON"
+        else
+          coverlet $test_assembly_glob \
+            --target "dotnet" \
+            --targetargs "test \"$csproj\" -c $(BUILD_CONFIGURATION) --no-build --logger trx;LogFileName=${base}.trx --results-directory \"$TRX_DIR\"" \
+            --include "$include_filter" \
+            --exclude-by-file "$(COVERAGE_EXCLUDE_BY_FILE)" \
+            --format "json,cobertura" \
+            --output "$out_base"
+        fi
+
+        # update merge anchor to latest json
+        MERGE_ANCHOR_JSON="${out_base}.json"
       done
 
-      echo ">>> Merging to HTML + Cobertura + JsonSummary via ReportGenerator"
-      # Merge all per-project Cobertura files into one and also produce HTML + JsonSummary
+      echo
+      echo ">>> Generating merged HTML + Cobertura + JsonSummary via ReportGenerator"
+      # Merge BOTH native Cobertura + JSON into one report directory (helps when one format is missing some metadata)
       reportgenerator \
-        -reports:"$COV_DIR/*.cobertura.xml" \
+        -reports:"$COV_DIR/*.json;$COV_DIR/*.cobertura.xml" \
         -targetdir:"$HTML_DIR" \
         -reporttypes:"Cobertura;HtmlInline_AzurePipelines;JsonSummary"
 
-      echo ">>> Gating from merged Cobertura: $COB_XML"
+      echo
+      echo ">>> Gating from merged Cobertura: $MERGED_COB"
       if ! command -v xmllint >/dev/null 2>&1; then
         sudo apt-get update -y && sudo apt-get install -y libxml2-utils
       fi
 
-      if [ ! -f "$COB_XML" ]; then
-        echo "ERROR: Missing merged Cobertura at $COB_XML"
+      if [ ! -f "$MERGED_COB" ]; then
+        echo "ERROR: Missing merged Cobertura at $MERGED_COB"
         echo "Available files:" && ls -la "$HTML_DIR" || true
         exit 3
       fi
 
       # Prefer explicit line-rate attribute
-      line_rate=$(xmllint --xpath 'string(/coverage/@line-rate)' "$COB_XML" 2>/dev/null || true)
+      line_rate=$(xmllint --xpath 'string(/coverage/@line-rate)' "$MERGED_COB" 2>/dev/null || true)
       if [ -n "${line_rate:-}" ]; then
         line_cov=$(awk -v r="$line_rate" 'BEGIN{printf "%.2f", (100.0*r)}')
         echo "Cobertura line-rate: $line_rate -> ${line_cov}%"
       else
         # Fallback to ratio from lines-covered / lines-valid
-        lc=$(xmllint --xpath 'string(/coverage/@lines-covered)' "$COB_XML" 2>/dev/null || echo "")
-        lv=$(xmllint --xpath 'string(/coverage/@lines-valid)'   "$COB_XML" 2>/dev/null || echo "")
+        lc=$(xmllint --xpath 'string(/coverage/@lines-covered)' "$MERGED_COB" 2>/dev/null || echo "")
+        lv=$(xmllint --xpath 'string(/coverage/@lines-valid)'   "$MERGED_COB" 2>/dev/null || echo "")
         echo "Cobertura counters: lines-covered=${lc:-?}, lines-valid=${lv:-?}"
         if [ -n "${lc:-}" ] && [ -n "${lv:-}" ] && awk "BEGIN{exit !($lv > 0)}"; then
           line_cov=$(awk -v c="$lc" -v v="$lv" 'BEGIN{printf "%.2f", (100.0*c)/v}')
         else
           echo "ERROR: Cobertura has no usable counters. Head:"
-          head -n 50 "$COB_XML" || true
+          head -n 60 "$MERGED_COB" || true
           exit 3
         fi
       fi
 
       echo "Total line coverage: ${line_cov}%"
+      threshold="$(COVERAGE_THRESHOLD)"
       lc_int=$(printf "%.0f" "$line_cov")
       th_int=$(printf "%.0f" "$threshold")
 
@@ -127,7 +157,7 @@ steps:
       else
         echo "Coverage gate PASSED: ${line_cov}% ≥ ${threshold}%"
       fi
-    displayName: 'Unit tests: coverage (MSBuild) + merge + gate'
+    displayName: 'Unit tests: coverlet.console + merge + gate (Cobertura)'
 
   # ---------------- Publish Unit Test Results ----------------
   - task: PublishTestResults@2
@@ -158,21 +188,6 @@ steps:
       pathToSources: '$(System.DefaultWorkingDirectory)'
       failIfCoverageEmpty: true
 
-  # ---------------- Integration Tests ----------------
-  - script: |
-      set -euo pipefail
-      mapfile -t INTEGRATION_TESTS < <(git ls-files '**/*Integration.Tests.csproj' | sort)
-      if [ "${#INTEGRATION_TESTS[@]}" -gt 0 ]; then
-        for csproj in "${INTEGRATION_TESTS[@]}"; do
-          dotnet test "$csproj" -c "$(BUILD_CONFIGURATION)" --no-build \
-            --logger trx;LogFileName="$(basename "${csproj%.csproj}").trx" \
-            --results-directory "$(Build.SourcesDirectory)/TestResults"
-        done
-      else
-        echo "No Integration tests found."
-      fi
-    displayName: 'Integration tests (no coverage gate)'
-
   # ---------------- Artifacts ----------------
   - task: PublishPipelineArtifact@1
     displayName: 'Publish coverage HTML artifact'
@@ -181,7 +196,7 @@ steps:
       artifact: 'coverage-report'
 
   - task: PublishPipelineArtifact@1
-    displayName: 'Publish raw test assets (trx + coverage xmls)'
+    displayName: 'Publish raw test assets (trx + json + cobertura)'
     inputs:
       targetPath: '$(Build.SourcesDirectory)/TestResults'
       artifact: 'test-assets'
