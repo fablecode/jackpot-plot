@@ -1,5 +1,6 @@
 # ========================== Jackpot CI ==========================
-# Runs: Restore → Build → Unit Tests (auto-discovered) → Coverage Merge + Gate (Cobertura-first, JsonSummary fallback) → Integration Tests → Publish Reports
+# Runs: Restore → Build → Unit Tests → Coverage (Coverlet MSBuild -> Cobertura per project)
+#    → Merge + Gate (ReportGenerator -> Cobertura) → Integration Tests → Publish Reports
 # =================================================================
 
 trigger:
@@ -36,15 +37,14 @@ steps:
       dotnet build "$(SOLUTION)" -c "$(BUILD_CONFIGURATION)" --no-restore
     displayName: 'dotnet restore + build'
 
-  # ---------------- Coverage Tools ----------------
+  # ---------------- Tools ----------------
   - script: |
       set -euo pipefail
-      dotnet tool install --global coverlet.console
       dotnet tool install --global dotnet-reportgenerator-globaltool
       echo '##vso[task.prependpath]'"$HOME/.dotnet/tools"
-    displayName: 'Install coverlet + reportgenerator'
+    displayName: 'Install reportgenerator'
 
-  # ---------------- Unit Tests + Coverage + Gate (Cobertura-first) ----------------
+  # ---------------- Unit Tests + Coverage (MSBuild) + Gate (Cobertura) ----------------
   - script: |
       set -euo pipefail
 
@@ -66,125 +66,58 @@ steps:
         exit 1
       fi
 
-      MERGED_JSON=""
-
+      # Run tests and emit Cobertura XML per project using Coverlet MSBuild
       for csproj in "${UNIT_TESTS[@]}"; do
         name="$(basename "$csproj")"            # e.g. JackpotPlot.Domain.Unit.Tests.csproj
-        base="${name%.csproj}"                  # JackpotPlot.Domain.Unit.Tests
-        sut_prefix="${base%.Unit.Tests}"        # JackpotPlot.Domain
-        if [[ "$sut_prefix" == "$base" ]]; then sut_prefix="JackpotPlot"; fi
-
-        include_filter="[${sut_prefix}*]*"
-        test_assembly_glob="$(dirname "$csproj")/bin/$(BUILD_CONFIGURATION)/**/${base}.dll"
-        out_json="$COV_DIR/${base}.json"
-
-        echo ">>> Running: $name"
-        echo "    SUT Include: $include_filter"
-        echo "    Output JSON: $out_json"
-
-        if [ -n "${MERGED_JSON}" ]; then
-          coverlet $test_assembly_glob \
-            --target "dotnet" \
-            --targetargs "test \"$csproj\" -c $(BUILD_CONFIGURATION) --no-build --logger trx;LogFileName=${base}.trx --results-directory \"$TRX_DIR\"" \
-            --include "$include_filter" \
-            --exclude-by-file "$(COVERAGE_EXCLUDE_BY_FILE)" \
-            --format json \
-            --output "$out_json" \
-            --merge-with "$MERGED_JSON"
-        else
-          coverlet $test_assembly_glob \
-            --target "dotnet" \
-            --targetargs "test \"$csproj\" -c $(BUILD_CONFIGURATION) --no-build --logger trx;LogFileName=${base}.trx --results-directory \"$TRX_DIR\"" \
-            --include "$include_filter" \
-            --exclude-by-file "$(COVERAGE_EXCLUDE_BY_FILE)" \
-            --format json \
-            --output "$out_json"
-        fi
-
-        MERGED_JSON="$out_json"
+        base="${name%.csproj}"                  # e.g. JackpotPlot.Domain.Unit.Tests
+        out_cov="$COV_DIR/${base}.cobertura.xml"
+        echo ">>> Running with coverage: $name"
+        dotnet test "$csproj" -c "$(BUILD_CONFIGURATION)" --no-build \
+          --logger "trx;LogFileName=${base}.trx" --results-directory "$TRX_DIR" \
+          /p:CollectCoverage=true \
+          /p:CoverletOutput="$out_cov" \
+          /p:CoverletOutputFormat="cobertura" \
+          /p:ExcludeByFile="$(COVERAGE_EXCLUDE_BY_FILE)"
       done
 
-      echo ">>> Generating HTML + Cobertura + JsonSummary"
+      echo ">>> Merging to HTML + Cobertura + JsonSummary via ReportGenerator"
+      # Merge all per-project Cobertura files into one and also produce HTML + JsonSummary
       reportgenerator \
-        -reports:"$COV_DIR/*.json" \
+        -reports:"$COV_DIR/*.cobertura.xml" \
         -targetdir:"$HTML_DIR" \
         -reporttypes:"Cobertura;HtmlInline_AzurePipelines;JsonSummary"
 
-      echo ">>> Gating (Cobertura-first):"
-      if ! command -v jq >/dev/null 2>&1; then
-        sudo apt-get update -y && sudo apt-get install -y jq
-      fi
+      echo ">>> Gating from merged Cobertura: $COB_XML"
       if ! command -v xmllint >/dev/null 2>&1; then
         sudo apt-get update -y && sudo apt-get install -y libxml2-utils
       fi
 
-      # --------- Try Cobertura.xml first ----------
-      if [ -f "$COB_XML" ]; then
-        line_rate=$(xmllint --xpath 'string(/coverage/@line-rate)' "$COB_XML" 2>/dev/null || true)
-
-        if [ -n "${line_rate:-}" ]; then
-          line_cov=$(awk -v r="$line_rate" 'BEGIN{printf "%.2f", (100.0*r)}')
-          echo "Cobertura line-rate: $line_rate -> ${line_cov}%"
-        else
-          lc=$(xmllint --xpath 'string(/coverage/@lines-covered)' "$COB_XML" 2>/dev/null || echo "")
-          lv=$(xmllint --xpath 'string(/coverage/@lines-valid)'   "$COB_XML" 2>/dev/null || echo "")
-          echo "Cobertura counters: lines-covered=${lc:-?}, lines-valid=${lv:-?}"
-
-          if [ -n "${lc:-}" ] && [ -n "${lv:-}" ] && awk "BEGIN{exit !($lv > 0)}"; then
-            line_cov=$(awk -v c="$lc" -v v="$lv" 'BEGIN{printf "%.2f", (100.0*c)/v}')
-          else
-            line_cov=""
-          fi
-        fi
-      else
-        echo "WARNING: Missing Cobertura.xml at $COB_XML"
-        line_cov=""
-      fi
-
-      # --------- If Cobertura failed, try JsonSummary fallback ----------
-      if [ -z "${line_cov:-}" ]; then
-        echo "Falling back to JsonSummary: $SUMMARY_JSON"
-        if [ ! -f "$SUMMARY_JSON" ]; then
-          echo "ERROR: Missing $SUMMARY_JSON"
-          exit 3
-        fi
-
-        pct_raw="$(
-          jq -r '
-            (.report.metrics[]? | select((.name // "") | ascii_downcase == "line") | .coverage) //
-            (.summary.coverage?.line) //
-            (.summary.LineCoverage // .summary.lineCoverage // .summary.linecoverage) //
-            empty
-          ' "$SUMMARY_JSON"
-        )"
-
-        if [ -n "${pct_raw:-}" ] && [ "$pct_raw" != "null" ]; then
-          line_cov="$pct_raw"
-        else
-          covered=$(jq -r '.summary.coveredlines // .summary.coveredLines // 0' "$SUMMARY_JSON")
-          total=$(jq -r '.summary.totallines // .summary.totalLines // .summary.coverablelines // 0' "$SUMMARY_JSON")
-          echo "JsonSummary counters: coveredlines=$covered, totallines=$total"
-
-          if awk "BEGIN{exit !($total > 0)}"; then
-            line_cov=$(awk -v c="$covered" -v t="$total" 'BEGIN{printf "%.2f", (100.0*c)/t}')
-          else
-            line_cov=""
-          fi
-        fi
-      fi
-
-      if [ -z "${line_cov:-}" ]; then
-        echo "ERROR: Could not determine total line coverage from either Cobertura.xml or Summary.json"
-        echo "Cobertura head:" && head -n 20 "$COB_XML" || true
-        echo "Summary preview:" && jq -r '{linecoverage,coveredlines,totallines,coverablelines}' "$SUMMARY_JSON" || true
+      if [ ! -f "$COB_XML" ]; then
+        echo "ERROR: Missing merged Cobertura at $COB_XML"
+        echo "Available files:" && ls -la "$HTML_DIR" || true
         exit 3
       fi
 
+      # Prefer explicit line-rate attribute
+      line_rate=$(xmllint --xpath 'string(/coverage/@line-rate)' "$COB_XML" 2>/dev/null || true)
+      if [ -n "${line_rate:-}" ]; then
+        line_cov=$(awk -v r="$line_rate" 'BEGIN{printf "%.2f", (100.0*r)}')
+        echo "Cobertura line-rate: $line_rate -> ${line_cov}%"
+      else
+        # Fallback to ratio from lines-covered / lines-valid
+        lc=$(xmllint --xpath 'string(/coverage/@lines-covered)' "$COB_XML" 2>/dev/null || echo "")
+        lv=$(xmllint --xpath 'string(/coverage/@lines-valid)'   "$COB_XML" 2>/dev/null || echo "")
+        echo "Cobertura counters: lines-covered=${lc:-?}, lines-valid=${lv:-?}"
+        if [ -n "${lc:-}" ] && [ -n "${lv:-}" ] && awk "BEGIN{exit !($lv > 0)}"; then
+          line_cov=$(awk -v c="$lc" -v v="$lv" 'BEGIN{printf "%.2f", (100.0*c)/v}')
+        else
+          echo "ERROR: Cobertura has no usable counters. Head:"
+          head -n 50 "$COB_XML" || true
+          exit 3
+        fi
+      fi
+
       echo "Total line coverage: ${line_cov}%"
-
-      threshold="$(COVERAGE_THRESHOLD)"
-
-      # Compare as integers to avoid float quirks
       lc_int=$(printf "%.0f" "$line_cov")
       th_int=$(printf "%.0f" "$threshold")
 
@@ -194,7 +127,7 @@ steps:
       else
         echo "Coverage gate PASSED: ${line_cov}% ≥ ${threshold}%"
       fi
-    displayName: 'Unit tests: merge coverage + gate + report'
+    displayName: 'Unit tests: coverage (MSBuild) + merge + gate'
 
   # ---------------- Publish Unit Test Results ----------------
   - task: PublishTestResults@2
@@ -225,6 +158,21 @@ steps:
       pathToSources: '$(System.DefaultWorkingDirectory)'
       failIfCoverageEmpty: true
 
+  # ---------------- Integration Tests ----------------
+  - script: |
+      set -euo pipefail
+      mapfile -t INTEGRATION_TESTS < <(git ls-files '**/*Integration.Tests.csproj' | sort)
+      if [ "${#INTEGRATION_TESTS[@]}" -gt 0 ]; then
+        for csproj in "${INTEGRATION_TESTS[@]}"; do
+          dotnet test "$csproj" -c "$(BUILD_CONFIGURATION)" --no-build \
+            --logger trx;LogFileName="$(basename "${csproj%.csproj}").trx" \
+            --results-directory "$(Build.SourcesDirectory)/TestResults"
+        done
+      else
+        echo "No Integration tests found."
+      fi
+    displayName: 'Integration tests (no coverage gate)'
+
   # ---------------- Artifacts ----------------
   - task: PublishPipelineArtifact@1
     displayName: 'Publish coverage HTML artifact'
@@ -233,7 +181,7 @@ steps:
       artifact: 'coverage-report'
 
   - task: PublishPipelineArtifact@1
-    displayName: 'Publish raw test assets (trx + json)'
+    displayName: 'Publish raw test assets (trx + coverage xmls)'
     inputs:
       targetPath: '$(Build.SourcesDirectory)/TestResults'
       artifact: 'test-assets'
