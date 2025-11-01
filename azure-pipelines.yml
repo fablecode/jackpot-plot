@@ -1,4 +1,6 @@
-# Jackpot CI (Linux): GitVersion (CLI) + Build + Tests + Coverage + Publishing
+# ========================== Jackpot CI ==========================
+# Runs: Restore → Build → Test (Unit & Integration) → Coverage Merge + Gate → Publish Reports
+# =================================================================
 
 trigger:
   - main
@@ -7,206 +9,144 @@ variables:
   DOTNET_SDK: '8.0.x'
   BUILD_CONFIGURATION: 'Release'
   SOLUTION: 'JackpotPlot.sln'
-  SRC_PROJECTS: '**/*.csproj'
-  TEST_PROJECTS: '**/*Tests.csproj'
-  COVERAGE_THRESHOLD: '1' # fail build if total line coverage < threshold
-  COVERAGE_EXCLUDE_GLOBS: '["**/bin/**","**/obj/**","**/*Migrations*/*"]'
-  # Use a stable, cached NuGet folder across jobs
+  COVERAGE_THRESHOLD: '70'                       # Minimum total line % required (gate)
+  COVERAGE_EXCLUDE_BY_FILE: '**/Migrations/*.cs;**/Generated/**/*.cs;**/bin/**;**/obj/**'
   NUGET_PACKAGES: '$(Pipeline.Workspace)/.nuget/packages'
 
 pool:
   vmImage: 'ubuntu-latest'
 
 steps:
+  # ---------------- Checkout ----------------
   - checkout: self
     fetchDepth: 0
-    displayName: 'Checkout Source Code'
 
-  # Ensure .NET SDK (do this BEFORE GitVersion CLI)
+  # ---------------- .NET SDK ----------------
   - task: UseDotNet@2
-    displayName: 'Use .NET SDK $(DOTNET_SDK)'
+    displayName: "Install .NET SDK $(DOTNET_SDK)"
     inputs:
-      packageType: sdk
+      packageType: 'sdk'
       version: '$(DOTNET_SDK)'
 
-  # ---------------- GitVersion via CLI (no marketplace task needed) ----------------
-  - bash: |
-      git fetch --force --tags --prune
-      dotnet tool install -g GitVersion.Tool --version 6.*
-      export PATH="$PATH:$HOME/.dotnet/tools"
-      dotnet-gitversion /output buildserver /config GitVersion.yml /verbosity minimal
-    displayName: 'Fetch tags + GitVersion'
-
-  - bash: |
-      set -euo pipefail
-      export PATH="$PATH:$HOME/.dotnet/tools"
-
-      # ensure a helper that sets a var if it's empty/missing
-      set_var () {
-        local name="$1"
-        local val="$(printenv "$name" || true)"
-        if [ -z "$val" ]; then
-          val="$(dotnet-gitversion /showvariable "${name#GitVersion.}" /config GitVersion.yml || true)"
-          echo "##vso[task.setvariable variable=$name]$val"
-        fi
-        echo "$name=$val"
-      }
-
-      # seed any that were missing
-      set_var "GitVersion.NuGetVersionV2"
-      set_var "GitVersion.NuGetVersion"
-    displayName: 'Backfill missing GitVersion vars'
-
-
-  - bash: |
-      echo "SemVer: $(GitVersion.SemVer)"
-      echo "FullSemVer: $(GitVersion.FullSemVer)"
-      echo "Major: $(GitVersion.Major)"
-      echo "Minor: $(GitVersion.Minor)"
-      echo "Patch: $(GitVersion.Patch)"
-      echo "PreReleaseTag: $(GitVersion.PreReleaseTag)"
-      echo "InformationalVersion: $(GitVersion.InformationalVersion)"
-      echo "AssemblySemVer: $(GitVersion.AssemblySemVer)"
-      echo "AssemblySemFileVer: $(GitVersion.AssemblySemFileVer)"
-      echo "NuGetVersionV2: $(GitVersion.NuGetVersionV2)"
-      echo "NuGetVersion: $(GitVersion.NuGetVersion)"
-      echo "MajorMinorPatch: $(GitVersion.MajorMinorPatch)"
-    displayName: 'Output GitVersion variables'
-
-
-  # Set run number to the computed SemVer
-  - bash: echo "##vso[build.updatebuildnumber]$(GitVersion.SemVer)"
-    displayName: 'Set build number from GitVersion'
-
-
-  # ---------------- Restore & quality checks ----------------
-  - script: dotnet restore "$(SOLUTION)"
-    displayName: 'dotnet restore'
-
-  # Optional: verify code style (fail if formatting required). Excludes tests if you want.
-  - bash: |
-      dotnet tool install -g dotnet-format
-      export PATH="$PATH:$HOME/.dotnet/tools"
-
-      # 1) Auto-fix formatting (no --verify flag)
-      dotnet format --verbosity minimal
-
-      # 2) If anything changed, publish a patch file for devs to apply
-      git diff > format-fixes.patch || true
-      if [ -s format-fixes.patch ]; then
-        echo "Formatting changes detected; publishing format-fixes.patch"
-      else
-        echo "No formatting changes."
-      fi
-    displayName: 'Auto-fix code style (dotnet format)'
-    continueOnError: true  # do not fail the build even if format found issues
-
-  - task: PublishPipelineArtifact@1
-    displayName: 'Publish formatting patch'
-    condition: always()
+  # ---------------- NuGet Cache ----------------
+  - task: Cache@2
+    displayName: 'Cache NuGet packages'
     inputs:
-      targetPath: 'format-fixes.patch'
-      artifact: 'format-fixes'
+      key: 'nuget | "$(Agent.OS)" | **/packages.lock.json'
+      restoreKeys: |
+        nuget | "$(Agent.OS)"
+      path: '$(NUGET_PACKAGES)'
 
-  # ---------------- Build (warnings as errors) ----------------
-  - script: >
-      dotnet build "$(SOLUTION)"
-      -c $(BUILD_CONFIGURATION)
-      --no-restore
-      /p:TreatWarningsAsErrors=false
-      /p:ContinuousIntegrationBuild=true
-      /p:Version=$(GitVersion.SemVer)
-      /p:AssemblyVersion=$(GitVersion.AssemblySemVer)
-      /p:FileVersion=$(GitVersion.AssemblySemFileVer)
-      /p:InformationalVersion=$(GitVersion.InformationalVersion)
-    displayName: 'dotnet build (with GitVersion)'
-
-
-  # ---------------- Test + Coverage (gate) ----------------
-  - bash: |
+  # ---------------- Restore & Build ----------------
+  - script: |
       set -euo pipefail
+      export NUGET_PACKAGES="$(NUGET_PACKAGES)"
+      dotnet restore "$(SOLUTION)"
+      dotnet build "$(SOLUTION)" -c "$(BUILD_CONFIGURATION)" --no-restore
+    displayName: 'dotnet restore + build'
 
-      if ! command -v jq >/dev/null 2>&1; then
-        sudo apt-get update -y
-        sudo apt-get install -y jq
-      fi
+  # ---------------- Coverage Tools ----------------
+  - script: |
+      set -euo pipefail
+      dotnet tool install --global coverlet.console
+      dotnet tool install --global dotnet-reportgenerator-globaltool
+      echo '##vso[task.prependpath]'"$HOME/.dotnet/tools"
+    displayName: 'Install coverlet + reportgenerator'
+
+  # ---------------- Unit Tests + Coverage + Gate ----------------
+  - script: |
+      set -euo pipefail
 
       OUT_ROOT="$(Build.SourcesDirectory)/TestResults"
-      COV_ROOT="$OUT_ROOT/Coverage"
-      mkdir -p "$OUT_ROOT" "$COV_ROOT"
+      TRX_DIR="$OUT_ROOT"
+      COV_DIR="$OUT_ROOT/coverage"
+      MERGED_JSON="$COV_DIR/coverage.json"
+      HTML_DIR="$OUT_ROOT/Coverage/Report"
+      mkdir -p "$TRX_DIR" "$COV_DIR" "$HTML_DIR"
 
-      EXCLUDE_ARG=""
-      if [ -n "$(COVERAGE_EXCLUDE_GLOBS)" ]; then
-        EXCL=$(echo '$(COVERAGE_EXCLUDE_GLOBS)' | jq -r 'join(";")')
-        [ -n "$EXCL" ] && EXCLUDE_ARG="/p:ExcludeByFile=\"$EXCL\""
+      threshold=$(COVERAGE_THRESHOLD)
+      echo "Coverage threshold (line,total): ${threshold}%"
+
+      # Discover all Unit test projects automatically
+      mapfile -t UNIT_TESTS < <(git ls-files '**/*Unit.Tests.csproj' | sort)
+      if [ "${#UNIT_TESTS[@]}" -eq 0 ]; then
+        echo "No Unit test projects found."
+        exit 1
       fi
 
-      dotnet test "$(SOLUTION)" \
-        -c '$(BUILD_CONFIGURATION)' \
-        --no-build \
-        --logger "trx;LogFileName=test_results.trx" \
-        --blame-hang --blame-hang-timeout 5m \
-        --results-directory "$OUT_ROOT" \
-        /p:CollectCoverage=true \
-        /p:CoverletOutputFormat=cobertura \
-        /p:CoverletOutput="$COV_ROOT/\$\(MSBuildProjectName\)/" \
-        /p:SkipAutoProps=true \
-        /p:Threshold=$(COVERAGE_THRESHOLD) \
-        /p:ThresholdType=line \
-        /p:ThresholdStat=total \
-        $EXCLUDE_ARG
-    displayName: 'dotnet test + coverage (with gate)'
+      # Run each Unit test project via coverlet.console
+      for csproj in "${UNIT_TESTS[@]}"; do
+        name="$(basename "$csproj")"              # e.g. JackpotPlot.Domain.Unit.Tests.csproj
+        base="${name%.csproj}"                    # JackpotPlot.Domain.Unit.Tests
+        sut_prefix="${base%.Unit.Tests}"          # JackpotPlot.Domain
+        if [[ "$sut_prefix" == "$base" ]]; then sut_prefix="JackpotPlot"; fi
 
+        include_filter="[${sut_prefix}*]*"
+        test_assembly_glob="$(dirname "$csproj")/bin/$(BUILD_CONFIGURATION)/**/${base}.dll"
 
-  # Publish TRX to test tab
+        echo ">>> Running: $name"
+        echo "    SUT Include: $include_filter"
+
+        coverlet $test_assembly_glob \
+          --target "dotnet" \
+          --targetargs "test \"$csproj\" -c $(BUILD_CONFIGURATION) --no-build --logger trx;LogFileName=${base}.trx --results-directory \"$TRX_DIR\"" \
+          --include "$include_filter" \
+          --exclude-by-file "$(COVERAGE_EXCLUDE_BY_FILE)" \
+          --format json \
+          --output "$COV_DIR/${base}" \
+          $( [ -f "$MERGED_JSON" ] && printf -- '--merge-with "%s"' "$MERGED_JSON" || true )
+
+        # Initialize merged JSON if missing
+        if [ ! -f "$MERGED_JSON" ]; then
+          cp "$COV_DIR/${base}.json" "$MERGED_JSON"
+        fi
+      done
+
+      echo ">>> Enforcing coverage gate on merged json"
+      coverlet "$MERGED_JSON" --target "true" \
+        --threshold "$threshold" --threshold-type line --threshold-stat total
+
+      echo ">>> Generating HTML + Cobertura"
+      reportgenerator \
+        -reports:"$COV_DIR/*.json" \
+        -targetdir:"$HTML_DIR" \
+        -reporttypes:"Cobertura;HtmlInline_AzurePipelines"
+    displayName: 'Unit tests: merge coverage + gate + report'
+
+  # ---------------- Publish Unit Test Results ----------------
   - task: PublishTestResults@2
-    displayName: 'Publish Test Results'
+    displayName: 'Publish Unit test results (.trx)'
     inputs:
       testResultsFormat: VSTest
-      testResultsFiles: '$(Build.SourcesDirectory)/TestResults/**/*.trx'
-      mergeTestResults: true
+      testResultsFiles: '$(Build.SourcesDirectory)/TestResults/*.trx'
+      searchFolder: '$(Build.SourcesDirectory)/TestResults'
       testRunTitle: 'Unit Tests'
+      mergeTestResults: true
+      failTaskOnFailedTests: true
 
-  # ---------------- Coverage report (merge + publish) ----------------
-  - script: dotnet tool install -g dotnet-reportgenerator-globaltool
-    displayName: 'Install ReportGenerator'
-
-  - bash: |
-      echo "##vso[task.prependpath]$HOME/.dotnet/tools"
-      REPORTS_GLOB='$(Build.SourcesDirectory)/TestResults/Coverage/**/coverage.cobertura.xml'
-      REPORT_OUT='$(Build.SourcesDirectory)/TestResults/Coverage/Report'
-      mkdir -p "$REPORT_OUT"
-      reportgenerator -reports:"$REPORTS_GLOB" -targetdir:"$REPORT_OUT" -reporttypes:'HtmlInline_AzurePipelines;Cobertura'
-    displayName: 'Generate merged coverage report'
-
+  # ---------------- Publish Code Coverage ----------------
   - task: PublishCodeCoverageResults@2
-    displayName: 'Publish Code Coverage'
+    displayName: 'Publish Unit test coverage (Cobertura)'
     inputs:
+      codeCoverageTool: Cobertura
       summaryFileLocation: '$(Build.SourcesDirectory)/TestResults/Coverage/Report/Cobertura.xml'
-      # If needed for non-absolute paths (e.g., some JaCoCo reports), uncomment:
-      # pathToSources: '$(Build.SourcesDirectory)'
+      reportDirectory: '$(Build.SourcesDirectory)/TestResults/Coverage/Report'
       failIfCoverageEmpty: true
 
-
-  # ---------------- CI summary ----------------
-  - bash: |
-      cat > $(Build.SourcesDirectory)/ci-summary.md <<'EOF'
-      # CI Summary
-
-      **Version:** $(GitVersion.SemVer)  
-      **Branch:** $(Build.SourceBranchName)  
-      **Commit:** $(Build.SourceVersion)
-
-      - Build configuration: $(BUILD_CONFIGURATION)
-      - Coverage threshold: $(COVERAGE_THRESHOLD)%
-      - SDK: $(DOTNET_SDK)
-
-      **Artifacts**
-      - Coverage HTML: _Artifacts_ → `coverage-report`
-      - TRX & raw coverage: _Artifacts_ → `test-assets`
-      EOF
-      echo "##vso[task.uploadsummary]$(Build.SourcesDirectory)/ci-summary.md"
-    displayName: 'Publish CI summary'
+  # ---------------- Integration Tests ----------------
+  - script: |
+      set -euo pipefail
+      mapfile -t INTEGRATION_TESTS < <(git ls-files '**/*Integration.Tests.csproj' | sort)
+      if [ "${#INTEGRATION_TESTS[@]}" -gt 0 ]; then
+        for csproj in "${INTEGRATION_TESTS[@]}"; do
+          dotnet test "$csproj" -c "$(BUILD_CONFIGURATION)" --no-build \
+            --logger trx;LogFileName="$(basename "${csproj%.csproj}").trx" \
+            --results-directory "$(Build.SourcesDirectory)/TestResults"
+        done
+      else
+        echo "No Integration tests found."
+      fi
+    displayName: 'Integration tests (no coverage gate)'
 
   # ---------------- Artifacts ----------------
   - task: PublishPipelineArtifact@1
@@ -216,7 +156,7 @@ steps:
       artifact: 'coverage-report'
 
   - task: PublishPipelineArtifact@1
-    displayName: 'Publish raw test assets (trx, cobertura)'
+    displayName: 'Publish raw test assets (trx + json)'
     inputs:
       targetPath: '$(Build.SourcesDirectory)/TestResults'
       artifact: 'test-assets'
