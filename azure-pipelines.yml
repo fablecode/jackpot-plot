@@ -12,7 +12,7 @@ variables:
   DOTNET_SDK: '8.0.x'
   BUILD_CONFIGURATION: 'Release'
   SOLUTION: 'JackpotPlot.sln'
-  COVERAGE_THRESHOLD: '10'                       # Minimum total line % required (gate)
+  COVERAGE_THRESHOLD: '70'                       # Minimum total line % required (gate)
   COVERAGE_EXCLUDE_BY_FILE: '**/Migrations/*.cs;**/Generated/**/*.cs;**/bin/**;**/obj/**'
   NUGET_PACKAGES: '$(Pipeline.Workspace)/.nuget/packages'
 
