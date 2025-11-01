@@ -9,7 +9,7 @@ variables:
   DOTNET_SDK: '8.0.x'
   BUILD_CONFIGURATION: 'Release'
   SOLUTION: 'JackpotPlot.sln'
-  COVERAGE_THRESHOLD: '10'                       # Minimum total line % required (gate)
+  COVERAGE_THRESHOLD: '70'                       # Minimum total line % required (gate)
   COVERAGE_EXCLUDE_BY_FILE: '**/Migrations/*.cs;**/Generated/**/*.cs;**/bin/**;**/obj/**'
   NUGET_PACKAGES: '$(Pipeline.Workspace)/.nuget/packages'
 
@@ -101,7 +101,6 @@ steps:
             --output "$out_json"
         fi
 
-        # Always advance the merge anchor to the latest file
         MERGED_JSON="$out_json"
       done
 
@@ -121,14 +120,12 @@ steps:
 
       # --------- Try Cobertura.xml first ----------
       if [ -f "$COB_XML" ]; then
-        # Prefer explicit line-rate attribute
         line_rate=$(xmllint --xpath 'string(/coverage/@line-rate)' "$COB_XML" 2>/dev/null || true)
 
         if [ -n "${line_rate:-}" ]; then
           line_cov=$(awk -v r="$line_rate" 'BEGIN{printf "%.2f", (100.0*r)}')
           echo "Cobertura line-rate: $line_rate -> ${line_cov}%"
         else
-          # Fallback to ratio from lines-covered / lines-valid
           lc=$(xmllint --xpath 'string(/coverage/@lines-covered)' "$COB_XML" 2>/dev/null || echo "")
           lv=$(xmllint --xpath 'string(/coverage/@lines-valid)'   "$COB_XML" 2>/dev/null || echo "")
           echo "Cobertura counters: lines-covered=${lc:-?}, lines-valid=${lv:-?}"
@@ -152,7 +149,6 @@ steps:
           exit 3
         fi
 
-        # explicit % in various schemas
         pct_raw="$(
           jq -r '
             (.report.metrics[]? | select((.name // "") | ascii_downcase == "line") | .coverage) //
@@ -211,13 +207,22 @@ steps:
       mergeTestResults: true
       failTaskOnFailedTests: true
 
+  # ---------------- Verify coverage files for publish ----------------
+  - script: |
+      set -euxo pipefail
+      echo "Expecting Cobertura at: $(System.DefaultWorkingDirectory)/TestResults/Coverage/Report/Cobertura.xml"
+      ls -la "$(System.DefaultWorkingDirectory)/TestResults/Coverage/Report" || true
+      test -f "$(System.DefaultWorkingDirectory)/TestResults/Coverage/Report/Cobertura.xml"
+    displayName: 'Verify Cobertura.xml exists for publish'
+
   # ---------------- Publish Code Coverage ----------------
   - task: PublishCodeCoverageResults@2
     displayName: 'Publish Unit test coverage (Cobertura)'
     inputs:
       codeCoverageTool: Cobertura
-      summaryFileLocation: '$(Build.SourcesDirectory)/TestResults/Coverage/Report/Cobertura.xml'
-      reportDirectory: '$(Build.SourcesDirectory)/TestResults/Coverage/Report'
+      summaryFileLocation: '$(System.DefaultWorkingDirectory)/TestResults/Coverage/Report/Cobertura.xml'
+      reportDirectory: '$(System.DefaultWorkingDirectory)/TestResults/Coverage/Report'
+      pathToSources: '$(System.DefaultWorkingDirectory)'
       failIfCoverageEmpty: true
 
   # ---------------- Artifacts ----------------
