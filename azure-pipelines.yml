@@ -1,5 +1,5 @@
 # ========================== Jackpot CI ==========================
-# Runs: Restore → Build → Unit Tests (auto-discovered) → Coverage Merge + Gate (JsonSummary) → Integration Tests → Publish Reports
+# Runs: Restore → Build → Unit Tests (auto-discovered) → Coverage Merge + Gate (Cobertura-first, JsonSummary fallback) → Integration Tests → Publish Reports
 # =================================================================
 
 trigger:
@@ -44,7 +44,7 @@ steps:
       echo '##vso[task.prependpath]'"$HOME/.dotnet/tools"
     displayName: 'Install coverlet + reportgenerator'
 
-  # ---------------- Unit Tests + Coverage + Gate (JsonSummary) ----------------
+  # ---------------- Unit Tests + Coverage + Gate (Cobertura-first) ----------------
   - script: |
       set -euo pipefail
 
@@ -53,6 +53,7 @@ steps:
       COV_DIR="$OUT_ROOT/coverage"
       HTML_DIR="$OUT_ROOT/Coverage/Report"
       SUMMARY_JSON="$HTML_DIR/Summary.json"
+      COB_XML="$HTML_DIR/Cobertura.xml"
       mkdir -p "$TRX_DIR" "$COV_DIR" "$HTML_DIR"
 
       threshold=$(COVERAGE_THRESHOLD)
@@ -110,47 +111,76 @@ steps:
         -targetdir:"$HTML_DIR" \
         -reporttypes:"Cobertura;HtmlInline_AzurePipelines;JsonSummary"
 
-      echo ">>> Gating from JsonSummary: $SUMMARY_JSON"
+      echo ">>> Gating (Cobertura-first):"
       if ! command -v jq >/dev/null 2>&1; then
         sudo apt-get update -y && sudo apt-get install -y jq
       fi
-
-      if [ ! -f "$SUMMARY_JSON" ]; then
-        echo "ERROR: Missing $SUMMARY_JSON"
-        exit 3
+      if ! command -v xmllint >/dev/null 2>&1; then
+        sudo apt-get update -y && sudo apt-get install -y libxml2-utils
       fi
 
-      # --- Robust coverage extraction: explicit % OR derive from counters ---
-      pct_raw="$(
-        jq -r '
-          # explicit % in various schemas
-          (.report.metrics[]? | select((.name // "") | ascii_downcase == "line") | .coverage) //
-          (.summary.coverage?.line) //
-          (.summary.LineCoverage // .summary.lineCoverage // .summary.linecoverage) //
-          empty
-        ' "$SUMMARY_JSON"
-      )"
+      # --------- Try Cobertura.xml first ----------
+      if [ -f "$COB_XML" ]; then
+        # Prefer explicit line-rate attribute
+        line_rate=$(xmllint --xpath 'string(/coverage/@line-rate)' "$COB_XML" 2>/dev/null || true)
 
-      if [ -n "${pct_raw:-}" ] && [ "$pct_raw" != "null" ]; then
-        line_cov="$pct_raw"
-      else
-        covered=$(jq -r '.summary.coveredlines // .summary.coveredLines // 0' "$SUMMARY_JSON")
-        total=$(jq -r '.summary.totallines // .summary.totalLines // .summary.coverablelines // 0' "$SUMMARY_JSON")
-
-        echo "Coverage counters from Summary.json: coveredlines=$covered, totallines=$total"
-
-        # compute percentage safely in bash (awk)
-        if awk "BEGIN{exit !($total > 0)}"; then
-          line_cov=$(awk -v c="$covered" -v t="$total" 'BEGIN{printf "%.2f", (100.0*c)/t}')
+        if [ -n "${line_rate:-}" ]; then
+          line_cov=$(awk -v r="$line_rate" 'BEGIN{printf "%.2f", (100.0*r)}')
+          echo "Cobertura line-rate: $line_rate -> ${line_cov}%"
         else
-          line_cov=""
+          # Fallback to ratio from lines-covered / lines-valid
+          lc=$(xmllint --xpath 'string(/coverage/@lines-covered)' "$COB_XML" 2>/dev/null || echo "")
+          lv=$(xmllint --xpath 'string(/coverage/@lines-valid)'   "$COB_XML" 2>/dev/null || echo "")
+          echo "Cobertura counters: lines-covered=${lc:-?}, lines-valid=${lv:-?}"
+
+          if [ -n "${lc:-}" ] && [ -n "${lv:-}" ] && awk "BEGIN{exit !($lv > 0)}"; then
+            line_cov=$(awk -v c="$lc" -v v="$lv" 'BEGIN{printf "%.2f", (100.0*c)/v}')
+          else
+            line_cov=""
+          fi
+        fi
+      else
+        echo "WARNING: Missing Cobertura.xml at $COB_XML"
+        line_cov=""
+      fi
+
+      # --------- If Cobertura failed, try JsonSummary fallback ----------
+      if [ -z "${line_cov:-}" ]; then
+        echo "Falling back to JsonSummary: $SUMMARY_JSON"
+        if [ ! -f "$SUMMARY_JSON" ]; then
+          echo "ERROR: Missing $SUMMARY_JSON"
+          exit 3
+        fi
+
+        # explicit % in various schemas
+        pct_raw="$(
+          jq -r '
+            (.report.metrics[]? | select((.name // "") | ascii_downcase == "line") | .coverage) //
+            (.summary.coverage?.line) //
+            (.summary.LineCoverage // .summary.lineCoverage // .summary.linecoverage) //
+            empty
+          ' "$SUMMARY_JSON"
+        )"
+
+        if [ -n "${pct_raw:-}" ] && [ "$pct_raw" != "null" ]; then
+          line_cov="$pct_raw"
+        else
+          covered=$(jq -r '.summary.coveredlines // .summary.coveredLines // 0' "$SUMMARY_JSON")
+          total=$(jq -r '.summary.totallines // .summary.totalLines // .summary.coverablelines // 0' "$SUMMARY_JSON")
+          echo "JsonSummary counters: coveredlines=$covered, totallines=$total"
+
+          if awk "BEGIN{exit !($total > 0)}"; then
+            line_cov=$(awk -v c="$covered" -v t="$total" 'BEGIN{printf "%.2f", (100.0*c)/t}')
+          else
+            line_cov=""
+          fi
         fi
       fi
-      # --- end robust extraction ---
 
       if [ -z "${line_cov:-}" ]; then
-        echo "ERROR: Could not read/derive total line coverage from $SUMMARY_JSON"
-        echo "Summary preview:" && jq -r '{linecoverage,coveredlines,totallines,coverablelines}' "$SUMMARY_JSON"
+        echo "ERROR: Could not determine total line coverage from either Cobertura.xml or Summary.json"
+        echo "Cobertura head:" && head -n 20 "$COB_XML" || true
+        echo "Summary preview:" && jq -r '{linecoverage,coveredlines,totallines,coverablelines}' "$SUMMARY_JSON" || true
         exit 3
       fi
 
