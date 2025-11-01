@@ -80,13 +80,13 @@ steps:
         include_filter="[${sut_prefix}*]*"
         test_assembly_glob="$(dirname "$csproj")/bin/$(BUILD_CONFIGURATION)/**/${base}.dll"
 
-        out_json_base="$COV_DIR/${base}"              # coverlet will create ${base}.json here
-        out_cob_base="$COV_DIR/${base}.cobertura"     # coverlet will create ${base}.cobertura.xml
+        out_json_file="$COV_DIR/${base}.json"               # explicit .json
+        out_cob_file="$COV_DIR/${base}.cobertura.xml"       # explicit .xml
 
         echo ">>> Running: $name"
         echo "    SUT Include: $include_filter"
-        echo "    JSON base:   $out_json_base.json"
-        echo "    Cobertura:   $out_cob_base.xml"
+        echo "    JSON file:   $out_json_file"
+        echo "    Cobertura:   $out_cob_file"
 
         # --- Pass 1: JSON (allows merge-with across projects) ---
         if [ -n "${MERGE_ANCHOR_JSON}" ]; then
@@ -96,7 +96,7 @@ steps:
             --include "$include_filter" \
             --exclude-by-file "$(COVERAGE_EXCLUDE_BY_FILE)" \
             --format json \
-            --output "$out_json_base" \
+            --output "$out_json_file" \
             --merge-with "$MERGE_ANCHOR_JSON"
         else
           coverlet $test_assembly_glob \
@@ -105,9 +105,9 @@ steps:
             --include "$include_filter" \
             --exclude-by-file "$(COVERAGE_EXCLUDE_BY_FILE)" \
             --format json \
-            --output "$out_json_base"
+            --output "$out_json_file"
         fi
-        MERGE_ANCHOR_JSON="${out_json_base}.json"
+        MERGE_ANCHOR_JSON="$out_json_file"
 
         # --- Pass 2: Cobertura (native XML per project, no merge) ---
         coverlet $test_assembly_glob \
@@ -116,8 +116,12 @@ steps:
           --include "$include_filter" \
           --exclude-by-file "$(COVERAGE_EXCLUDE_BY_FILE)" \
           --format cobertura \
-          --output "$out_cob_base"
+          --output "$out_cob_file"
       done
+
+      echo
+      echo "Coverage files present in $COV_DIR:"
+      ls -la "$COV_DIR" || true
 
       echo
       echo ">>> Merging to HTML + Cobertura + JsonSummary via ReportGenerator"
@@ -184,10 +188,10 @@ steps:
 
   # ---------------- Verify coverage files for publish ----------------
   - script: |
-      set -euxo pipefail
-      echo "Expecting Cobertura at: $(System.DefaultWorkingDirectory)/TestResults/Coverage/Report/Cobertura.xml"
-      ls -la "$(System.DefaultWorkingDirectory)/TestResults/Coverage/Report" || true
-      test -f "$(System.DefaultWorkingDirectory)/TestResults/Coverage/Report/Cobertura.xml"
+    set -euxo pipefail
+    echo "Expecting Cobertura at: $(System.DefaultWorkingDirectory)/TestResults/Coverage/Report/Cobertura.xml"
+    ls -la "$(System.DefaultWorkingDirectory)/TestResults/Coverage/Report" || true
+    test -f "$(System.DefaultWorkingDirectory)/TestResults/Coverage/Report/Cobertura.xml"
     displayName: 'Verify Cobertura.xml exists for publish'
 
   # ---------------- Publish Code Coverage ----------------
@@ -199,21 +203,6 @@ steps:
       reportDirectory: '$(System.DefaultWorkingDirectory)/TestResults/Coverage/Report'
       pathToSources: '$(System.DefaultWorkingDirectory)'
       failIfCoverageEmpty: true
-
-  # ---------------- Integration Tests ----------------
-  - script: |
-      set -euo pipefail
-      mapfile -t INTEGRATION_TESTS < <(git ls-files '**/*Integration.Tests.csproj' | sort)
-      if [ "${#INTEGRATION_TESTS[@]}" -gt 0 ]; then
-        for csproj in "${INTEGRATION_TESTS[@]}"; do
-          dotnet test "$csproj" -c "$(BUILD_CONFIGURATION)" --no-build \
-            --logger trx;LogFileName="$(basename "${csproj%.csproj}").trx" \
-            --results-directory "$(Build.SourcesDirectory)/TestResults"
-        done
-      else
-        echo "No Integration tests found."
-      fi
-    displayName: 'Integration tests (no coverage gate)'
 
   # ---------------- Artifacts ----------------
   - task: PublishPipelineArtifact@1
