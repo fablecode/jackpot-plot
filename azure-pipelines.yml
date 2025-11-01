@@ -127,8 +127,10 @@ steps:
           (.report.metrics[]? | select(.name=="Line") | .coverage) //
           # Some builds: summary.coverage.line
           (.summary.coverage?.line) //
-          # Legacy: summary.LineCoverage or summary.lineCoverage
-          (.summary.LineCoverage // .summary.lineCoverage)
+          # Legacy (PascalCase/camelCase): summary.LineCoverage or summary.lineCoverage
+          (.summary.LineCoverage // .summary.lineCoverage) //
+          # Lowercase variant (seen in logs): summary.linecoverage
+          (.summary.linecoverage)
         ' "$SUMMARY_JSON"
       )"
 
