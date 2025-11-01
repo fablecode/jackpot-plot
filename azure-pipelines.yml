@@ -1,7 +1,7 @@
 # ========================== Jackpot CI ==========================
-# Runs: Restore → Build → Unit Tests (coverlet.console wraps dotnet test)
-#    → Coverage outputs (JSON + Cobertura per project)
-#    → Merge + Gate (Cobertura) + HTML + JsonSummary
+# Runs: Restore → Build → Unit Tests (coverlet.console)
+#    → Coverage outputs: JSON (merged) + Cobertura (per project)
+#    → Merge (Cobertura) + Gate + HTML + JsonSummary
 #    → Integration Tests → Publish Reports
 # =================================================================
 
@@ -70,6 +70,7 @@ steps:
       fi
 
       MERGE_ANCHOR_JSON=""
+
       for csproj in "${UNIT_TESTS[@]}"; do
         name="$(basename "$csproj")"            # e.g. JackpotPlot.Domain.Unit.Tests.csproj
         base="${name%.csproj}"                  # e.g. JackpotPlot.Domain.Unit.Tests
@@ -78,20 +79,24 @@ steps:
 
         include_filter="[${sut_prefix}*]*"
         test_assembly_glob="$(dirname "$csproj")/bin/$(BUILD_CONFIGURATION)/**/${base}.dll"
-        out_base="$COV_DIR/${base}"             # coverlet will create .json and .cobertura.xml next to this base
+
+        out_json_base="$COV_DIR/${base}"              # coverlet will create ${base}.json here
+        out_cob_base="$COV_DIR/${base}.cobertura"     # coverlet will create ${base}.cobertura.xml
 
         echo ">>> Running: $name"
         echo "    SUT Include: $include_filter"
-        echo "    Output base: $out_base"
+        echo "    JSON base:   $out_json_base.json"
+        echo "    Cobertura:   $out_cob_base.xml"
 
+        # --- Pass 1: JSON (allows merge-with across projects) ---
         if [ -n "${MERGE_ANCHOR_JSON}" ]; then
           coverlet $test_assembly_glob \
             --target "dotnet" \
             --targetargs "test \"$csproj\" -c $(BUILD_CONFIGURATION) --no-build --logger trx;LogFileName=${base}.trx --results-directory \"$TRX_DIR\"" \
             --include "$include_filter" \
             --exclude-by-file "$(COVERAGE_EXCLUDE_BY_FILE)" \
-            --format "json,cobertura" \
-            --output "$out_base" \
+            --format json \
+            --output "$out_json_base" \
             --merge-with "$MERGE_ANCHOR_JSON"
         else
           coverlet $test_assembly_glob \
@@ -99,19 +104,26 @@ steps:
             --targetargs "test \"$csproj\" -c $(BUILD_CONFIGURATION) --no-build --logger trx;LogFileName=${base}.trx --results-directory \"$TRX_DIR\"" \
             --include "$include_filter" \
             --exclude-by-file "$(COVERAGE_EXCLUDE_BY_FILE)" \
-            --format "json,cobertura" \
-            --output "$out_base"
+            --format json \
+            --output "$out_json_base"
         fi
+        MERGE_ANCHOR_JSON="${out_json_base}.json"
 
-        # update merge anchor to latest json
-        MERGE_ANCHOR_JSON="${out_base}.json"
+        # --- Pass 2: Cobertura (native XML per project, no merge) ---
+        coverlet $test_assembly_glob \
+          --target "dotnet" \
+          --targetargs "test \"$csproj\" -c $(BUILD_CONFIGURATION) --no-build" \
+          --include "$include_filter" \
+          --exclude-by-file "$(COVERAGE_EXCLUDE_BY_FILE)" \
+          --format cobertura \
+          --output "$out_cob_base"
       done
 
       echo
-      echo ">>> Generating merged HTML + Cobertura + JsonSummary via ReportGenerator"
-      # Merge BOTH native Cobertura + JSON into one report directory (helps when one format is missing some metadata)
+      echo ">>> Merging to HTML + Cobertura + JsonSummary via ReportGenerator"
+      # Merge ALL per-project Cobertura files; also include JSON (helps completeness for HTML)
       reportgenerator \
-        -reports:"$COV_DIR/*.json;$COV_DIR/*.cobertura.xml" \
+        -reports:"$COV_DIR/*.cobertura.xml;$COV_DIR/*.json" \
         -targetdir:"$HTML_DIR" \
         -reporttypes:"Cobertura;HtmlInline_AzurePipelines;JsonSummary"
 
@@ -187,6 +199,21 @@ steps:
       reportDirectory: '$(System.DefaultWorkingDirectory)/TestResults/Coverage/Report'
       pathToSources: '$(System.DefaultWorkingDirectory)'
       failIfCoverageEmpty: true
+
+  # ---------------- Integration Tests ----------------
+  - script: |
+      set -euo pipefail
+      mapfile -t INTEGRATION_TESTS < <(git ls-files '**/*Integration.Tests.csproj' | sort)
+      if [ "${#INTEGRATION_TESTS[@]}" -gt 0 ]; then
+        for csproj in "${INTEGRATION_TESTS[@]}"; do
+          dotnet test "$csproj" -c "$(BUILD_CONFIGURATION)" --no-build \
+            --logger trx;LogFileName="$(basename "${csproj%.csproj}").trx" \
+            --results-directory "$(Build.SourcesDirectory)/TestResults"
+        done
+      else
+        echo "No Integration tests found."
+      fi
+    displayName: 'Integration tests (no coverage gate)'
 
   # ---------------- Artifacts ----------------
   - task: PublishPipelineArtifact@1
