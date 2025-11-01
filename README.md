@@ -1,4 +1,4 @@
-[![Build Status](https://fablecode.visualstudio.com/jackpotplot/_apis/build/status%2Ffablecode.jackpot-plot?branchName=main)](https://fablecode.visualstudio.com/jackpotplot/_build/latest?definitionId=25&branchName=main)
+[![Build Status](https://fablecode.visualstudio.com/jackpotplot/_apis/build/status%2Ffablecode.jackpot-plot?branchName=main)](https://fablecode.visualstudio.com/jackpotplot)
 
 # 🎰 Jackpot Plot
 
