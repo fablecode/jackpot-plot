@@ -28,15 +28,6 @@ steps:
       packageType: 'sdk'
       version: '$(DOTNET_SDK)'
 
-  # ---------------- NuGet Cache ----------------
-  - task: Cache@2
-    displayName: 'Cache NuGet packages'
-    inputs:
-      key: 'nuget | "$(Agent.OS)" | **/packages.lock.json'
-      restoreKeys: |
-        nuget | "$(Agent.OS)"
-      path: '$(NUGET_PACKAGES)'
-
   # ---------------- Restore & Build ----------------
   - script: |
       set -euo pipefail
