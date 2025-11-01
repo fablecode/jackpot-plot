@@ -121,16 +121,23 @@ steps:
       fi
 
       # Extract total line coverage. Try multiple schema variants used by ReportGenerator.
+      # If those fail, derive % from counts (coveredlines / totallines or coverablelines).
       line_cov="$(
         jq -r '
-          # Newer schema: metrics array with name "Line"
-          (.report.metrics[]? | select(.name=="Line") | .coverage) //
-          # Some builds: summary.coverage.line
-          (.summary.coverage?.line) //
-          # Legacy (PascalCase/camelCase): summary.LineCoverage or summary.lineCoverage
-          (.summary.LineCoverage // .summary.lineCoverage) //
-          # Lowercase variant (seen in logs): summary.linecoverage
-          (.summary.linecoverage)
+          def asnum: if type=="string" then (try tonumber catch empty) else . end;
+          def pct(x;y): ( (x|asnum) as $x | (y|asnum) as $y | if ($y==0 or $y==null) then empty else (100 * ($x / $y)) end );
+
+          (
+            # Newer schema: metrics array with name "Line"
+            (.report.metrics[]? | select((.name // "") | ascii_downcase == "line") | .coverage) //
+            # Some builds: summary.coverage.line
+            (.summary.coverage?.line) //
+            # Legacy (PascalCase/camelCase/lowercase)
+            (.summary.LineCoverage // .summary.lineCoverage // .summary.linecoverage) //
+            # Derive from counters if explicit % is missing
+            pct(.summary.coveredlines; .summary.totallines) //
+            pct(.summary.coveredlines; .summary.coverablelines)
+          ) | asnum
         ' "$SUMMARY_JSON"
       )"
 
