@@ -20,12 +20,5 @@
 	  <ProjectReference Include="..\..\..\src\Domain\JackpotPlot.Domain\JackpotPlot.Domain.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="ServicesTests\ClusteringAnalysisAlgorithmTests\" />
-	  <Folder Include="ServicesTests\ConsecutiveNumbersAlgorithmTests\" />
-	  <Folder Include="ServicesTests\DeltaSystemAlgorithmTests\" />
-	  <Folder Include="ServicesTests\GapAnalysisAlgorithmTests\" />
-	</ItemGroup>
-
 
 </Project>
