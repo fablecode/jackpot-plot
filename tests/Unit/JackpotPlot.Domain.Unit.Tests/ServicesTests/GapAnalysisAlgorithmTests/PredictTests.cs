@@ -73,7 +73,6 @@ public class PredictTests
         result.PredictedNumbers.Length.Should().Be(cfg.MainNumbersCount);
     }
 
-    // ---------- main numbers behavior ----------
     [Test]
     public void Given_History_When_Predict_Method_Is_Invoked_PredictionNumbers_Count_Should_Equal_Config()
     {
