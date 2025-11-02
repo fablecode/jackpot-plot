@@ -34,7 +34,7 @@ public sealed class HighLowNumberSplitAlgorithm : IPredictionAlgorithm
         }
 
         // 1) Analyze historical low/high ratios
-        var (lowRatio, highRatio) = HighLowNumberSplitAlgorithmHelpers.AnalyzeHighLowSplit(history, config.MainNumbersRange);
+        var (lowRatio, _) = HighLowNumberSplitAlgorithmHelpers.AnalyzeHighLowSplit(history, config.MainNumbersRange);
 
         // 2) Determine counts for each half
         var lowCount = (int)Math.Round(config.MainNumbersCount * lowRatio, MidpointRounding.AwayFromZero);
