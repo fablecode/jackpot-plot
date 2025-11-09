@@ -9,7 +9,7 @@ public static class HighLowNumberSplitAlgorithmHelpers
         IEnumerable<HistoricalDraw> historicalDraws, int numberRange)
     {
         int low = 0, high = 0;
-        int mid = numberRange / 2;
+        var mid = numberRange / 2;
 
         foreach (var draw in historicalDraws)
         {
@@ -21,8 +21,7 @@ public static class HighLowNumberSplitAlgorithmHelpers
         }
 
         var total = low + high;
-        if (total == 0) return (0.5, 0.5);
-        return (low / (double)total, high / (double)total);
+        return total == 0 ? (0.5, 0.5) : (low / (double)total, high / (double)total);
     }
 
     public static double DistributionConfidence(
