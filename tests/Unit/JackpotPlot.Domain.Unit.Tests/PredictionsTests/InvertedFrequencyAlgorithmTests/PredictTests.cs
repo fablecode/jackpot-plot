@@ -10,33 +10,6 @@ namespace JackpotPlot.Domain.Unit.Tests.PredictionsTests.InvertedFrequencyAlgori
 [TestFixture]
 public class PredictTests
 {
-    // ---------- helpers ----------
-    private static HistoricalDraw Draw(int id, params int[] main) =>
-        new(
-            DrawId: id,
-            LotteryId: 1,
-            DrawDate: DateTime.UtcNow.AddDays(id),
-            WinningNumbers: main.ToList(),
-            BonusNumbers: [],
-            CreatedAt: DateTime.UtcNow.AddDays(id));
-
-    private static LotteryConfigurationDomain Config(
-        int lotteryId = 6,
-        int mainRange = 50,
-        int mainCount = 5,
-        int bonusRange = 10,
-        int bonusCount = 0)
-    {
-        return new LotteryConfigurationDomain
-        {
-            LotteryId = lotteryId,
-            MainNumbersRange = mainRange,
-            MainNumbersCount = mainCount,
-            BonusNumbersRange = bonusRange,
-            BonusNumbersCount = bonusCount
-        };
-    }
-
     [Test]
     public void Given_History_When_Predict_Method_Is_Invoked_Should_Set_AlgorithmKey_To_InvertedFrequency()
     {
@@ -226,4 +199,30 @@ public class PredictTests
         result.ConfidenceScore.Should().BeGreaterThan(0.0);
     }
 
+    // ---------- helpers ----------
+    private static HistoricalDraw Draw(int id, params int[] main) =>
+        new(
+            DrawId: id,
+            LotteryId: 1,
+            DrawDate: DateTime.UtcNow.AddDays(id),
+            WinningNumbers: main.ToList(),
+            BonusNumbers: [],
+            CreatedAt: DateTime.UtcNow.AddDays(id));
+
+    private static LotteryConfigurationDomain Config(
+        int lotteryId = 6,
+        int mainRange = 50,
+        int mainCount = 5,
+        int bonusRange = 10,
+        int bonusCount = 0)
+    {
+        return new LotteryConfigurationDomain
+        {
+            LotteryId = lotteryId,
+            MainNumbersRange = mainRange,
+            MainNumbersCount = mainCount,
+            BonusNumbersRange = bonusRange,
+            BonusNumbersCount = bonusCount
+        };
+    }
 }
