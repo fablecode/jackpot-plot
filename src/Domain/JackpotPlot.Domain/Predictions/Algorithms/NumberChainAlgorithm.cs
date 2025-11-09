@@ -10,10 +10,7 @@ namespace JackpotPlot.Domain.Predictions.Algorithms;
 [PredictionAlgorithmDescription(PredictionAlgorithmKeys.NumberChain, "Identifies chains or sequences of numbers that often appear together in historical draws and uses these chains to inform the predicted numbers.")]
 public sealed class NumberChainAlgorithm : IPredictionAlgorithm
 {
-    public PredictionResult Predict(
-        LotteryConfigurationDomain config,
-        IReadOnlyList<HistoricalDraw> history,
-        Random rng)
+    public PredictionResult Predict(LotteryConfigurationDomain config, IReadOnlyList<HistoricalDraw> history, Random rng)
     {
         if (history.Count == 0)
         {
@@ -47,6 +44,4 @@ public sealed class NumberChainAlgorithm : IPredictionAlgorithm
             confidence,
             PredictionAlgorithmKeys.NumberChain);
     }
-
-    // ---------- helpers (PURE) ----------
 }
