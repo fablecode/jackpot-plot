@@ -22,6 +22,7 @@
 
 	<ItemGroup>
 	  <Folder Include="PredictionsTests\InvertedFrequencyAlgorithmTests\" />
+	  <Folder Include="PredictionsTests\PatternMatchingAlgorithmTests\" />
 	</ItemGroup>
 
 
