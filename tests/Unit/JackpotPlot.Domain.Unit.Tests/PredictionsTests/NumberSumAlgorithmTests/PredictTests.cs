@@ -151,6 +151,30 @@ public class PredictTests
         result.ConfidenceScore.Should().BeGreaterThan(0.0);
     }
 
+    [Test]
+    public void Given_No_History_And_Even_MainCount_When_Predict_Method_Is_Invoked_Should_Return_Half_Odds_Half_Evens()
+    {
+        var sut = new OddEvenBalanceAlgorithm();
+        var cfg = Config(mainRange: 50, mainCount: 6);
+        var rng = new Random(13);
+
+        var result = sut.Predict(cfg, Array.Empty<HistoricalDraw>(), rng);
+
+        result.PredictedNumbers.Count(n => (n & 1) == 1).Should().Be(cfg.MainNumbersCount / 2);
+    }
+
+    [Test]
+    public void Given_No_History_And_BonusEnabled_When_Predict_Method_Is_Invoked_Bonus_Count_Should_Equal_Config()
+    {
+        var sut = new OddEvenBalanceAlgorithm();
+        var cfg = Config(mainRange: 50, mainCount: 5, bonusRange: 12, bonusCount: 3);
+        var rng = new Random(14);
+
+        var result = sut.Predict(cfg, Array.Empty<HistoricalDraw>(), rng);
+
+        result.BonusNumbers.Length.Should().Be(cfg.BonusNumbersCount);
+    }
+
     private static HistoricalDraw Draw(int id, params int[] main) =>
         new(
             DrawId: id,
