@@ -4,6 +4,7 @@ using NUnit.Framework;
 
 namespace JackpotPlot.Domain.Unit.Tests.PredictionsTests.HelperTests.NumberChainAlgorithmHelpersTests;
 
+[TestFixture]
 public class GenerateNumbersFromChainsTests
 {
     [Test]

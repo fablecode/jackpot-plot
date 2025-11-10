@@ -6,6 +6,7 @@ using NUnit.Framework;
 
 namespace JackpotPlot.Domain.Unit.Tests.PredictionsTests.HelperTests.NumberSumAlgorithmHelpersTests;
 
+[TestFixture]
 public class CalculateNumberSumConfidenceTests
 {
     [Test]

@@ -5,6 +5,7 @@ using NUnit.Framework;
 
 namespace JackpotPlot.Domain.Unit.Tests.PredictionsTests.HelperTests.NumberChainAlgorithmHelpersTests;
 
+[TestFixture]
 public class CalculateChainConfidenceTests
 {
     private static HistoricalDraw Draw(params int[] main) =>
