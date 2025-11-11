@@ -22,6 +22,8 @@
 
 	<ItemGroup>
 	  <Folder Include="PredictionsTests\InvertedFrequencyAlgorithmTests\" />
+	  <Folder Include="PredictionsTests\StatisticalAveragingAlgorithmTests\" />
+	  <Folder Include="PredictionsTests\SeasonalPatternsAlgorithmTests\" />
 	  <Folder Include="PredictionsTests\RarePatternsAlgorithmTests\" />
 	  <Folder Include="PredictionsTests\PatternMatchingAlgorithmTests\" />
 	</ItemGroup>
