@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace JackpotPlot.Domain.Unit.Tests.PredictionsTests.HelperTests.TimeDecayAlgorithmHelpersTests;
 
 [TestFixture]
-public class WeightedSampleDistinct
+public class WeightedSampleDistinctTests
 {
     [Test]
     public void Given_Non_Positive_Take_When_WeightedSampleDistinct_Is_Invoked_Should_Return_Empty_Sequence()

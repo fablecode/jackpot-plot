@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace JackpotPlot.Domain.Unit.Tests.PredictionsTests.HelperTests.TimeDecayAlgorithmHelpersTests;
 
 [TestFixture]
-public class TimeDecayConfidence
+public class TimeDecayConfidenceTests
 {
     [Test]
     public void Given_Empty_Predicted_When_TimeDecayConfidence_Is_Invoked_Should_Return_Zero()

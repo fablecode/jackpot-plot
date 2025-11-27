@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace JackpotPlot.Domain.Unit.Tests.PredictionsTests.HelperTests.TimeDecayAlgorithmHelpersTests;
 
 [TestFixture]
-public class RandomDistinct
+public class RandomDistinctTests
 {
     [Test]
     public void Given_Non_Positive_Count_When_RandomDistinct_Is_Invoked_Should_Return_Empty()
