@@ -2,11 +2,8 @@
 using JackpotPlot.Domain.Domain;
 using JackpotPlot.Domain.Models;
 using JackpotPlot.Domain.Predictions.Algorithms;
-using JackpotPlot.Domain.Predictions.Helpers;
-using JackpotPlot.Domain.Unit.Tests.PredictionsTests.HelperTests;
 using JackpotPlot.Primitives.Algorithms;
 using NUnit.Framework;
-using System.Collections.Immutable;
 
 namespace JackpotPlot.Domain.Unit.Tests.PredictionsTests.GroupSelectionAlgorithmTests;
 
