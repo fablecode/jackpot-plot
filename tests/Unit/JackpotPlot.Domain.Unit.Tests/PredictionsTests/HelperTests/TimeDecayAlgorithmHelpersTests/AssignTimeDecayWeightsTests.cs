@@ -15,7 +15,7 @@ public class AssignTimeDecayWeightsTests
         var older = Draw(1, new DateTime(2024, 1, 1), 1, 2);
         var newer = Draw(2, new DateTime(2024, 1, 10), 3, 4);
         var draws = new[] { older, newer };
-        var decay = 0.5d;
+        const double decay = 0.5d;
 
         // Act
         var weights = TimeDecayAlgorithmHelpers.AssignTimeDecayWeights(draws, decay);
