@@ -63,6 +63,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JackpotPlot.Primitives", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JackpotPlot.Infrastructure.Unit.Tests", "tests\Unit\JackpotPlot.Infrastructure.Unit.Tests\JackpotPlot.Infrastructure.Unit.Tests.csproj", "{800F76E7-B661-411B-9BE4-8D5082C2889C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JackpotPlot.Prediction.API.Application.Unit.Tests", "tests\Unit\JackpotPlot.Prediction.API.Application.Unit.Tests\JackpotPlot.Prediction.API.Application.Unit.Tests.csproj", "{7D06F835-A691-40BF-BB38-4659771DCE40}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -141,6 +143,10 @@ Global
 		{800F76E7-B661-411B-9BE4-8D5082C2889C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{800F76E7-B661-411B-9BE4-8D5082C2889C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{800F76E7-B661-411B-9BE4-8D5082C2889C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D06F835-A691-40BF-BB38-4659771DCE40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D06F835-A691-40BF-BB38-4659771DCE40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D06F835-A691-40BF-BB38-4659771DCE40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D06F835-A691-40BF-BB38-4659771DCE40}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -170,6 +176,7 @@ Global
 		{786A5B98-8D06-4207-8ED3-45F2D823F57C} = {BA1D4398-6C79-4D93-8784-5678A3201AAC}
 		{7F304407-476A-431D-8663-ABD6A6D30D1C} = {F2C868A7-B407-433D-9006-E5465C5727B9}
 		{800F76E7-B661-411B-9BE4-8D5082C2889C} = {9DE4F7D6-502B-43A0-83D7-EE17B2B93815}
+		{7D06F835-A691-40BF-BB38-4659771DCE40} = {9DE4F7D6-502B-43A0-83D7-EE17B2B93815}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5ABC289-BAD2-4CF2-BF68-3189382251AB}
