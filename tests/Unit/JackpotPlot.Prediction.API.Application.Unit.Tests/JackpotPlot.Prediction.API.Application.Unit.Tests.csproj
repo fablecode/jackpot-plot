@@ -20,4 +20,8 @@
 	  <ProjectReference Include="..\..\..\src\Application\JackpotPlot.Prediction.API.Application\JackpotPlot.Prediction.API.Application.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="FeaturesTests\GetNumberSpreadQueryHandlerTests\" />
+	</ItemGroup>
+
 </Project>
