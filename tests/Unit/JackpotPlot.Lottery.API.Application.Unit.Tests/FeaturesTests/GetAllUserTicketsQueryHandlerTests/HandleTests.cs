@@ -22,11 +22,6 @@ public class HandleTests
         _sut = new GetAllUserTicketsQueryHandler(_ticketRepository);
     }
 
-
-    // --------------------------------------------------------------------
-    // Repository interaction
-    // --------------------------------------------------------------------
-
     [Test]
     public async Task Given_Query_When_Handle_Is_Invoked_Should_Call_Repository_With_UserId()
     {
@@ -45,10 +40,6 @@ public class HandleTests
         await _ticketRepository.Received(1).GetAllUserTickets(userId);
     }
 
-    // --------------------------------------------------------------------
-    // Result mapping
-    // --------------------------------------------------------------------
-
     [Test]
     public async Task Given_Tickets_When_Handle_Is_Invoked_Should_Return_Success_Result()
     {
@@ -62,7 +53,7 @@ public class HandleTests
 
         _ticketRepository
             .GetAllUserTickets(userId)
-            .Returns(Task.FromResult<ImmutableArray<TicketDomain>>(tickets));
+            .Returns(Task.FromResult<ImmutableArray<TicketDomain>>(tickets.ToImmutableArray()));
 
         var query = new GetAllUserTicketsQuery(userId);
 
