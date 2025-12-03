@@ -1,6 +1,5 @@
 ﻿using System.Collections.Immutable;
 using JackpotPlot.Application.Abstractions.Persistence.Repositories;
-using JackpotPlot.Domain.Domain;
 using JackpotPlot.Lottery.API.Infrastructure.Databases;
 using JackpotPlot.Lottery.API.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;

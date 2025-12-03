@@ -272,8 +272,7 @@ public class PredictTests
 
     private static DateTime ADateInCurrentSeason()
     {
-        var season = JackpotPlot.Domain.Predictions.Helpers
-            .SeasonalPatternsAlgorithmHelpers.GetSeason(DateTime.UtcNow);
+        var season = SeasonalPatternsAlgorithmHelpers.GetSeason(DateTime.UtcNow);
         return season switch
         {
             "Winter" => new DateTime(2025, 1, 15, 0, 0, 0, DateTimeKind.Utc),

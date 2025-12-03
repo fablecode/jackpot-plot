@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using System.Threading;
 using JackpotPlot.Application.Abstractions.Persistence.Repositories;
 using JackpotPlot.Domain.Models;
 using JackpotPlot.Prediction.API.Infrastructure.Databases;

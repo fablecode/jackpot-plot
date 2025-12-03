@@ -53,7 +53,7 @@ public class HandleTests
 
         _ticketRepository
             .GetAllUserTickets(userId)
-            .Returns(Task.FromResult<ImmutableArray<TicketDomain>>(tickets.ToImmutableArray()));
+            .Returns(Task.FromResult(tickets.ToImmutableArray()));
 
         var query = new GetAllUserTicketsQuery(userId);
 

@@ -17,7 +17,7 @@ public class GeneratePredictionsFromRepeatingNumbersTests
         var result = RepeatingNumbersAlgorithmHelpers.GeneratePredictionsFromRepeatingNumbers(repeating, count: 2);
 
         // Assert
-        result.Should().Equal(new[] { 7, 5 });
+        result.Should().Equal(7, 5);
     }
 
     [Test]
@@ -30,6 +30,6 @@ public class GeneratePredictionsFromRepeatingNumbersTests
         var result = RepeatingNumbersAlgorithmHelpers.GeneratePredictionsFromRepeatingNumbers(repeating, count: 5);
 
         // Assert
-        result.Should().Equal(new[] { 4, 1 });
+        result.Should().Equal(4, 1);
     }
 }

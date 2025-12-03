@@ -1,5 +1,4 @@
-﻿using JackpotPlot.Domain.Constants;
-using JackpotPlot.Domain.Models;
+﻿using JackpotPlot.Domain.Models;
 using JackpotPlot.Primitives.Algorithms;
 using MediatR;
 

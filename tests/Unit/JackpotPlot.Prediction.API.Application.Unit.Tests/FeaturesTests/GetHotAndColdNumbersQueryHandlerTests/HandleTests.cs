@@ -1,6 +1,5 @@
 ﻿using NSubstitute;
 using NUnit.Framework;
-using System;
 using FluentAssertions;
 using JackpotPlot.Application.Abstractions.Persistence.Repositories;
 using JackpotPlot.Prediction.API.Application.Features.GetHotAndColdNumbers;
