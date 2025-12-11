@@ -10,7 +10,8 @@ public sealed class LotteryDrawnEventMessageValidation : AbstractValidator<Messa
     public LotteryDrawnEventMessageValidation()
     {
         RuleFor(x => x.Event)
-            .Equals(EventTypes.LotteryDrawn);
+            .Equal(EventTypes.LotteryDrawn);
+
         RuleFor(x => x.Data.LotteryId)
             .GreaterThan(0);
     }
