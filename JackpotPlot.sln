@@ -69,6 +69,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JackpotPlot.Lottery.API.App
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prediction.API.Unit.Tests", "tests\Unit\Prediction.API.Unit.Tests\Prediction.API.Unit.Tests.csproj", "{64A6339E-162A-41AE-8D64-D258E6B4CD68}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lottery.API.Unit.Tests", "tests\Unit\Lottery.API.Unit.Tests\Lottery.API.Unit.Tests.csproj", "{99D3DE33-97DD-4084-95A0-542CE07CCFB7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -159,6 +161,10 @@ Global
 		{64A6339E-162A-41AE-8D64-D258E6B4CD68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64A6339E-162A-41AE-8D64-D258E6B4CD68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64A6339E-162A-41AE-8D64-D258E6B4CD68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99D3DE33-97DD-4084-95A0-542CE07CCFB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99D3DE33-97DD-4084-95A0-542CE07CCFB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99D3DE33-97DD-4084-95A0-542CE07CCFB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99D3DE33-97DD-4084-95A0-542CE07CCFB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -191,6 +197,7 @@ Global
 		{7D06F835-A691-40BF-BB38-4659771DCE40} = {9DE4F7D6-502B-43A0-83D7-EE17B2B93815}
 		{56CA0902-646D-487A-A143-4FBE6B586C14} = {9DE4F7D6-502B-43A0-83D7-EE17B2B93815}
 		{64A6339E-162A-41AE-8D64-D258E6B4CD68} = {9DE4F7D6-502B-43A0-83D7-EE17B2B93815}
+		{99D3DE33-97DD-4084-95A0-542CE07CCFB7} = {9DE4F7D6-502B-43A0-83D7-EE17B2B93815}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5ABC289-BAD2-4CF2-BF68-3189382251AB}
