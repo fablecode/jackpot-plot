@@ -1,6 +1,4 @@
 ﻿using FluentAssertions;
-using JackpotPlot.Application.Abstractions.Persistence.Repositories;
-using JackpotPlot.Domain.Domain;
 using JackpotPlot.Domain.Models;
 using JackpotPlot.Lottery.API.Application.Features.CreateUserTicket;
 using JackpotPlot.Lottery.API.Application.Models.Input;
