@@ -1,0 +1,232 @@
+﻿name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+  security-events: write
+
+env:
+  SOLUTION: JackpotPlot.sln
+  CONFIGURATION: Release
+  COVERAGE_THRESHOLD: "70" # percent
+  # coverlet collector expects URL-encoded commas when passed in the config
+  EXCLUDE_BY_FILE: "**/Migrations/*.cs%2c**/Generated/**/*.cs%2c**/bin/**%2c**/obj/**"
+
+jobs:
+  unit_tests:
+    name: Unit Tests (${{ matrix.os }} • .NET ${{ matrix.dotnet }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        dotnet: ["8.0.x", "9.0.x"]
+        include:
+          # Canonical run for coverage + badge (single source of truth)
+          - os: ubuntu-latest
+            dotnet: "8.0.x"
+            collect_coverage: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET (with NuGet cache)
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ matrix.dotnet }}
+          cache: true
+          cache-dependency-path: |
+            **/*.csproj
+            **/*.props
+            **/*.targets
+            **/packages.lock.json
+
+      - name: Restore
+        run: dotnet restore "${{ env.SOLUTION }}"
+
+      - name: Build
+        run: dotnet build "${{ env.SOLUTION }}" -c "${{ env.CONFIGURATION }}" --no-restore
+
+      # Non-canonical runs: quick unit tests only
+      - name: Unit Tests (TRX)
+        if: ${{ !matrix.collect_coverage }}
+        run: >
+          dotnet test "${{ env.SOLUTION }}"
+          -c "${{ env.CONFIGURATION }}"
+          --no-build
+          --logger "trx"
+          --results-directory "TestResults/unit/${{ matrix.os }}/${{ matrix.dotnet }}"
+
+      # Canonical run: unit tests + coverage collection (clean, no coverlet.console)
+      - name: Unit Tests + Coverage (canonical)
+        if: ${{ matrix.collect_coverage == true }}
+        run: >
+          dotnet test "${{ env.SOLUTION }}"
+          -c "${{ env.CONFIGURATION }}"
+          --no-build
+          --logger "trx"
+          --results-directory "TestResults/unit/${{ matrix.os }}/${{ matrix.dotnet }}"
+          --collect:"XPlat Code Coverage"
+          -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
+             DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile=${{ env.EXCLUDE_BY_FILE }}
+
+      - name: Test Report (TRX → GitHub Checks)
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Unit Tests (${{ matrix.os }} • .NET ${{ matrix.dotnet }})
+          path: TestResults/unit/${{ matrix.os }}/${{ matrix.dotnet }}/*.trx
+          reporter: dotnet-trx
+          fail-on-error: true
+
+      # Coverage report generation only for canonical run
+      - name: Generate coverage report (ReportGenerator)
+        if: ${{ always() && matrix.collect_coverage == true }}
+        uses: danielpalme/ReportGenerator-GitHub-Action@5
+        with:
+          reports: "**/TestResults/**/coverage.cobertura.xml"
+          targetdir: "TestResults/coverage"
+          reporttypes: "HtmlInline;Cobertura;JsonSummary;MarkdownSummaryGithub"
+          title: "Unit Test Coverage"
+
+      - name: Coverage summary (Step Summary)
+        if: ${{ always() && matrix.collect_coverage == true }}
+        run: |
+          if [ -f "TestResults/coverage/SummaryGithub.md" ]; then
+            cat "TestResults/coverage/SummaryGithub.md" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Coverage summary not found. Ensure coverlet.collector is referenced by test projects." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Coverage gate (canonical)
+        if: ${{ always() && matrix.collect_coverage == true }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            const summaryPath = 'TestResults/coverage/Summary.json';
+            if (!fs.existsSync(summaryPath)) {
+              core.setFailed('Coverage Summary.json not found. Ensure coverlet.collector is installed and coverage was produced.');
+              return;
+            }
+
+            const summary = JSON.parse(fs.readFileSync(summaryPath, 'utf8'));
+            const line =
+              summary?.summary?.linecoverage ??
+              summary?.summary?.lineCoverage ??
+              summary?.linecoverage ??
+              summary?.lineCoverage;
+
+            if (line === undefined || line === null) {
+              core.setFailed('Could not read line coverage from Summary.json.');
+              return;
+            }
+
+            const threshold = Number(process.env.COVERAGE_THRESHOLD);
+            const linePct = Number(line);
+
+            core.notice(`Unit line coverage: ${linePct}% (threshold ${threshold}%)`);
+            if (linePct < threshold) core.setFailed(`Coverage gate failed: ${linePct}% < ${threshold}%`);
+
+      - name: Upload unit test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-results-${{ matrix.os }}-${{ matrix.dotnet }}
+          path: TestResults/unit/${{ matrix.os }}/${{ matrix.dotnet }}
+
+      - name: Upload coverage artifacts (canonical)
+        if: ${{ always() && matrix.collect_coverage == true }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-coverage
+          path: TestResults/coverage
+
+      # ---- Badge publishing to GitHub Pages (gh-pages), only on push to main, canonical run ----
+      - name: Create coverage badge (SVG + JSON)
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && matrix.collect_coverage == true }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            const summaryPath = 'TestResults/coverage/Summary.json';
+            const summary = JSON.parse(fs.readFileSync(summaryPath, 'utf8'));
+            const line =
+              summary?.summary?.linecoverage ??
+              summary?.summary?.lineCoverage ??
+              summary?.linecoverage ??
+              summary?.lineCoverage;
+
+            const pct = Number(line);
+            const label = 'coverage';
+            const message = `${pct.toFixed(2)}%`;
+
+            // Simple SVG badge (no external service)
+            const svg =
+              `<?xml version="1.0" encoding="UTF-8"?>` +
+              `<svg xmlns="http://www.w3.org/2000/svg" width="140" height="20" role="img" aria-label="${label}: ${message}">` +
+              `<linearGradient id="s" x2="0" y2="100%"><stop offset="0" stop-color="#fff" stop-opacity=".7"/><stop offset=".1" stop-color="#aaa" stop-opacity=".1"/><stop offset=".9" stop-color="#000" stop-opacity=".3"/><stop offset="1" stop-color="#000" stop-opacity=".5"/></linearGradient>` +
+              `<mask id="m"><rect width="140" height="20" rx="3" fill="#fff"/></mask>` +
+              `<g mask="url(#m)">` +
+              `<rect width="60" height="20" fill="#555"/>` +
+              `<rect x="60" width="80" height="20" fill="#4c1"/>` +
+              `<rect width="140" height="20" fill="url(#s)"/>` +
+              `</g>` +
+              `<g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">` +
+              `<text x="30" y="14">${label}</text>` +
+              `<text x="100" y="14">${message}</text>` +
+              `</g>` +
+              `</svg>`;
+
+            fs.mkdirSync('public', { recursive: true });
+            fs.writeFileSync('public/coverage-badge.svg', svg);
+            fs.writeFileSync('public/coverage.json', JSON.stringify({ coverage: pct, label, message }, null, 2));
+
+      - name: Deploy badge to gh-pages
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && matrix.collect_coverage == true }}
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: public
+          force_orphan: true
+
+  dependency_review:
+    name: Dependency Review (PR)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/dependency-review-action@v4
+
+  codeql:
+    name: CodeQL (C#)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: csharp
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - run: |
+          dotnet restore "${{ env.SOLUTION }}"
+          dotnet build "${{ env.SOLUTION }}" -c "${{ env.CONFIGURATION }}" --no-restore
+
+      - uses: github/codeql-action/analyze@v3
