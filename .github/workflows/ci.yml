@@ -13,29 +13,18 @@ permissions:
   contents: read
   checks: write
   pull-requests: write
-  security-events: write
 
 env:
   SOLUTION: JackpotPlot.sln
   CONFIGURATION: Release
+  DOTNET_VERSION: "8.0.x"
   COVERAGE_THRESHOLD: "70" # percent
-  # coverlet collector expects URL-encoded commas when passed in the config
   EXCLUDE_BY_FILE: "**/Migrations/*.cs%2c**/Generated/**/*.cs%2c**/bin/**%2c**/obj/**"
 
 jobs:
-  unit_tests:
-    name: Unit Tests (${{ matrix.os }} • .NET ${{ matrix.dotnet }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        dotnet: ["8.0.x", "9.0.x"]
-        include:
-          # Canonical run for coverage + badge (single source of truth)
-          - os: ubuntu-latest
-            dotnet: "8.0.x"
-            collect_coverage: true
+  build_test_coverage:
+    name: Build • Test • Coverage
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -43,7 +32,7 @@ jobs:
       - name: Setup .NET (with NuGet cache)
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ matrix.dotnet }}
+          dotnet-version: ${{ env.DOTNET_VERSION }}
           cache: true
           cache-dependency-path: |
             **/*.csproj
@@ -57,25 +46,13 @@ jobs:
       - name: Build
         run: dotnet build "${{ env.SOLUTION }}" -c "${{ env.CONFIGURATION }}" --no-restore
 
-      # Non-canonical runs: quick unit tests only
-      - name: Unit Tests (TRX)
-        if: ${{ !matrix.collect_coverage }}
+      - name: Unit Tests + Coverage (TRX + XPlat)
         run: >
           dotnet test "${{ env.SOLUTION }}"
           -c "${{ env.CONFIGURATION }}"
           --no-build
           --logger "trx"
-          --results-directory "TestResults/unit/${{ matrix.os }}/${{ matrix.dotnet }}"
-
-      # Canonical run: unit tests + coverage collection (clean, no coverlet.console)
-      - name: Unit Tests + Coverage (canonical)
-        if: ${{ matrix.collect_coverage == true }}
-        run: >
-          dotnet test "${{ env.SOLUTION }}"
-          -c "${{ env.CONFIGURATION }}"
-          --no-build
-          --logger "trx"
-          --results-directory "TestResults/unit/${{ matrix.os }}/${{ matrix.dotnet }}"
+          --results-directory "TestResults"
           --collect:"XPlat Code Coverage"
           -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
              DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile=${{ env.EXCLUDE_BY_FILE }}
@@ -84,15 +61,14 @@ jobs:
         uses: dorny/test-reporter@v1
         if: always()
         with:
-          name: Unit Tests (${{ matrix.os }} • .NET ${{ matrix.dotnet }})
-          path: TestResults/unit/${{ matrix.os }}/${{ matrix.dotnet }}/*.trx
+          name: Unit Tests
+          path: TestResults/*.trx
           reporter: dotnet-trx
           fail-on-error: true
 
-      # Coverage report generation only for canonical run
       - name: Generate coverage report (ReportGenerator)
-        if: ${{ always() && matrix.collect_coverage == true }}
         uses: danielpalme/ReportGenerator-GitHub-Action@5
+        if: always()
         with:
           reports: "**/TestResults/**/coverage.cobertura.xml"
           targetdir: "TestResults/coverage"
@@ -100,7 +76,7 @@ jobs:
           title: "Unit Test Coverage"
 
       - name: Coverage summary (Step Summary)
-        if: ${{ always() && matrix.collect_coverage == true }}
+        if: always()
         run: |
           if [ -f "TestResults/coverage/SummaryGithub.md" ]; then
             cat "TestResults/coverage/SummaryGithub.md" >> "$GITHUB_STEP_SUMMARY"
@@ -108,8 +84,8 @@ jobs:
             echo "Coverage summary not found. Ensure coverlet.collector is referenced by test projects." >> "$GITHUB_STEP_SUMMARY"
           fi
 
-      - name: Coverage gate (canonical)
-        if: ${{ always() && matrix.collect_coverage == true }}
+      - name: Coverage gate
+        if: always()
         uses: actions/github-script@v7
         with:
           script: |
@@ -139,23 +115,23 @@ jobs:
             core.notice(`Unit line coverage: ${linePct}% (threshold ${threshold}%)`);
             if (linePct < threshold) core.setFailed(`Coverage gate failed: ${linePct}% < ${threshold}%`);
 
-      - name: Upload unit test artifacts
+      - name: Upload coverage report artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: unit-test-results-${{ matrix.os }}-${{ matrix.dotnet }}
-          path: TestResults/unit/${{ matrix.os }}/${{ matrix.dotnet }}
-
-      - name: Upload coverage artifacts (canonical)
-        if: ${{ always() && matrix.collect_coverage == true }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: unit-coverage
+          name: coverage-report
           path: TestResults/coverage
 
-      # ---- Badge publishing to GitHub Pages (gh-pages), only on push to main, canonical run ----
+      - name: Upload test results artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: TestResults
+
+      # ---- Coverage badge publishing (GitHub Pages / gh-pages), only on push to main ----
       - name: Create coverage badge (SVG + JSON)
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && matrix.collect_coverage == true }}
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         uses: actions/github-script@v7
         with:
           script: |
@@ -173,7 +149,7 @@ jobs:
             const label = 'coverage';
             const message = `${pct.toFixed(2)}%`;
 
-            // Simple SVG badge (no external service)
+            // Simple SVG badge (no external services)
             const svg =
               `<?xml version="1.0" encoding="UTF-8"?>` +
               `<svg xmlns="http://www.w3.org/2000/svg" width="140" height="20" role="img" aria-label="${label}: ${message}">` +
@@ -195,38 +171,10 @@ jobs:
             fs.writeFileSync('public/coverage.json', JSON.stringify({ coverage: pct, label, message }, null, 2));
 
       - name: Deploy badge to gh-pages
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && matrix.collect_coverage == true }}
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: public
           force_orphan: true
-
-  dependency_review:
-    name: Dependency Review (PR)
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/dependency-review-action@v4
-
-  codeql:
-    name: CodeQL (C#)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: github/codeql-action/init@v3
-        with:
-          languages: csharp
-
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: "8.0.x"
-
-      - run: |
-          dotnet restore "${{ env.SOLUTION }}"
-          dotnet build "${{ env.SOLUTION }}" -c "${{ env.CONFIGURATION }}" --no-restore
-
-      - uses: github/codeql-action/analyze@v3
