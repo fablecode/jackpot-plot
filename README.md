@@ -1,6 +1,8 @@
 [![Build Status](https://dev.azure.com/fablecode/jackpotplot/_apis/build/status/fablecode.jackpot-plot?branchName=main)](https://dev.azure.com/fablecode/jackpotplot/_build/latest?definitionId=25&branchName=main)
 ![License](https://img.shields.io/github/license/fablecode/jackpot-plot)
 ![Last Commit](https://img.shields.io/github/last-commit/fablecode/jackpot-plot)
+![coverage](https://fablecode.github.io/jackpot-plot/coverage-badge.svg)
+
 
 # 🎰 Jackpot Plot
 
