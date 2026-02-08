@@ -96,6 +96,7 @@ jobs:
           name: Unit Tests
           path: TestResults/*.trx
           reporter: dotnet-trx
+          list-tests: none
           fail-on-error: true
 
       - name: Upload raw test + coverage data
