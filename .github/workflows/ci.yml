@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: read
+  contents: write # for gh-pages badge publishing
   checks: write
   pull-requests: write
 
