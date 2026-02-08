@@ -47,15 +47,15 @@ jobs:
         run: dotnet build "${{ env.SOLUTION }}" -c "${{ env.CONFIGURATION }}" --no-restore
 
       - name: Unit Tests + Coverage (TRX + XPlat)
-        run: >
-          dotnet test "${{ env.SOLUTION }}"
-          -c "${{ env.CONFIGURATION }}"
-          --no-build
-          --logger "trx"
-          --results-directory "TestResults"
-          --collect:"XPlat Code Coverage"
-          -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
-             DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile=${{ env.EXCLUDE_BY_FILE }}
+        run: |
+            dotnet test "${{ env.SOLUTION }}" \
+              -c "${{ env.CONFIGURATION }}" \
+              --no-build \
+              --logger "trx" \
+              --results-directory "TestResults" \
+              --collect:"XPlat Code Coverage" \
+              /p:CoverletOutputFormat=cobertura \
+              /p:ExcludeByFile="${{ env.EXCLUDE_BY_FILE }}"
 
       - name: Test Report (TRX → GitHub Checks)
         uses: dorny/test-reporter@v1
