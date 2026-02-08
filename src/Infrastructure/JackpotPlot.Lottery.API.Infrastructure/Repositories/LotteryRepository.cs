@@ -18,9 +18,9 @@ public sealed class LotteryRepository : ILotteryRepository
         using (var context = await _contextFactory.CreateDbContextAsync())
         {
             return await context.Lotteries
-                .Where(l => EF.Functions.ILike(l.Name, name))
+                .Where(l => l.Name.ToLower() == name.ToLower())
                 .Select(l => l.Id)
-                .SingleAsync();
+                .FirstOrDefaultAsync();
         }
     }
 
