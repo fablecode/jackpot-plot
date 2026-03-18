@@ -1,0 +1,113 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Spacing Scale (Tailwind-inspired, 4px base) -->
+    <system:Double x:Key="Spacing0">0</system:Double>
+    <system:Double x:Key="Spacing0-5">2</system:Double>         <!-- 0.125rem / 2px -->
+    <system:Double x:Key="Spacing1">4</system:Double>           <!-- 0.25rem / 4px -->
+    <system:Double x:Key="Spacing1-5">6</system:Double>         <!-- 0.375rem / 6px -->
+    <system:Double x:Key="Spacing2">8</system:Double>           <!-- 0.5rem / 8px -->
+    <system:Double x:Key="Spacing2-5">10</system:Double>        <!-- 0.625rem / 10px -->
+    <system:Double x:Key="Spacing3">12</system:Double>          <!-- 0.75rem / 12px -->
+    <system:Double x:Key="Spacing3-5">14</system:Double>        <!-- 0.875rem / 14px -->
+    <system:Double x:Key="Spacing4">16</system:Double>          <!-- 1rem / 16px -->
+    <system:Double x:Key="Spacing5">20</system:Double>          <!-- 1.25rem / 20px -->
+    <system:Double x:Key="Spacing6">24</system:Double>          <!-- 1.5rem / 24px -->
+    <system:Double x:Key="Spacing7">28</system:Double>          <!-- 1.75rem / 28px -->
+    <system:Double x:Key="Spacing7-5">30</system:Double>        <!-- 1.875rem / 30px -->
+    <system:Double x:Key="Spacing8">32</system:Double>          <!-- 2rem / 32px -->
+    <system:Double x:Key="Spacing10">40</system:Double>         <!-- 2.5rem / 40px -->
+    <system:Double x:Key="Spacing12">48</system:Double>         <!-- 3rem / 48px -->
+    <system:Double x:Key="Spacing16">64</system:Double>         <!-- 4rem / 64px -->
+    <system:Double x:Key="Spacing20">80</system:Double>         <!-- 5rem / 80px -->
+    <system:Double x:Key="Spacing24">96</system:Double>         <!-- 6rem / 96px -->
+
+    <!-- Thickness Values (for Margin, Padding, BorderThickness) -->
+    <Thickness x:Key="Thickness0">0</Thickness>
+    <Thickness x:Key="Thickness1">4</Thickness>
+    <Thickness x:Key="Thickness2">8</Thickness>
+    <Thickness x:Key="Thickness3">12</Thickness>
+    <Thickness x:Key="Thickness4">16</Thickness>
+    <Thickness x:Key="Thickness5">20</Thickness>
+    <Thickness x:Key="Thickness6">24</Thickness>
+    <Thickness x:Key="Thickness8">32</Thickness>
+    <Thickness x:Key="Thickness10">40</Thickness>
+    <Thickness x:Key="Thickness12">48</Thickness>
+
+    <!-- Common Padding Combinations -->
+    <Thickness x:Key="PaddingXs">4,4,4,4</Thickness>
+    <Thickness x:Key="PaddingSm">8,8,8,8</Thickness>
+    <Thickness x:Key="PaddingMd">12,12,12,12</Thickness>
+    <Thickness x:Key="PaddingLg">16,16,16,16</Thickness>
+    <Thickness x:Key="PaddingXl">20,20,20,20</Thickness>
+    <Thickness x:Key="Padding2Xl">24,24,24,24</Thickness>
+
+    <!-- Common Margin Combinations -->
+    <Thickness x:Key="MarginXs">4,4,4,4</Thickness>
+    <Thickness x:Key="MarginSm">8,8,8,8</Thickness>
+    <Thickness x:Key="MarginMd">12,12,12,12</Thickness>
+    <Thickness x:Key="MarginLg">16,16,16,16</Thickness>
+    <Thickness x:Key="MarginXl">20,20,20,20</Thickness>
+    <Thickness x:Key="Margin2Xl">24,24,24,24</Thickness>
+
+    <!-- Border Thickness -->
+    <Thickness x:Key="BorderThickness1">1</Thickness>
+    <Thickness x:Key="BorderThickness2">2</Thickness>
+    <Thickness x:Key="BorderThickness4">4</Thickness>
+
+    <!-- Border Radius / Corner Radius -->
+    <CornerRadius x:Key="CornerRadiusNone">0</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusSm">4</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusMd">6</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusLg">8</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusXl">12</CornerRadius>
+    <CornerRadius x:Key="CornerRadius2Xl">16</CornerRadius>
+    <CornerRadius x:Key="CornerRadius3Xl">24</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusFull">9999</CornerRadius>
+
+    <!-- Gap Spacing (for StackPanel, Grid, etc.) -->
+    <system:Double x:Key="GapXs">4</system:Double>
+    <system:Double x:Key="GapSm">8</system:Double>
+    <system:Double x:Key="GapMd">12</system:Double>
+    <system:Double x:Key="GapLg">16</system:Double>
+    <system:Double x:Key="GapXl">20</system:Double>
+    <system:Double x:Key="Gap2Xl">24</system:Double>
+
+    <!-- Layout Dimensions -->
+    <system:Double x:Key="SidebarWidthDesktop">220</system:Double>
+    <system:Double x:Key="SidebarWidthDesktopCollapsed">75</system:Double>
+    <system:Double x:Key="SidebarWidthMobile">250</system:Double>
+    <system:Double x:Key="HeaderHeightDesktop">60</system:Double>
+    <system:Double x:Key="HeaderHeightMobile">60</system:Double>
+    <system:Double x:Key="MenuItemHeight">40</system:Double>
+    <system:Double x:Key="MenuItemMinHeight">38</system:Double>
+
+    <!-- Icon Sizes -->
+    <system:Double x:Key="IconSizeSm">16</system:Double>
+    <system:Double x:Key="IconSizeMd">20</system:Double>
+    <system:Double x:Key="IconSizeLg">24</system:Double>
+    <system:Double x:Key="IconSizeXl">32</system:Double>
+    <system:Double x:Key="IconSize2Xl">40</system:Double>
+
+    <!-- Button Sizes -->
+    <system:Double x:Key="ButtonHeightSm">32</system:Double>
+    <system:Double x:Key="ButtonHeightMd">38</system:Double>
+    <system:Double x:Key="ButtonHeightLg">44</system:Double>
+    <system:Double x:Key="ButtonIconSize">30</system:Double>
+
+    <!-- Input Heights -->
+    <system:Double x:Key="InputHeightSm">32</system:Double>
+    <system:Double x:Key="InputHeightMd">38</system:Double>
+    <system:Double x:Key="InputHeightLg">44</system:Double>
+
+    <!-- Z-Index Layers -->
+    <system:Int32 x:Key="ZIndexDropdown">1000</system:Int32>
+    <system:Int32 x:Key="ZIndexSticky">1020</system:Int32>
+    <system:Int32 x:Key="ZIndexFixed">1030</system:Int32>
+    <system:Int32 x:Key="ZIndexModalBackdrop">1040</system:Int32>
+    <system:Int32 x:Key="ZIndexModal">1050</system:Int32>
+    <system:Int32 x:Key="ZIndexPopover">1060</system:Int32>
+    <system:Int32 x:Key="ZIndexTooltip">1070</system:Int32>
+
+</ResourceDictionary>

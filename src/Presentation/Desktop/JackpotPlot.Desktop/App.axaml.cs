@@ -5,6 +5,7 @@ using JackpotPlot.Desktop.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using JackpotPlot.Desktop.UI.Services.Navigation;
+using JackpotPlot.Desktop.UI.Services.Theme;
 using JackpotPlot.Desktop.UI.ViewModels;
 using DashboardNavigationRequest = JackpotPlot.Desktop.UI.Services.Navigation.DashboardNavigationRequest;
 
@@ -25,6 +26,9 @@ namespace JackpotPlot.Desktop
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
+                var themeService = _services.GetRequiredService<IThemeService>();
+                await themeService.LoadSavedThemeAsync();
+
                 var navigationService = _services.GetRequiredService<INavigationService>();
 
                 await navigationService.NavigateToAsync<DashboardViewModel, DashboardNavigationRequest>(new DashboardNavigationRequest());

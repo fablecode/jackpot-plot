@@ -1,0 +1,124 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Font Families -->
+    <FontFamily x:Key="PrimaryFontFamily">Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif</FontFamily>
+    <FontFamily x:Key="MonospaceFontFamily">Consolas, Monaco, "Courier New", monospace</FontFamily>
+
+    <!-- Font Sizes (Following Tailwind/Metronic Scale) -->
+    <system:Double x:Key="FontSize2Xs">10</system:Double>       <!-- 0.625rem / 10px -->
+    <system:Double x:Key="FontSizeXs">12</system:Double>        <!-- 0.75rem / 12px -->
+    <system:Double x:Key="FontSizeSm">14</system:Double>        <!-- 0.875rem / 14px -->
+    <system:Double x:Key="FontSize2Sm">13</system:Double>       <!-- 0.8125rem / 13px -->
+    <system:Double x:Key="FontSizeBase">16</system:Double>      <!-- 1rem / 16px -->
+    <system:Double x:Key="FontSizeLg">18</system:Double>        <!-- 1.125rem / 18px -->
+    <system:Double x:Key="FontSizeXl">20</system:Double>        <!-- 1.25rem / 20px -->
+    <system:Double x:Key="FontSize2Xl">24</system:Double>       <!-- 1.5rem / 24px -->
+    <system:Double x:Key="FontSize3Xl">28</system:Double>       <!-- 1.75rem / 28px -->
+    <system:Double x:Key="FontSize4Xl">32</system:Double>       <!-- 2rem / 32px -->
+    <system:Double x:Key="FontSize5Xl">36</system:Double>       <!-- 2.25rem / 36px -->
+    <system:Double x:Key="FontSize6Xl">48</system:Double>       <!-- 3rem / 48px -->
+
+    <!-- Font Weights -->
+    <FontWeight x:Key="FontWeightLight">Light</FontWeight>              <!-- 300 -->
+    <FontWeight x:Key="FontWeightNormal">Normal</FontWeight>            <!-- 400 -->
+    <FontWeight x:Key="FontWeightMedium">Medium</FontWeight>            <!-- 500 -->
+    <FontWeight x:Key="FontWeightSemiBold">SemiBold</FontWeight>        <!-- 600 -->
+    <FontWeight x:Key="FontWeightBold">Bold</FontWeight>                <!-- 700 -->
+    <FontWeight x:Key="FontWeightExtraBold">ExtraBold</FontWeight>      <!-- 800 -->
+
+    <!-- Line Heights -->
+    <system:Double x:Key="LineHeightTight">1.25</system:Double>
+    <system:Double x:Key="LineHeightNormal">1.5</system:Double>
+    <system:Double x:Key="LineHeightRelaxed">1.625</system:Double>
+    <system:Double x:Key="LineHeightLoose">2.0</system:Double>
+
+    <!-- Letter Spacing -->
+    <system:Double x:Key="LetterSpacingTighter">-0.5</system:Double>
+    <system:Double x:Key="LetterSpacingTight">-0.25</system:Double>
+    <system:Double x:Key="LetterSpacingNormal">0</system:Double>
+    <system:Double x:Key="LetterSpacingWide">0.25</system:Double>
+    <system:Double x:Key="LetterSpacingWider">0.5</system:Double>
+    <system:Double x:Key="LetterSpacingWidest">1.0</system:Double>
+
+    <!-- Text Styles (Predefined combinations) -->
+    
+    <!-- Heading Styles -->
+    <Style Selector="TextBlock.h1" x:Key="Heading1Style">
+        <Setter Property="FontSize" Value="{StaticResource FontSize4Xl}" />
+        <Setter Property="FontWeight" Value="{StaticResource FontWeightBold}" />
+        <Setter Property="LineHeight" Value="40" />
+    </Style>
+
+    <Style Selector="TextBlock.h2" x:Key="Heading2Style">
+        <Setter Property="FontSize" Value="{StaticResource FontSize3Xl}" />
+        <Setter Property="FontWeight" Value="{StaticResource FontWeightBold}" />
+        <Setter Property="LineHeight" Value="36" />
+    </Style>
+
+    <Style Selector="TextBlock.h3" x:Key="Heading3Style">
+        <Setter Property="FontSize" Value="{StaticResource FontSize2Xl}" />
+        <Setter Property="FontWeight" Value="{StaticResource FontWeightSemiBold}" />
+        <Setter Property="LineHeight" Value="32" />
+    </Style>
+
+    <Style Selector="TextBlock.h4" x:Key="Heading4Style">
+        <Setter Property="FontSize" Value="{StaticResource FontSizeXl}" />
+        <Setter Property="FontWeight" Value="{StaticResource FontWeightSemiBold}" />
+        <Setter Property="LineHeight" Value="28" />
+    </Style>
+
+    <Style Selector="TextBlock.h5" x:Key="Heading5Style">
+        <Setter Property="FontSize" Value="{StaticResource FontSizeLg}" />
+        <Setter Property="FontWeight" Value="{StaticResource FontWeightSemiBold}" />
+        <Setter Property="LineHeight" Value="24" />
+    </Style>
+
+    <Style Selector="TextBlock.h6" x:Key="Heading6Style">
+        <Setter Property="FontSize" Value="{StaticResource FontSizeBase}" />
+        <Setter Property="FontWeight" Value="{StaticResource FontWeightSemiBold}" />
+        <Setter Property="LineHeight" Value="20" />
+    </Style>
+
+    <!-- Body Text Styles -->
+    <Style Selector="TextBlock.text-sm" x:Key="TextSmallStyle">
+        <Setter Property="FontSize" Value="{StaticResource FontSizeSm}" />
+        <Setter Property="FontWeight" Value="{StaticResource FontWeightNormal}" />
+    </Style>
+
+    <Style Selector="TextBlock.text-base" x:Key="TextBaseStyle">
+        <Setter Property="FontSize" Value="{StaticResource FontSizeBase}" />
+        <Setter Property="FontWeight" Value="{StaticResource FontWeightNormal}" />
+    </Style>
+
+    <Style Selector="TextBlock.text-2sm" x:Key="Text2SmallStyle">
+        <Setter Property="FontSize" Value="{StaticResource FontSize2Sm}" />
+        <Setter Property="FontWeight" Value="{StaticResource FontWeightMedium}" />
+    </Style>
+
+    <!-- Weight Modifiers -->
+    <Style Selector="TextBlock.font-medium" x:Key="FontMediumStyle">
+        <Setter Property="FontWeight" Value="{StaticResource FontWeightMedium}" />
+    </Style>
+
+    <Style Selector="TextBlock.font-semibold" x:Key="FontSemiBoldStyle">
+        <Setter Property="FontWeight" Value="{StaticResource FontWeightSemiBold}" />
+    </Style>
+
+    <Style Selector="TextBlock.font-bold" x:Key="FontBoldStyle">
+        <Setter Property="FontWeight" Value="{StaticResource FontWeightBold}" />
+    </Style>
+
+    <!-- Menu-specific Typography -->
+    <Style Selector="TextBlock.menu-title" x:Key="MenuTitleStyle">
+        <Setter Property="FontSize" Value="{StaticResource FontSizeSm}" />
+        <Setter Property="FontWeight" Value="{StaticResource FontWeightSemiBold}" />
+    </Style>
+
+    <Style Selector="TextBlock.menu-subtitle" x:Key="MenuSubtitleStyle">
+        <Setter Property="FontSize" Value="{StaticResource FontSize2Sm}" />
+        <Setter Property="FontWeight" Value="{StaticResource FontWeightMedium}" />
+    </Style>
+
+</ResourceDictionary>

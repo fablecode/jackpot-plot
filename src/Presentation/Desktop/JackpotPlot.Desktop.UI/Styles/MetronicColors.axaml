@@ -1,0 +1,144 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Primary Colors -->
+    <Color x:Key="PrimaryColor">#1379F0</Color>
+    <Color x:Key="PrimaryActiveColor">#0D5FC7</Color>
+    <Color x:Key="PrimaryLightColor">#E8F2FF</Color>
+    <Color x:Key="PrimaryForegroundColor">#FFFFFF</Color>
+
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}" />
+    <SolidColorBrush x:Key="PrimaryActiveBrush" Color="{StaticResource PrimaryActiveColor}" />
+    <SolidColorBrush x:Key="PrimaryLightBrush" Color="{StaticResource PrimaryLightColor}" />
+    <SolidColorBrush x:Key="PrimaryForegroundBrush" Color="{StaticResource PrimaryForegroundColor}" />
+
+    <!-- Gray Scale - Light Mode -->
+    <Color x:Key="Gray100Color">#F9F9F9</Color>
+    <Color x:Key="Gray200Color">#F1F1F4</Color>
+    <Color x:Key="Gray300Color">#DBDFE9</Color>
+    <Color x:Key="Gray400Color">#C4CADA</Color>
+    <Color x:Key="Gray500Color">#99A1B7</Color>
+    <Color x:Key="Gray600Color">#78829D</Color>
+    <Color x:Key="Gray700Color">#4B5675</Color>
+    <Color x:Key="Gray800Color">#252F4A</Color>
+    <Color x:Key="Gray900Color">#071437</Color>
+
+    <SolidColorBrush x:Key="Gray100Brush" Color="{StaticResource Gray100Color}" />
+    <SolidColorBrush x:Key="Gray200Brush" Color="{StaticResource Gray200Color}" />
+    <SolidColorBrush x:Key="Gray300Brush" Color="{StaticResource Gray300Color}" />
+    <SolidColorBrush x:Key="Gray400Brush" Color="{StaticResource Gray400Color}" />
+    <SolidColorBrush x:Key="Gray500Brush" Color="{StaticResource Gray500Color}" />
+    <SolidColorBrush x:Key="Gray600Brush" Color="{StaticResource Gray600Color}" />
+    <SolidColorBrush x:Key="Gray700Brush" Color="{StaticResource Gray700Color}" />
+    <SolidColorBrush x:Key="Gray800Brush" Color="{StaticResource Gray800Color}" />
+    <SolidColorBrush x:Key="Gray900Brush" Color="{StaticResource Gray900Color}" />
+
+    <!-- Gray Scale - Dark Mode (Coal) -->
+    <Color x:Key="Coal100Color">#1B1C22</Color>
+    <Color x:Key="Coal200Color">#26272F</Color>
+    <Color x:Key="Coal300Color">#363843</Color>
+    <Color x:Key="Coal400Color">#464852</Color>
+    <Color x:Key="Coal500Color">#636674</Color>
+    <Color x:Key="Coal600Color">#808290</Color>
+    <Color x:Key="Coal700Color">#9A9CAE</Color>
+    <Color x:Key="Coal800Color">#B5B7C8</Color>
+    <Color x:Key="Coal900Color">#F5F5F5</Color>
+
+    <SolidColorBrush x:Key="Coal100Brush" Color="{StaticResource Coal100Color}" />
+    <SolidColorBrush x:Key="Coal200Brush" Color="{StaticResource Coal200Color}" />
+    <SolidColorBrush x:Key="Coal300Brush" Color="{StaticResource Coal300Color}" />
+    <SolidColorBrush x:Key="Coal400Brush" Color="{StaticResource Coal400Color}" />
+    <SolidColorBrush x:Key="Coal500Brush" Color="{StaticResource Coal500Color}" />
+    <SolidColorBrush x:Key="Coal600Brush" Color="{StaticResource Coal600Color}" />
+    <SolidColorBrush x:Key="Coal700Brush" Color="{StaticResource Coal700Color}" />
+    <SolidColorBrush x:Key="Coal800Brush" Color="{StaticResource Coal800Color}" />
+    <SolidColorBrush x:Key="Coal900Brush" Color="{StaticResource Coal900Color}" />
+
+    <!-- Contextual Colors -->
+    <Color x:Key="SuccessColor">#17C653</Color>
+    <Color x:Key="SuccessLightColor">#E8FFF3</Color>
+    <Color x:Key="WarningColor">#FFC700</Color>
+    <Color x:Key="WarningLightColor">#FFF8DD</Color>
+    <Color x:Key="DangerColor">#F1416C</Color>
+    <Color x:Key="DangerLightColor">#FFF5F8</Color>
+    <Color x:Key="InfoColor">#7239EA</Color>
+    <Color x:Key="InfoLightColor">#F8F5FF</Color>
+
+    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}" />
+    <SolidColorBrush x:Key="SuccessLightBrush" Color="{StaticResource SuccessLightColor}" />
+    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}" />
+    <SolidColorBrush x:Key="WarningLightBrush" Color="{StaticResource WarningLightColor}" />
+    <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}" />
+    <SolidColorBrush x:Key="DangerLightBrush" Color="{StaticResource DangerLightColor}" />
+    <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource InfoColor}" />
+    <SolidColorBrush x:Key="InfoLightBrush" Color="{StaticResource InfoLightColor}" />
+
+    <!-- Background Colors - Light Theme -->
+    <Color x:Key="LightBackgroundColor">#FFFFFF</Color>
+    <Color x:Key="LightCardBackgroundColor">#FFFFFF</Color>
+    <Color x:Key="LightSidebarBackgroundColor">#F9F9F9</Color>
+    <Color x:Key="LightSecondaryActiveColor">#F1F1F4</Color>
+
+    <SolidColorBrush x:Key="LightBackgroundBrush" Color="{StaticResource LightBackgroundColor}" />
+    <SolidColorBrush x:Key="LightCardBackgroundBrush" Color="{StaticResource LightCardBackgroundColor}" />
+    <SolidColorBrush x:Key="LightSidebarBackgroundBrush" Color="{StaticResource LightSidebarBackgroundColor}" />
+    <SolidColorBrush x:Key="LightSecondaryActiveBrush" Color="{StaticResource LightSecondaryActiveColor}" />
+
+    <!-- Background Colors - Dark Theme -->
+    <Color x:Key="DarkBackgroundColor">#1B1C22</Color>
+    <Color x:Key="DarkCardBackgroundColor">#26272F</Color>
+    <Color x:Key="DarkSidebarBackgroundColor">#1B1C22</Color>
+    <Color x:Key="DarkSecondaryActiveColor">#363843</Color>
+
+    <SolidColorBrush x:Key="DarkBackgroundBrush" Color="{StaticResource DarkBackgroundColor}" />
+    <SolidColorBrush x:Key="DarkCardBackgroundBrush" Color="{StaticResource DarkCardBackgroundColor}" />
+    <SolidColorBrush x:Key="DarkSidebarBackgroundBrush" Color="{StaticResource DarkSidebarBackgroundColor}" />
+    <SolidColorBrush x:Key="DarkSecondaryActiveBrush" Color="{StaticResource DarkSecondaryActiveColor}" />
+
+    <!-- Border Colors -->
+    <Color x:Key="BorderLightColor">#F1F1F4</Color>
+    <Color x:Key="BorderDarkColor">#363843</Color>
+
+    <SolidColorBrush x:Key="BorderLightBrush" Color="{StaticResource BorderLightColor}" />
+    <SolidColorBrush x:Key="BorderDarkBrush" Color="{StaticResource BorderDarkColor}" />
+
+    <!-- Theme-Aware Semantic Brushes (Auto-switch based on theme) -->
+    <ResourceDictionary.ThemeDictionaries>
+        <!-- Light Theme Dictionary -->
+        <ResourceDictionary x:Key="Light">
+            <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource LightBackgroundColor}" />
+            <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource LightCardBackgroundColor}" />
+            <SolidColorBrush x:Key="SidebarBackgroundBrush" Color="{StaticResource LightSidebarBackgroundColor}" />
+            <SolidColorBrush x:Key="SecondaryActiveBrush" Color="{StaticResource LightSecondaryActiveColor}" />
+            <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderLightColor}" />
+            <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource Gray900Color}" />
+            <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource Gray700Color}" />
+            <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource Gray500Color}" />
+        </ResourceDictionary>
+
+        <!-- Dark Theme Dictionary -->
+        <ResourceDictionary x:Key="Dark">
+            <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource DarkBackgroundColor}" />
+            <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource DarkCardBackgroundColor}" />
+            <SolidColorBrush x:Key="SidebarBackgroundBrush" Color="{StaticResource DarkSidebarBackgroundColor}" />
+            <SolidColorBrush x:Key="SecondaryActiveBrush" Color="{StaticResource DarkSecondaryActiveColor}" />
+            <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderDarkColor}" />
+            <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource Coal900Color}" />
+            <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource Coal700Color}" />
+            <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource Coal500Color}" />
+        </ResourceDictionary>
+
+        <!-- Default Theme Dictionary (follows system preference) -->
+        <ResourceDictionary x:Key="Default">
+            <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource LightBackgroundColor}" />
+            <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource LightCardBackgroundColor}" />
+            <SolidColorBrush x:Key="SidebarBackgroundBrush" Color="{StaticResource LightSidebarBackgroundColor}" />
+            <SolidColorBrush x:Key="SecondaryActiveBrush" Color="{StaticResource LightSecondaryActiveColor}" />
+            <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderLightColor}" />
+            <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource Gray900Color}" />
+            <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource Gray700Color}" />
+            <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource Gray500Color}" />
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
+</ResourceDictionary>

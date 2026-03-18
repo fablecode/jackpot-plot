@@ -10,5 +10,6 @@
      </Application.DataTemplates>
     <Application.Styles>
         <FluentTheme />
+        <StyleInclude Source="avares://JackpotPlot.Desktop.UI/Styles/MetronicTheme.axaml" />
     </Application.Styles>
 </Application>

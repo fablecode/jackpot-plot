@@ -1,4 +1,5 @@
 using JackpotPlot.Desktop.UI.Services.Navigation;
+using JackpotPlot.Desktop.UI.Services.Theme;
 using JackpotPlot.Desktop.UI.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using DashboardNavigationRequest = JackpotPlot.Desktop.UI.Services.Navigation.DashboardNavigationRequest;
@@ -12,6 +13,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<MainWindow>();
 
+        services.AddSingleton<IThemeService, ThemeService>();
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<INavigationMenuFactory, NavigationMenuFactory>();
 
