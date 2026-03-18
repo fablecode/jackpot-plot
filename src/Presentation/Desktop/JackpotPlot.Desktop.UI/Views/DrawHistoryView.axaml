@@ -1,0 +1,118 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="JackpotPlot.Desktop.UI.Views.DrawHistoryView"
+             xmlns:vm="using:JackpotPlot.Desktop.UI.ViewModels"
+             x:DataType="vm:DrawHistoryViewModel">
+    <Border Padding="24">
+        <Grid RowDefinitions="Auto,Auto,*">
+            <!-- Header Section -->
+            <StackPanel Grid.Row="0" Spacing="8">
+                <TextBlock Text="{Binding Title}"
+                           FontSize="28"
+                           FontWeight="SemiBold" />
+
+                <TextBlock Text="{Binding Summary}"
+                           TextWrapping="Wrap"
+                           Foreground="Gray" />
+            </StackPanel>
+
+            <!-- Filter Section -->
+            <Border Grid.Row="1" 
+                    Padding="16" 
+                    Margin="0,16,0,0"
+                    Background="#F5F5F5"
+                    CornerRadius="4">
+                <StackPanel Spacing="8">
+                    <TextBox Text="{Binding SearchText}"
+                             Watermark="Search by lottery name or numbers..." />
+
+                    <Grid ColumnDefinitions="Auto,*,Auto,*" ColumnSpacing="8">
+                        <TextBlock Grid.Column="0"
+                                   Text="From:"
+                                   VerticalAlignment="Center" />
+
+                        <CalendarDatePicker Grid.Column="1"
+                                           SelectedDate="{Binding FromDate}"
+                                           VerticalAlignment="Center" />
+
+                        <TextBlock Grid.Column="2"
+                                   Text="To:"
+                                   VerticalAlignment="Center"
+                                   Margin="8,0,0,0" />
+
+                        <CalendarDatePicker Grid.Column="3"
+                                           SelectedDate="{Binding ToDate}"
+                                           VerticalAlignment="Center" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Data List Section -->
+            <Border Grid.Row="2" Margin="0,16,0,0">
+                <ScrollViewer>
+                    <ItemsControl ItemsSource="{Binding DrawHistory}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Padding="16"
+                                        Margin="0,0,0,8"
+                                        Background="White"
+                                        BorderBrush="#E0E0E0"
+                                        BorderThickness="1"
+                                        CornerRadius="4">
+                                    <Grid ColumnDefinitions="120,120,*,140,80" ColumnSpacing="16">
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="Draw Date" 
+                                                       FontSize="10"
+                                                       Foreground="Gray" />
+                                            <TextBlock Text="{Binding DrawDateDisplay}"
+                                                       FontWeight="SemiBold" />
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Text="Lottery" 
+                                                       FontSize="10"
+                                                       Foreground="Gray" />
+                                            <TextBlock Text="{Binding LotteryName}"
+                                                       FontWeight="SemiBold" />
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="2">
+                                            <TextBlock Text="Winning Numbers" 
+                                                       FontSize="10"
+                                                       Foreground="Gray" />
+                                            <TextBlock Text="{Binding WinningNumbersDisplay}"
+                                                       FontWeight="SemiBold"
+                                                       FontSize="16"
+                                                       Foreground="DarkBlue" />
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="3">
+                                            <TextBlock Text="Jackpot" 
+                                                       FontSize="10"
+                                                       Foreground="Gray" />
+                                            <TextBlock Text="{Binding JackpotDisplay}"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="Green" />
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="4">
+                                            <TextBlock Text="Winners" 
+                                                       FontSize="10"
+                                                       Foreground="Gray" />
+                                            <TextBlock Text="{Binding WinnersCount}"
+                                                       FontWeight="SemiBold"
+                                                       HorizontalAlignment="Center" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>

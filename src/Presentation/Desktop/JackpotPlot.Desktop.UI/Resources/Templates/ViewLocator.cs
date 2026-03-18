@@ -12,6 +12,7 @@ public sealed class ViewLocator : IDataTemplate
         return data switch
         {
             DashboardViewModel => new DashboardView(),
+            DrawHistoryViewModel => new DrawHistoryView(),
             _ => new TextBlock { Text = $"No view found for {data?.GetType().Name ?? "null"}" }
         };
     }
