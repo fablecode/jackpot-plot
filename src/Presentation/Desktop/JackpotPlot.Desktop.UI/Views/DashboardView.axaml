@@ -1,0 +1,42 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="JackpotPlot.Desktop.UI.Views.DashboardView"
+             xmlns:vm="using:JackpotPlot.Desktop.UI.ViewModels"
+             x:DataType="vm:DashboardViewModel">
+	<Border Padding="24">
+        <StackPanel Spacing="12">
+            <TextBlock Text="{Binding Title}"
+                       FontSize="28"
+                       FontWeight="SemiBold" />
+
+            <TextBlock Text="{Binding Summary}"
+                       TextWrapping="Wrap" />
+
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
+                <Border Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="Latest Draw" FontWeight="SemiBold" />
+                        <TextBlock Text="04 11 19 26 37 44" />
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="1" Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="Prediction Status" FontWeight="SemiBold" />
+                        <TextBlock Text="Last prediction successful" />
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="2" Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="Service Health" FontWeight="SemiBold" />
+                        <TextBlock Text="All services reachable" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </StackPanel>
+    </Border>
+</UserControl>

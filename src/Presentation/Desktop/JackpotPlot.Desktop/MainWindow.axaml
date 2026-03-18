@@ -1,0 +1,49 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="JackpotPlot.Desktop.MainWindow"
+        xmlns:vm="using:JackpotPlot.Desktop.UI.ViewModels"
+        x:DataType="vm:MainWindowViewModel"
+        Title="{Binding Title}">
+	<Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="220,*">
+        <Border Grid.Row="0" Grid.ColumnSpan="2" Padding="12">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <TextBlock Text="{Binding Title}"
+                           VerticalAlignment="Center"
+                           FontSize="24"
+                           FontWeight="SemiBold" />
+
+                <TextBox Grid.Column="1"
+                         Margin="16,0,16,0"
+                         Watermark="Search..." />
+
+                <Button Grid.Column="2"
+                        Content="Back"
+                        Command="{Binding GoBackCommand}" />
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="1" Grid.Column="0" Padding="12">
+            <ListBox ItemsSource="{Binding NavigationItems}"
+                     SelectedItem="{Binding SelectedNavigationItem, Mode=TwoWay}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Button Content="{Binding Title}"
+                                Command="{ReflectionBinding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
+
+        <Border Grid.Row="1" Grid.Column="1" Padding="12">
+            <ContentControl Content="{Binding CurrentPage}" />
+        </Border>
+
+        <Border Grid.Row="2" Grid.ColumnSpan="2" Padding="8">
+            <TextBlock Text="Ready." />
+        </Border>
+    </Grid>
+</Window>
