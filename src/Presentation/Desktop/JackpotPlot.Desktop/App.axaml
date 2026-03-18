@@ -1,9 +1,16 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:templates="clr-namespace:JackpotPlot.Desktop.UI.Resources.Templates;assembly=JackpotPlot.Desktop.UI"
+             xmlns:converters="clr-namespace:JackpotPlot.Desktop.UI.Converters;assembly=JackpotPlot.Desktop.UI"
              x:Class="JackpotPlot.Desktop.App"
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+     <Application.Resources>
+         <converters:ExpandIconConverter x:Key="ExpandIconConverter" />
+         <converters:BoolToWidthConverter x:Key="BoolToWidthConverter" />
+         <converters:BoolToAngleConverter x:Key="BoolToAngleConverter" />
+     </Application.Resources>
 
      <Application.DataTemplates>
          <templates:ViewLocator />
@@ -11,5 +18,6 @@
     <Application.Styles>
         <FluentTheme />
         <StyleInclude Source="avares://JackpotPlot.Desktop.UI/Styles/MetronicTheme.axaml" />
+        <StyleInclude Source="avares://JackpotPlot.Desktop.UI/Styles/MenuItemStyles.axaml" />
     </Application.Styles>
 </Application>

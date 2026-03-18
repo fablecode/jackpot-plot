@@ -2,50 +2,66 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
         x:Class="JackpotPlot.Desktop.UI.Views.MainWindow"
         xmlns:vm="using:JackpotPlot.Desktop.UI.ViewModels"
+        xmlns:components="using:JackpotPlot.Desktop.UI.Views.Components"
         x:DataType="vm:MainWindowViewModel"
-        Title="{Binding Title}">
+        Title="{Binding Title}"
+        Width="1200"
+        Height="800"
+        Background="{DynamicResource BackgroundBrush}">
 
-    <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="220,*">
-        <Border Grid.Row="0" Grid.ColumnSpan="2" Padding="12">
-            <Grid ColumnDefinitions="Auto,*,Auto">
-                <TextBlock Text="{Binding Title}"
-                           VerticalAlignment="Center"
-                           FontSize="24"
-                           FontWeight="SemiBold" />
+    <Grid ColumnDefinitions="Auto,*">
+        <!-- Sidebar -->
+        <components:SidebarView Grid.Column="0"
+                                DataContext="{Binding SidebarViewModel}" />
 
-                <TextBox Grid.Column="1"
-                         Margin="16,0,16,0"
-                         Watermark="Search..." />
+        <!-- Main Content Area -->
+        <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto">
+            <!-- Header -->
+            <Border Grid.Row="0" 
+                    Padding="20,12"
+                    Background="{DynamicResource CardBackgroundBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="0,0,0,1">
+                <Grid ColumnDefinitions="Auto,*,Auto">
+                    <TextBlock Text="{Binding Title}"
+                               VerticalAlignment="Center"
+                               FontSize="20"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextPrimaryBrush}" />
 
-                <Button Grid.Column="2"
-                        Content="Back"
-                        Command="{Binding GoBackCommand}" />
-            </Grid>
-        </Border>
+                    <TextBox Grid.Column="1"
+                             Margin="20,0,20,0"
+                             Watermark="Search..."
+                             MaxWidth="400"
+                             HorizontalAlignment="Left" />
 
-        <Border Grid.Row="1" Grid.Column="0" Padding="12">
-            <ListBox ItemsSource="{Binding NavigationItems}"
-                     SelectedItem="{Binding SelectedNavigationItem, Mode=TwoWay}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Button Content="{Binding Title}"
-                                Command="{ReflectionBinding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                CommandParameter="{Binding}" />
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </Border>
+                    <Button Grid.Column="2"
+                            Content="Back"
+                            Command="{Binding GoBackCommand}" />
+                </Grid>
+            </Border>
 
-        <Border Grid.Row="1" Grid.Column="1" Padding="12">
-            <ContentControl Content="{Binding CurrentPage}" />
-        </Border>
+            <!-- Page Content -->
+            <Border Grid.Row="1" 
+                    Padding="20">
+                <ContentControl Content="{Binding CurrentPage}" />
+            </Border>
 
-        <Border Grid.Row="2" Grid.ColumnSpan="2" Padding="8">
-            <TextBlock Text="Ready." />
-        </Border>
+            <!-- Footer (Status Bar) -->
+            <Border Grid.Row="2" 
+                    Padding="12,8"
+                    Background="{DynamicResource CardBackgroundBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="0,1,0,0">
+                <TextBlock Text="Ready"
+                           FontSize="11"
+                           Foreground="{DynamicResource TextMutedBrush}"
+                           VerticalAlignment="Center" />
+            </Border>
+        </Grid>
     </Grid>
 
 </Window>

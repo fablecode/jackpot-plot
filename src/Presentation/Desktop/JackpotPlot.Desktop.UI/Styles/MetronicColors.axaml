@@ -114,6 +114,8 @@
             <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource Gray900Color}" />
             <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource Gray700Color}" />
             <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource Gray500Color}" />
+            <SolidColorBrush x:Key="MenuItemHoverBrush" Color="{StaticResource Gray200Color}" />
+            <SolidColorBrush x:Key="MenuItemActiveBrush" Color="{StaticResource PrimaryLightColor}" />
         </ResourceDictionary>
 
         <!-- Dark Theme Dictionary -->
@@ -126,6 +128,8 @@
             <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource Coal900Color}" />
             <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource Coal700Color}" />
             <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource Coal500Color}" />
+            <SolidColorBrush x:Key="MenuItemHoverBrush" Color="{StaticResource Coal300Color}" />
+            <SolidColorBrush x:Key="MenuItemActiveBrush" Color="{StaticResource Coal400Color}" />
         </ResourceDictionary>
 
         <!-- Default Theme Dictionary (follows system preference) -->
@@ -138,6 +142,8 @@
             <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource Gray900Color}" />
             <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource Gray700Color}" />
             <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource Gray500Color}" />
+            <SolidColorBrush x:Key="MenuItemHoverBrush" Color="{StaticResource Gray200Color}" />
+            <SolidColorBrush x:Key="MenuItemActiveBrush" Color="{StaticResource PrimaryLightColor}" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 

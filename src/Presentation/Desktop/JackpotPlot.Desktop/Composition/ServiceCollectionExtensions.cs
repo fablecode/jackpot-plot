@@ -1,3 +1,4 @@
+using JackpotPlot.Desktop.UI.Services.Menu;
 using JackpotPlot.Desktop.UI.Services.Navigation;
 using JackpotPlot.Desktop.UI.Services.Theme;
 using JackpotPlot.Desktop.UI.ViewModels;
@@ -11,14 +12,17 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddDesktopApplication(this IServiceCollection services)
     {
-        services.AddSingleton<MainWindow>();
+        services.AddSingleton<UI.Views.MainWindow>();
 
         services.AddSingleton<IThemeService, ThemeService>();
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<INavigationMenuFactory, NavigationMenuFactory>();
+        services.AddSingleton<IMenuService, MenuService>();
 
         services.AddTransient<DashboardViewModel>();
         services.AddTransient<DrawHistoryViewModel>();
+
+        services.AddSingleton<SidebarViewModel>();
 
         services.AddSingleton<INavigationTarget>(
             new NavigationTarget<DashboardViewModel, DashboardNavigationRequest>(

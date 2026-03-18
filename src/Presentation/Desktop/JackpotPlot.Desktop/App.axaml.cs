@@ -2,11 +2,13 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using JackpotPlot.Desktop.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using System;
 using JackpotPlot.Desktop.UI.Services.Navigation;
 using JackpotPlot.Desktop.UI.Services.Theme;
 using JackpotPlot.Desktop.UI.ViewModels;
+using JackpotPlot.Desktop.UI.Views;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Threading.Tasks;
 using DashboardNavigationRequest = JackpotPlot.Desktop.UI.Services.Navigation.DashboardNavigationRequest;
 
 namespace JackpotPlot.Desktop
@@ -20,26 +22,46 @@ namespace JackpotPlot.Desktop
             AvaloniaXamlLoader.Load(this);
         }
 
-        public override async void OnFrameworkInitializationCompleted()
+        public override void OnFrameworkInitializationCompleted()
         {
-            _services = DesktopHostBuilder.BuildServiceProvider();
-
-            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            try
             {
-                var themeService = _services.GetRequiredService<IThemeService>();
-                await themeService.LoadSavedThemeAsync();
+                if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                {
+                    _services = DesktopHostBuilder.BuildServiceProvider();
 
-                var navigationService = _services.GetRequiredService<INavigationService>();
+                    var mainWindow = _services.GetRequiredService<MainWindow>();
+                    mainWindow.DataContext = _services.GetRequiredService<MainWindowViewModel>();
 
-                await navigationService.NavigateToAsync<DashboardViewModel, DashboardNavigationRequest>(new DashboardNavigationRequest());
+                    desktop.MainWindow = mainWindow;
+                }
 
-                var mainWindow = _services.GetRequiredService<MainWindow>();
-                mainWindow.DataContext = _services.GetRequiredService<MainWindowViewModel>();
+                base.OnFrameworkInitializationCompleted();
 
-                desktop.MainWindow = mainWindow;
+                if (_services != null)
+                {
+                    Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(async () =>
+                    {
+                        try
+                        {
+                            var themeService = _services.GetRequiredService<IThemeService>();
+                            await themeService.LoadSavedThemeAsync();
+
+                            var navigationService = _services.GetRequiredService<INavigationService>();
+                            await navigationService.NavigateToAsync<DashboardViewModel, DashboardNavigationRequest>(new DashboardNavigationRequest());
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Async initialization failed: {ex}");
+                        }
+                    });
+                }
             }
-
-            base.OnFrameworkInitializationCompleted();
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Application initialization failed: {ex}");
+                throw;
+            }
         }
     }
 }

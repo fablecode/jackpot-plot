@@ -1,0 +1,73 @@
+<Styles xmlns="https://github.com/avaloniaui"
+         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+         xmlns:converters="using:JackpotPlot.Desktop.UI.Converters">
+
+    <Styles.Resources>
+        <converters:ExpandIconConverter x:Key="ExpandIconConverter" />
+    </Styles.Resources>
+
+    <!-- Parent Menu Item Button Style -->
+    <Style Selector="Button.menu-item-parent">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="10,8" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+
+    <Style Selector="Button.menu-item-parent:pointerover">
+        <Setter Property="Background" Value="{DynamicResource MenuItemHoverBrush}" />
+    </Style>
+
+    <Style Selector="Button.menu-item-parent:pressed">
+        <Setter Property="Background" Value="{DynamicResource SecondaryActiveBrush}" />
+    </Style>
+
+    <!-- Child Menu Item Button Style -->
+    <Style Selector="Button.menu-item-child">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="8,6" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+
+    <Style Selector="Button.menu-item-child:pointerover">
+        <Setter Property="Background" Value="{DynamicResource MenuItemHoverBrush}" />
+    </Style>
+
+    <Style Selector="Button.menu-item-child:pointerover /template/ ContentPresenter#PART_ContentPresenter > Grid > TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}" />
+    </Style>
+
+    <!-- Active State for Child Menu Items -->
+    <Style Selector="Button.menu-item-child.active">
+        <Setter Property="Background" Value="{DynamicResource MenuItemActiveBrush}" />
+    </Style>
+
+    <Style Selector="Button.menu-item-child.active /template/ ContentPresenter#PART_ContentPresenter > Grid > Border">
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
+    </Style>
+
+    <Style Selector="Button.menu-item-child.active /template/ ContentPresenter#PART_ContentPresenter > Grid > TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <!-- Icon Button Style -->
+    <Style Selector="Button.icon-button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+
+    <Style Selector="Button.icon-button:pointerover">
+        <Setter Property="Background" Value="{DynamicResource MenuItemHoverBrush}" />
+    </Style>
+
+</Styles>

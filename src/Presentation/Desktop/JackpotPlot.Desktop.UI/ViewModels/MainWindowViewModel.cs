@@ -21,6 +21,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase
         Title = "JackpotPlot Desktop";
         NavigationItems = new ObservableCollection<NavigationMenuItem>();
         CurrentPage = new DashboardViewModel();
+        SidebarViewModel = null!;
 
         NavigateCommand = new AsyncRelayCommand<NavigationMenuItem>(NavigateAsync);
         GoBackCommand = new AsyncRelayCommand(GoBackAsync);
@@ -28,7 +29,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel(
         INavigationService navigationService,
-        INavigationMenuFactory navigationMenuFactory)
+        INavigationMenuFactory navigationMenuFactory,
+        SidebarViewModel sidebarViewModel)
     {
         _navigationService = navigationService;
         Title = "JackpotPlot Desktop";
@@ -36,6 +38,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase
         NavigationItems = new ObservableCollection<NavigationMenuItem>(navigationMenuFactory.CreatePrimaryMenuItems());
 
         CurrentPage = _navigationService.CurrentViewModel;
+
+        SidebarViewModel = sidebarViewModel;
 
         NavigateCommand = new AsyncRelayCommand<NavigationMenuItem>(NavigateAsync);
         GoBackCommand = new AsyncRelayCommand(GoBackAsync, CanGoBack);
@@ -45,6 +49,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase
     }
 
     public string Title { get; }
+
+    public SidebarViewModel SidebarViewModel { get; }
 
     public ObservableCollection<NavigationMenuItem> NavigationItems { get; }
 

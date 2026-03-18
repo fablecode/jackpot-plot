@@ -12,12 +12,10 @@ public sealed class ThemeService : IThemeService
         "JackpotPlot",
         ThemePreferenceFileName);
 
-    private readonly Application _application;
     private ThemeVariant _currentTheme;
 
     public ThemeService()
     {
-        _application = Application.Current ?? throw new InvalidOperationException("Application.Current is null");
         _currentTheme = ThemeVariant.Default;
     }
 
@@ -27,9 +25,15 @@ public sealed class ThemeService : IThemeService
 
     public void SetTheme(ThemeVariant theme)
     {
+        var application = Application.Current;
+        if (application == null)
+        {
+            throw new InvalidOperationException("Application.Current is null");
+        }
+
         var previousTheme = _currentTheme;
         _currentTheme = theme;
-        _application.RequestedThemeVariant = theme;
+        application.RequestedThemeVariant = theme;
 
         SaveThemePreference(theme);
 
@@ -52,7 +56,7 @@ public sealed class ThemeService : IThemeService
                 Directory.CreateDirectory(directory);
             }
 
-            var preference = new ThemePreference { Theme = theme.Key.ToString() };
+            var preference = new ThemePreference { Theme = theme.Key.ToString() ?? "Default" };
             var json = JsonSerializer.Serialize(preference);
             File.WriteAllText(ThemePreferencePath, json);
         }
