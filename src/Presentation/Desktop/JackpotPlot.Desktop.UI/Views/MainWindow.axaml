@@ -52,6 +52,7 @@
 
             <!-- Footer (Status Bar) -->
             <Border Grid.Row="2" 
+                    Height="27"
                     Padding="12,8"
                     Background="{DynamicResource CardBackgroundBrush}"
                     BorderBrush="{DynamicResource BorderBrush}"
