@@ -10,6 +10,7 @@
          <converters:ExpandIconConverter x:Key="ExpandIconConverter" />
          <converters:BoolToWidthConverter x:Key="BoolToWidthConverter" />
          <converters:BoolToAngleConverter x:Key="BoolToAngleConverter" />
+         <converters:IconPathConverter x:Key="IconPathConverter" />
      </Application.Resources>
 
      <Application.DataTemplates>

@@ -39,8 +39,7 @@
                             Command="{Binding ToggleSidebarCommand}"
                             ToolTip.Tip="Toggle Sidebar"
                             Background="Transparent"
-                            BorderThickness="0"
-                            HorizontalAlignment="Center">
+                            BorderThickness="0">
                         <PathIcon Data="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"
                                   Width="16"
                                   Height="16"
@@ -66,27 +65,29 @@
                                         CommandParameter="{Binding}"
                                         HorizontalContentAlignment="Stretch"
                                         Padding="8,6">
-                                    <!-- When collapsed: show only centered dot -->
-                                    <!-- When expanded: show dot + text + expand icon -->
+                                    <!-- When collapsed: show only centered icon -->
+                                    <!-- When expanded: show icon + text + expand icon -->
                                     <Panel>
-                                        <!-- Collapsed view: centered dot -->
-                                        <TextBlock Text="●"
-                                                   FontSize="12"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center"
-                                                   Foreground="{DynamicResource TextSecondaryBrush}"
-                                                   IsVisible="{Binding $parent[UserControl].((vm:SidebarViewModel)DataContext).IsCollapsed}" />
+                                        <!-- Collapsed view: centered icon -->
+                                        <PathIcon Width="18"
+                                                  Height="18"
+                                                  Data="{Binding Icon, Converter={StaticResource IconPathConverter}}"
+                                                  Foreground="{DynamicResource TextSecondaryBrush}"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"
+                                                  IsVisible="{Binding $parent[UserControl].((vm:SidebarViewModel)DataContext).IsCollapsed}" />
 
                                         <!-- Expanded view: full layout -->
                                         <Grid ColumnDefinitions="Auto,*,Auto"
                                               HorizontalAlignment="Stretch"
                                               IsVisible="{Binding !$parent[UserControl].((vm:SidebarViewModel)DataContext).IsCollapsed}">
-                                            <TextBlock Grid.Column="0"
-                                                       Text="●"
-                                                       FontSize="12"
-                                                       Margin="0,0,8,0"
-                                                       VerticalAlignment="Center"
-                                                       Foreground="{DynamicResource TextSecondaryBrush}" />
+                                            <PathIcon Grid.Column="0"
+                                                      Width="18"
+                                                      Height="18"
+                                                      Margin="0,0,12,0"
+                                                      Data="{Binding Icon, Converter={StaticResource IconPathConverter}}"
+                                                      Foreground="{DynamicResource TextSecondaryBrush}"
+                                                      VerticalAlignment="Center" />
 
                                             <TextBlock Grid.Column="1"
                                                        Text="{Binding Title}"
