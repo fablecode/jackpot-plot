@@ -330,21 +330,18 @@
 				<!-- Chart 2: Hot & Cold Numbers -->
 				<Border Grid.Column="1" Grid.Row="0" Classes="card" MinHeight="280">
 					<StackPanel>
-						<TextBlock Text="Hot &amp; Cold Numbers"
-                                   FontSize="16"
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,12" />
+						<TextBlock Text="?? Hot &amp; ?? Cold Numbers"
+								   FontSize="16"
+								   FontWeight="SemiBold"
+								   Margin="0,0,0,12" />
 
-						<Border Background="#FAFAFA"
-                                CornerRadius="4"
-                                Padding="20"
-                                MinHeight="200">
-							<TextBlock Text="Chart: Hot &amp; Cold Numbers"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       Foreground="Gray"
-                                       FontStyle="Italic" />
-						</Border>
+						<lvc:CartesianChart Series="{Binding HotColdNumbersSeries}"
+											XAxes="{Binding HotColdNumbersXAxes}"
+											YAxes="{Binding HotColdNumbersYAxes}"
+											Height="220"
+											Background="Transparent"
+											LegendPosition="Top">
+						</lvc:CartesianChart>
 					</StackPanel>
 				</Border>
 

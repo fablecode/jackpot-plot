@@ -134,6 +134,29 @@ public sealed partial class NumberGeneratorViewModel : ViewModelBase, INavigatio
         }
     ];
 
+    [ObservableProperty]
+    private ISeries[] _hotColdNumbersSeries = [];
+
+    [ObservableProperty]
+    private Axis[] _hotColdNumbersXAxes = 
+    [
+        new Axis
+        {
+            Name = "Number",
+            NamePadding = new LiveChartsCore.Drawing.Padding(0, 15)
+        }
+    ];
+
+    [ObservableProperty]
+    private Axis[] _hotColdNumbersYAxes = 
+    [
+        new Axis
+        {
+            Name = "Frequency",
+            NamePadding = new LiveChartsCore.Drawing.Padding(15, 0)
+        }
+    ];
+
     #endregion
 
     #region Computed Properties
@@ -223,6 +246,7 @@ public sealed partial class NumberGeneratorViewModel : ViewModelBase, INavigatio
 
         // Clear chart series
         TrendingNumbersSeries = [];
+        HotColdNumbersSeries = [];
     }
 
     #endregion
@@ -317,6 +341,7 @@ public sealed partial class NumberGeneratorViewModel : ViewModelBase, INavigatio
             if (response.IsSuccessStatusCode && response.Content != null)
             {
                 HotColdNumbers = response.Content;
+                UpdateHotColdNumbersChart();
             }
         }
         catch (Exception ex)
@@ -380,6 +405,72 @@ public sealed partial class NumberGeneratorViewModel : ViewModelBase, INavigatio
             {
                 Name = "Numbers",
                 Labels = sortedData.Select(d => d.Number.ToString()).ToArray(),
+                NamePadding = new LiveChartsCore.Drawing.Padding(0, 15)
+            }
+        ];
+    }
+
+    private void UpdateHotColdNumbersChart()
+    {
+        if (HotColdNumbers == null)
+        {
+            HotColdNumbersSeries = [];
+            return;
+        }
+
+        // Get all unique numbers from both hot and cold
+        var allNumbers = HotColdNumbers.HotNumbers.Keys
+            .Concat(HotColdNumbers.ColdNumbers.Keys)
+            .Distinct()
+            .OrderBy(n => n)
+            .ToArray();
+
+        // Create data arrays, using 0 for numbers not in the respective dictionary
+        var hotData = allNumbers
+            .Select(num => HotColdNumbers.HotNumbers.GetValueOrDefault(num, 0))
+            .ToArray();
+
+        var coldData = allNumbers
+            .Select(num => HotColdNumbers.ColdNumbers.GetValueOrDefault(num, 0))
+            .ToArray();
+
+        HotColdNumbersSeries = 
+        [
+            new ColumnSeries<int>
+            {
+                Name = "Hot Numbers 🔥",
+                Values = hotData,
+                Fill = new LiveChartsCore.SkiaSharpView.Painting.SolidColorPaint(
+                    new SkiaSharp.SKColor(239, 68, 68)), // Red color #EF4444
+                Stroke = new LiveChartsCore.SkiaSharpView.Painting.SolidColorPaint(
+                    new SkiaSharp.SKColor(220, 38, 38)) { StrokeThickness = 2 },
+                DataLabelsPaint = new LiveChartsCore.SkiaSharpView.Painting.SolidColorPaint(
+                    new SkiaSharp.SKColor(75, 85, 99)),
+                DataLabelsSize = 11,
+                DataLabelsPosition = LiveChartsCore.Measure.DataLabelsPosition.End
+            },
+            new ColumnSeries<int>
+            {
+                Name = "Cold Numbers ❄️",
+                Values = coldData,
+                Fill = new LiveChartsCore.SkiaSharpView.Painting.SolidColorPaint(
+                    new SkiaSharp.SKColor(59, 130, 246)), // Blue color #3B82F6
+                Stroke = new LiveChartsCore.SkiaSharpView.Painting.SolidColorPaint(
+                    new SkiaSharp.SKColor(29, 78, 216)) { StrokeThickness = 2 },
+                DataLabelsPaint = new LiveChartsCore.SkiaSharpView.Painting.SolidColorPaint(
+                    new SkiaSharp.SKColor(75, 85, 99)),
+                DataLabelsSize = 11,
+                DataLabelsPosition = LiveChartsCore.Measure.DataLabelsPosition.End
+            }
+        ];
+
+        // Update X-axis with number labels
+        HotColdNumbersXAxes = 
+        [
+            new Axis
+            {
+                Name = "Number",
+                Labels = allNumbers.Select(n => n.ToString()).ToArray(),
                 NamePadding = new LiveChartsCore.Drawing.Padding(0, 15)
             }
         ];
