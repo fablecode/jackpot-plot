@@ -1,11 +1,12 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="using:JackpotPlot.Desktop.UI.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="900"
-             x:Class="JackpotPlot.Desktop.UI.Views.NumberGeneratorView"
-             x:CompileBindings="False">
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:JackpotPlot.Desktop.UI.ViewModels"
+			 xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+			 mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="900"
+			 x:Class="JackpotPlot.Desktop.UI.Views.NumberGeneratorView"
+			 x:CompileBindings="False">
 
 	<Design.DataContext>
 		<vm:NumberGeneratorViewModel />
@@ -311,21 +312,18 @@
 				<!-- Chart 1: Trending Numbers -->
 				<Border Grid.Column="0" Grid.Row="0" Classes="card" MinHeight="280">
 					<StackPanel>
-						<TextBlock Text="Trending Numbers"
-                                   FontSize="16"
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,12" />
+						<TextBlock Text="?? Trending Numbers"
+								   FontSize="16"
+								   FontWeight="SemiBold"
+								   Margin="0,0,0,12" />
 
-						<Border Background="#FAFAFA"
-                                CornerRadius="4"
-                                Padding="20"
-                                MinHeight="200">
-							<TextBlock Text="Chart: Trending Numbers"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       Foreground="Gray"
-                                       FontStyle="Italic" />
-						</Border>
+						<lvc:CartesianChart Series="{Binding TrendingNumbersSeries}"
+											XAxes="{Binding TrendingNumbersXAxes}"
+											YAxes="{Binding TrendingNumbersYAxes}"
+											Height="220"
+											Background="Transparent"
+											LegendPosition="Hidden">
+						</lvc:CartesianChart>
 					</StackPanel>
 				</Border>
 

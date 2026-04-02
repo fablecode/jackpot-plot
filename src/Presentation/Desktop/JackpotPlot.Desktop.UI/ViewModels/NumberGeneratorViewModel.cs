@@ -3,6 +3,8 @@ using CommunityToolkit.Mvvm.Input;
 using JackpotPlot.Desktop.UI.Services.Api;
 using JackpotPlot.Desktop.UI.Services.Api.Models;
 using JackpotPlot.Desktop.UI.Services.Navigation;
+using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -108,6 +110,30 @@ public sealed partial class NumberGeneratorViewModel : ViewModelBase, INavigatio
     [ObservableProperty]
     private List<LuckyPairResult>? _luckyPairFrequency;
 
+    // LiveCharts2 Series
+    [ObservableProperty]
+    private ISeries[] _trendingNumbersSeries = [];
+
+    [ObservableProperty]
+    private Axis[] _trendingNumbersXAxes = 
+    [
+        new Axis
+        {
+            Name = "Numbers",
+            NamePadding = new LiveChartsCore.Drawing.Padding(0, 15)
+        }
+    ];
+
+    [ObservableProperty]
+    private Axis[] _trendingNumbersYAxes = 
+    [
+        new Axis
+        {
+            Name = "Frequency",
+            NamePadding = new LiveChartsCore.Drawing.Padding(15, 0)
+        }
+    ];
+
     #endregion
 
     #region Computed Properties
@@ -194,6 +220,9 @@ public sealed partial class NumberGeneratorViewModel : ViewModelBase, INavigatio
         TrendingNumbers = null;
         NumberSpread = null;
         LuckyPairFrequency = null;
+
+        // Clear chart series
+        TrendingNumbersSeries = [];
     }
 
     #endregion
@@ -306,12 +335,54 @@ public sealed partial class NumberGeneratorViewModel : ViewModelBase, INavigatio
             if (response.IsSuccessStatusCode && response.Content != null)
             {
                 TrendingNumbers = response.Content;
+                UpdateTrendingNumbersChart();
             }
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Error loading trending numbers: {ex.Message}");
         }
+    }
+
+    private void UpdateTrendingNumbersChart()
+    {
+        if (TrendingNumbers == null || TrendingNumbers.Count == 0)
+        {
+            TrendingNumbersSeries = [];
+            return;
+        }
+
+        // Convert dictionary to sorted array of values for the bar chart
+        var sortedData = TrendingNumbers
+            .OrderBy(kvp => kvp.Key)
+            .Select(kvp => new { Number = kvp.Key, Frequency = kvp.Value })
+            .ToArray();
+
+        TrendingNumbersSeries = 
+        [
+            new ColumnSeries<int>
+            {
+                Name = "Trending Numbers",
+                Values = sortedData.Select(d => d.Frequency).ToArray(),
+                Fill = new LiveChartsCore.SkiaSharpView.Painting.SolidColorPaint(
+                    new SkiaSharp.SKColor(59, 130, 246)), // Blue color #3B82F6
+                DataLabelsPaint = new LiveChartsCore.SkiaSharpView.Painting.SolidColorPaint(
+                    new SkiaSharp.SKColor(75, 85, 99)),
+                DataLabelsSize = 12,
+                DataLabelsPosition = LiveChartsCore.Measure.DataLabelsPosition.End
+            }
+        ];
+
+        // Update X-axis with number labels
+        TrendingNumbersXAxes = 
+        [
+            new Axis
+            {
+                Name = "Numbers",
+                Labels = sortedData.Select(d => d.Number.ToString()).ToArray(),
+                NamePadding = new LiveChartsCore.Drawing.Padding(0, 15)
+            }
+        ];
     }
 
     private async Task LoadNumberSpreadAsync(CancellationToken cancellationToken = default)
