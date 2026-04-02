@@ -366,21 +366,18 @@
 				<!-- Chart 4: Lucky Pair Frequency -->
 				<Border Grid.Column="1" Grid.Row="1" Classes="card" MinHeight="280">
 					<StackPanel>
-						<TextBlock Text="Lucky Pair Frequency"
-                                   FontSize="16"
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,12" />
+						<TextBlock Text="?? Lucky Pair Frequency (Top 10)"
+								   FontSize="16"
+								   FontWeight="SemiBold"
+								   Margin="0,0,0,12" />
 
-						<Border Background="#FAFAFA"
-                                CornerRadius="4"
-                                Padding="20"
-                                MinHeight="200">
-							<TextBlock Text="Chart: Lucky Pair Frequency"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       Foreground="Gray"
-                                       FontStyle="Italic" />
-						</Border>
+						<lvc:CartesianChart Series="{Binding LuckyPairSeries}"
+											XAxes="{Binding LuckyPairXAxes}"
+											YAxes="{Binding LuckyPairYAxes}"
+											Height="220"
+											Background="Transparent"
+											LegendPosition="Hidden">
+						</lvc:CartesianChart>
 					</StackPanel>
 				</Border>
 

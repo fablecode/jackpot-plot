@@ -181,6 +181,29 @@ public sealed partial class NumberGeneratorViewModel : ViewModelBase, INavigatio
         }
     ];
 
+    [ObservableProperty]
+    private ISeries[] _luckyPairSeries = [];
+
+    [ObservableProperty]
+    private Axis[] _luckyPairXAxes = 
+    [
+        new Axis
+        {
+            Name = "Frequency",
+            NamePadding = new LiveChartsCore.Drawing.Padding(0, 15)
+        }
+    ];
+
+    [ObservableProperty]
+    private Axis[] _luckyPairYAxes = 
+    [
+        new Axis
+        {
+            Name = "Lucky Pairs",
+            NamePadding = new LiveChartsCore.Drawing.Padding(15, 0)
+        }
+    ];
+
     #endregion
 
     #region Computed Properties
@@ -272,6 +295,7 @@ public sealed partial class NumberGeneratorViewModel : ViewModelBase, INavigatio
         TrendingNumbersSeries = [];
         HotColdNumbersSeries = [];
         NumberSpreadSeries = [];
+        LuckyPairSeries = [];
     }
 
     #endregion
@@ -580,12 +604,58 @@ public sealed partial class NumberGeneratorViewModel : ViewModelBase, INavigatio
             if (response.IsSuccessStatusCode && response.Content != null)
             {
                 LuckyPairFrequency = response.Content;
+                UpdateLuckyPairChart();
             }
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Error loading lucky pair frequency: {ex.Message}");
         }
+    }
+
+    private void UpdateLuckyPairChart()
+    {
+        if (LuckyPairFrequency == null || LuckyPairFrequency.Count == 0)
+        {
+            LuckyPairSeries = [];
+            return;
+        }
+
+        // Take top 10 pairs by frequency and reverse for better visualization (highest at top)
+        var topPairs = LuckyPairFrequency
+            .OrderByDescending(p => p.Frequency)
+            .Take(10)
+            .Reverse()
+            .ToArray();
+
+        LuckyPairSeries = 
+        [
+            new RowSeries<long>
+            {
+                Name = "Lucky Pairs",
+                Values = topPairs.Select(p => p.Frequency).ToArray(),
+                Fill = new LiveChartsCore.SkiaSharpView.Painting.SolidColorPaint(
+                    new SkiaSharp.SKColor(168, 85, 247)), // Purple color #A855F7
+                Stroke = new LiveChartsCore.SkiaSharpView.Painting.SolidColorPaint(
+                    new SkiaSharp.SKColor(126, 34, 206)) { StrokeThickness = 2 },
+                DataLabelsPaint = new LiveChartsCore.SkiaSharpView.Painting.SolidColorPaint(
+                    new SkiaSharp.SKColor(75, 85, 99)),
+                DataLabelsSize = 11,
+                DataLabelsPosition = LiveChartsCore.Measure.DataLabelsPosition.End,
+                MaxBarWidth = 30
+            }
+        ];
+
+        // Update Y-axis with pair labels
+        LuckyPairYAxes = 
+        [
+            new Axis
+            {
+                Name = "Lucky Pairs",
+                Labels = topPairs.Select(p => $"{p.Number1} & {p.Number2}").ToArray(),
+                NamePadding = new LiveChartsCore.Drawing.Padding(15, 0)
+            }
+        ];
     }
 
     #endregion
