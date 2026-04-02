@@ -348,21 +348,18 @@
 				<!-- Chart 3: Number Spread Analysis -->
 				<Border Grid.Column="0" Grid.Row="1" Classes="card" MinHeight="280">
 					<StackPanel>
-						<TextBlock Text="Number Spread Analysis"
-                                   FontSize="16"
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,12" />
+						<TextBlock Text="?? Number Spread Analysis"
+								   FontSize="16"
+								   FontWeight="SemiBold"
+								   Margin="0,0,0,12" />
 
-						<Border Background="#FAFAFA"
-                                CornerRadius="4"
-                                Padding="20"
-                                MinHeight="200">
-							<TextBlock Text="Chart: Number Spread Analysis"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       Foreground="Gray"
-                                       FontStyle="Italic" />
-						</Border>
+						<lvc:CartesianChart Series="{Binding NumberSpreadSeries}"
+											XAxes="{Binding NumberSpreadXAxes}"
+											YAxes="{Binding NumberSpreadYAxes}"
+											Height="220"
+											Background="Transparent"
+											LegendPosition="Top">
+						</lvc:CartesianChart>
 					</StackPanel>
 				</Border>
 

@@ -157,6 +157,30 @@ public sealed partial class NumberGeneratorViewModel : ViewModelBase, INavigatio
         }
     ];
 
+    [ObservableProperty]
+    private ISeries[] _numberSpreadSeries = [];
+
+    [ObservableProperty]
+    private Axis[] _numberSpreadXAxes = 
+    [
+        new Axis
+        {
+            Name = "Number Ranges",
+            Labels = ["Number Distribution"],
+            NamePadding = new LiveChartsCore.Drawing.Padding(0, 15)
+        }
+    ];
+
+    [ObservableProperty]
+    private Axis[] _numberSpreadYAxes = 
+    [
+        new Axis
+        {
+            Name = "Frequency",
+            NamePadding = new LiveChartsCore.Drawing.Padding(15, 0)
+        }
+    ];
+
     #endregion
 
     #region Computed Properties
@@ -247,6 +271,7 @@ public sealed partial class NumberGeneratorViewModel : ViewModelBase, INavigatio
         // Clear chart series
         TrendingNumbersSeries = [];
         HotColdNumbersSeries = [];
+        NumberSpreadSeries = [];
     }
 
     #endregion
@@ -485,12 +510,65 @@ public sealed partial class NumberGeneratorViewModel : ViewModelBase, INavigatio
             if (response.IsSuccessStatusCode && response.Content != null)
             {
                 NumberSpread = response.Content;
+                UpdateNumberSpreadChart();
             }
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Error loading number spread: {ex.Message}");
         }
+    }
+
+    private void UpdateNumberSpreadChart()
+    {
+        if (NumberSpread == null)
+        {
+            NumberSpreadSeries = [];
+            return;
+        }
+
+        NumberSpreadSeries = 
+        [
+            new StackedColumnSeries<int>
+            {
+                Name = "Low (1-20)",
+                Values = [NumberSpread.Low],
+                Fill = new LiveChartsCore.SkiaSharpView.Painting.SolidColorPaint(
+                    new SkiaSharp.SKColor(34, 197, 94)), // Green color #22C55E
+                Stroke = new LiveChartsCore.SkiaSharpView.Painting.SolidColorPaint(
+                    new SkiaSharp.SKColor(21, 128, 61)) { StrokeThickness = 2 },
+                DataLabelsPaint = new LiveChartsCore.SkiaSharpView.Painting.SolidColorPaint(
+                    new SkiaSharp.SKColor(255, 255, 255)), // White text on green
+                DataLabelsSize = 12,
+                DataLabelsPosition = LiveChartsCore.Measure.DataLabelsPosition.Middle
+            },
+            new StackedColumnSeries<int>
+            {
+                Name = "Mid (21-40)",
+                Values = [NumberSpread.Mid],
+                Fill = new LiveChartsCore.SkiaSharpView.Painting.SolidColorPaint(
+                    new SkiaSharp.SKColor(251, 191, 36)), // Yellow/Amber color #FBBF24
+                Stroke = new LiveChartsCore.SkiaSharpView.Painting.SolidColorPaint(
+                    new SkiaSharp.SKColor(217, 119, 6)) { StrokeThickness = 2 },
+                DataLabelsPaint = new LiveChartsCore.SkiaSharpView.Painting.SolidColorPaint(
+                    new SkiaSharp.SKColor(255, 255, 255)),
+                DataLabelsSize = 12,
+                DataLabelsPosition = LiveChartsCore.Measure.DataLabelsPosition.Middle
+            },
+            new StackedColumnSeries<int>
+            {
+                Name = "High (41-50)",
+                Values = [NumberSpread.High],
+                Fill = new LiveChartsCore.SkiaSharpView.Painting.SolidColorPaint(
+                    new SkiaSharp.SKColor(239, 68, 68)), // Red color #EF4444
+                Stroke = new LiveChartsCore.SkiaSharpView.Painting.SolidColorPaint(
+                    new SkiaSharp.SKColor(220, 38, 38)) { StrokeThickness = 2 },
+                DataLabelsPaint = new LiveChartsCore.SkiaSharpView.Painting.SolidColorPaint(
+                    new SkiaSharp.SKColor(255, 255, 255)),
+                DataLabelsSize = 12,
+                DataLabelsPosition = LiveChartsCore.Measure.DataLabelsPosition.Middle
+            }
+        ];
     }
 
     private async Task LoadLuckyPairFrequencyAsync(CancellationToken cancellationToken = default)
