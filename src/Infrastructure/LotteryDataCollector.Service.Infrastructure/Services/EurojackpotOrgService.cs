@@ -42,10 +42,10 @@ public class EurojackpotOrgService : IEurojackpotService
                 ["DrawDate"] = drawDate
             });
 
-            var url = $"https://www.eurojackpot.org/results?date={drawDate:dd-MM-yyyy}";
+            var url = $"https://www.eurojackpot.org/proxy.php?d=eurojackpot&t={DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}";
             _logger.LogDebug(EvtIterate, "Fetching draw data from {Url}.", url);
 
-            EurojackpotOrgResult? dto = null;
+            EurojackpotProxyResponse? dto = null;
             try
             {
                 dto = await FetchDataAsync(url, cancellationToken);
@@ -109,106 +109,37 @@ public class EurojackpotOrgService : IEurojackpotService
         _logger.LogInformation(EvtIterate, "Completed draw history enumeration.");
     }
 
-    private static EurojackpotResult GetDetails(EurojackpotOrgResult dto)
+    private static EurojackpotResult? GetDetails(EurojackpotProxyResponse dto)
     {
-        var year = int.Parse(dto.date?.year ?? throw new InvalidOperationException("Missing year"));
-        var month = int.Parse(dto.date?.month ?? throw new InvalidOperationException("Missing month"));
-        var day = int.Parse(dto.date?.day ?? throw new InvalidOperationException("Missing day"));
-
-        var main = dto.numbers?.numbers ?? Array.Empty<int>();
-        var extra = dto.numbers?.extraNumbers ?? Array.Empty<int>();
+        var draw = dto.last;
+        if (draw?.date is null)
+            return null;
 
         return new EurojackpotResult
         {
-            Date = new DateTime(year, month, day),
-            MainNumbers = [.. main],
-            EuroNumbers = [.. extra],
-            JackpotAmount = dto.jackpot.ToString(),
+            Date = new DateTime(draw.date.year, draw.date.month, draw.date.day),
+            MainNumbers = [.. (draw.numbers ?? [])],
+            EuroNumbers = [.. (draw.euroNumbers ?? [])],
+            JackpotAmount = draw.jackpot ?? string.Empty,
             PrizeBreakdown = ImmutableArray<DataTable>.Empty
         };
     }
 
     #region Private Helpers
 
-    public async Task<EurojackpotOrgResult?> FetchDataAsync(string url, CancellationToken ct = default)
+    public async Task<EurojackpotProxyResponse?> FetchDataAsync(string url, CancellationToken ct = default)
     {
         using var client = _factory.CreateClient();
 
         _logger.LogDebug(EvtFetch, "GET {Url}", url);
         var response = await client.GetAsync(url, ct);
-
-        if (response.StatusCode is HttpStatusCode.MovedPermanently or HttpStatusCode.Found)
-        {
-            var redirectUrl = response.Headers.Location?.ToString();
-            if (string.IsNullOrEmpty(redirectUrl))
-            {
-                _logger.LogError(EvtFetch,
-                    "Received redirect from {Url} but no Location header present.", url);
-                throw new InvalidOperationException("No redirect URL found in headers.");
-            }
-
-            _logger.LogInformation(EvtFetch,
-                "Following redirect from {From} to {To}.", url, redirectUrl);
-            return await FetchDataAsync(redirectUrl!, ct);
-        }
+        response.EnsureSuccessStatusCode();
 
         var json = await response.Content.ReadAsStringAsync(ct);
-        _logger.LogDebug(EvtFetch, "Response {StatusCode} with length {Length} from {Url}.",
-            (int)response.StatusCode, json?.Length ?? 0, url);
-
-        // Normalize odd payloads BEFORE binding to a type
-        var token = JToken.Parse(json ?? "null");
-
-        if (token.Type == JTokenType.Null)
-        {
-            _logger.LogInformation(EvtFetch, "Null payload from {Url}.", url);
+        if (string.IsNullOrWhiteSpace(json))
             return null;
-        }
 
-        if (token.Type == JTokenType.Array)
-        {
-            var arr = (JArray)token;
-
-            if (arr.Count == 0 || arr.All(t => t.Type == JTokenType.Null))
-            {
-                _logger.LogInformation(EvtFetch,
-                    "Array payload with no usable items (count={Count}) from {Url}.", arr.Count, url);
-                return null;
-            }
-
-            if (arr.Count == 1 && arr[0].Type == JTokenType.Object)
-            {
-                _logger.LogDebug(EvtFetch,
-                    "Single-object array wrapper detected for {Url}; unwrapping.", url);
-                token = arr[0];
-            }
-            else
-            {
-                _logger.LogWarning(EvtFetch,
-                    "Unexpected array payload shape (count={Count}) from {Url}.", arr.Count, url);
-                throw new JsonSerializationException("Unexpected array payload shape.");
-            }
-        }
-
-        if (token.Type != JTokenType.Object)
-        {
-            _logger.LogWarning(EvtFetch,
-                "Unexpected token type {TokenType} from {Url}.", token.Type, url);
-            throw new JsonSerializationException($"Unexpected token: {token.Type}");
-        }
-
-        try
-        {
-            var dto = token.ToObject<EurojackpotOrgResult>();
-            _logger.LogDebug(EvtFetch, "Successfully deserialized payload from {Url}.", url);
-            return dto;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(EvtFetch, ex,
-                "Deserialization failed for payload from {Url}.", url);
-            throw;
-        }
+        return JsonConvert.DeserializeObject<EurojackpotProxyResponse>(json);
     }
 
     #endregion
@@ -334,5 +265,46 @@ public class Rank12
 {
     public string rank { get; set; }
     public long? winners { get; set; }
+    public long? prize { get; set; }
+}
+
+public sealed class EurojackpotProxyResponse
+{
+    public EurojackpotLatestDraw? last { get; set; }
+    public EurojackpotLatestDraw? next { get; set; }
+}
+
+public sealed class EurojackpotLatestDraw
+{
+    public long nr { get; set; }
+    public string? currency { get; set; }
+    public EurojackpotDate? date { get; set; }
+    public string? closingDate { get; set; }
+    public string? lateClosingDate { get; set; }
+    public string? drawingDate { get; set; }
+    public int[]? numbers { get; set; }
+    public int[]? euroNumbers { get; set; }
+    public string? jackpot { get; set; }
+    public string? marketingJackpot { get; set; }
+    public string? specialMarketingJackpot { get; set; }
+    public long? Winners { get; set; }
+    public IDictionary<string, EurojackpotRank>? odds { get; set; }
+}
+
+public sealed class EurojackpotDate
+{
+    public string? full { get; set; }
+    public int day { get; set; }
+    public int month { get; set; }
+    public int year { get; set; }
+    public int hour { get; set; }
+    public int minute { get; set; }
+    public string? dayOfWeek { get; set; }
+}
+
+public sealed class EurojackpotRank
+{
+    public long? winners { get; set; }
+    public long? specialPrize { get; set; }
     public long? prize { get; set; }
 }
