@@ -1,6 +1,7 @@
-using System;
+using System.IO;
 using Avalonia;
 using JackpotPlot.Desktop.Composition;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace JackpotPlot.Desktop.Hosting;
@@ -23,6 +24,16 @@ public static class DesktopHostBuilder
 
     private static void ConfigureServices(IServiceCollection services)
     {
-        services.AddDesktopApplication();
+        // Build configuration
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production"}.json", optional: true, reloadOnChange: true)
+            .AddEnvironmentVariables()
+            .Build();
+
+        services.AddSingleton<IConfiguration>(configuration);
+
+        services.AddDesktopApplication(configuration);
     }
 }
