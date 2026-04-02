@@ -6,4 +6,5 @@ public static class NavigationKeys
     public const string Predictions = "predictions";
     public const string DrawHistory = "draw-history";
     public const string Login = "login";
+    public const string NumberGenerator = "number-generator";
 }

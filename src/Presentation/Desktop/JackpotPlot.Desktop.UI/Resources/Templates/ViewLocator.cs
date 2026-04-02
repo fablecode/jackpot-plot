@@ -13,6 +13,7 @@ public sealed class ViewLocator : IDataTemplate
         {
             DashboardViewModel => new DashboardView(),
             DrawHistoryViewModel => new DrawHistoryView(),
+            NumberGeneratorViewModel => new NumberGeneratorView(),
             _ => new TextBlock { Text = $"No view found for {data?.GetType().Name ?? "null"}" }
         };
     }

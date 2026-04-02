@@ -103,7 +103,7 @@ public static class MenuConfiguration
             id: "predictions-generator",
             title: "Number Generator",
             icon: "AutoFix",
-            navigationKey: "number-generator",
+            navigationKey: NavigationKeys.NumberGenerator,
             order: 0));
 
         menu.AddChild(new MenuItem(

@@ -1,0 +1,441 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:JackpotPlot.Desktop.UI.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="900"
+             x:Class="JackpotPlot.Desktop.UI.Views.NumberGeneratorView"
+             x:CompileBindings="False">
+
+	<Design.DataContext>
+		<vm:NumberGeneratorViewModel />
+	</Design.DataContext>
+
+	<UserControl.Styles>
+		<!-- Card Style -->
+		<Style Selector="Border.card">
+			<Setter Property="Background" Value="White" />
+			<Setter Property="BorderBrush" Value="#E0E0E0" />
+			<Setter Property="BorderThickness" Value="1" />
+			<Setter Property="CornerRadius" Value="8" />
+			<Setter Property="Padding" Value="20" />
+		</Style>
+
+		<!-- Button Styles -->
+		<Style Selector="Button.btn">
+			<Setter Property="MinHeight" Value="44" />
+			<Setter Property="Padding" Value="20,12" />
+			<Setter Property="FontSize" Value="14" />
+			<Setter Property="FontWeight" Value="Medium" />
+			<Setter Property="CornerRadius" Value="8" />
+			<Setter Property="BorderThickness" Value="0" />
+			<Setter Property="Cursor" Value="Hand" />
+		</Style>
+
+		<Style Selector="Button.btn-light">
+			<Setter Property="Background" Value="#F3F4F6" />
+			<Setter Property="Foreground" Value="#4B5563" />
+		</Style>
+
+		<Style Selector="Button.btn-light:pointerover">
+			<Setter Property="Background" Value="#E5E7EB" />
+		</Style>
+
+		<Style Selector="Button.btn-light:pressed">
+			<Setter Property="Background" Value="#D1D5DB" />
+		</Style>
+
+		<Style Selector="Button.btn-primary">
+			<Setter Property="Background" Value="#3B82F6" />
+			<Setter Property="Foreground" Value="White" />
+		</Style>
+
+		<Style Selector="Button.btn-primary:pointerover">
+			<Setter Property="Background" Value="#2563EB" />
+		</Style>
+
+		<Style Selector="Button.btn-primary:pressed">
+			<Setter Property="Background" Value="#1D4ED8" />
+		</Style>
+
+		<Style Selector="Button.btn-primary:disabled">
+			<Setter Property="Background" Value="#9CA3AF" />
+			<Setter Property="Opacity" Value="0.6" />
+		</Style>
+
+		<!-- Number Badge Styles -->
+		<Style Selector="Border.number-badge">
+			<Setter Property="Width" Value="40" />
+			<Setter Property="Height" Value="40" />
+			<Setter Property="CornerRadius" Value="20" />
+			<Setter Property="Background" Value="#F5F5F5" />
+			<Setter Property="BorderThickness" Value="1" />
+			<Setter Property="BorderBrush" Value="#BDBDBD" />
+		</Style>
+
+		<Style Selector="Border.number-badge-hot">
+			<Setter Property="Background" Value="#FFE57373" />
+			<Setter Property="BorderBrush" Value="#FFD32F2F" />
+		</Style>
+
+		<Style Selector="Border.number-badge-cold">
+			<Setter Property="Background" Value="#FF64B5F6" />
+			<Setter Property="BorderBrush" Value="#FF1976D2" />
+		</Style>
+
+		<Style Selector="Border.number-badge-neutral">
+			<Setter Property="Background" Value="#FFE0E0E0" />
+			<Setter Property="BorderBrush" Value="#FF9E9E9E" />
+		</Style>
+	</UserControl.Styles>
+
+	<!-- Main Container -->
+	<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+		<Grid Margin="20" ColumnDefinitions="450,*">
+
+			<!-- Left Column: Form and Results -->
+			<StackPanel Grid.Column="0" Spacing="20" Margin="0,0,20,0">
+
+				<!-- Form Card -->
+				<Border Classes="card">
+					<StackPanel Spacing="16">
+						<TextBlock Text="Lottery Number Generator"
+                                   FontSize="20"
+                                   FontWeight="Bold" />
+
+						<!-- Lottery Selection -->
+						<StackPanel>
+							<TextBlock Text="Choose a lottery:"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Margin="0,0,0,8" />
+							<ComboBox ItemsSource="{Binding Lotteries}"
+                                      SelectedItem="{Binding SelectedLottery}"
+                                      PlaceholderText="-- Select a Lottery --"
+                                      HorizontalAlignment="Stretch"
+                                      MinHeight="40">
+								<ComboBox.ItemTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding Name}" />
+									</DataTemplate>
+								</ComboBox.ItemTemplate>
+							</ComboBox>
+
+							<TextBlock Text="Loading lotteries..."
+                                       FontSize="12"
+                                       FontStyle="Italic"
+                                       Margin="0,4,0,0"
+                                       Foreground="Gray"
+                                       IsVisible="{Binding IsLoadingLotteries}" />
+						</StackPanel>
+
+						<!-- Number of Plays -->
+						<StackPanel>
+							<TextBlock Text="Number of Plays:"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Margin="0,0,0,8" />
+							<ComboBox ItemsSource="{Binding NumberOfPlaysOptions}"
+                                      SelectedItem="{Binding SelectedNumberOfPlays}"
+                                      HorizontalAlignment="Stretch"
+                                      MinHeight="40" />
+						</StackPanel>
+
+						<!-- Strategy Selection -->
+						<StackPanel>
+							<TextBlock Text="Strategy:"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Margin="0,0,0,8" />
+							<ComboBox ItemsSource="{Binding Strategies}"
+                                      SelectedItem="{Binding SelectedStrategy}"
+                                      PlaceholderText="-- Select a Strategy --"
+                                      HorizontalAlignment="Stretch"
+                                      MinHeight="40">
+								<ComboBox.ItemTemplate>
+									<DataTemplate>
+										<StackPanel>
+											<TextBlock Text="{Binding Name}"
+                                                       FontWeight="SemiBold"
+                                                       ToolTip.Tip="{Binding Description}"/>
+										</StackPanel>
+									</DataTemplate>
+								</ComboBox.ItemTemplate>
+							</ComboBox>
+
+							<TextBlock Text="Loading strategies..."
+                                       FontSize="12"
+                                       FontStyle="Italic"
+                                       Margin="0,4,0,0"
+                                       Foreground="Gray"
+                                       IsVisible="{Binding IsLoadingStrategies}" />
+						</StackPanel>
+
+						<!-- Action Buttons -->
+						<StackPanel Orientation="Horizontal" 
+									HorizontalAlignment="Right" 
+									Spacing="10" 
+									Margin="0,12,0,0">
+							<Button Classes="btn btn-light"
+									Content="Clear"
+									Command="{Binding ClearFormCommand}"
+									MinWidth="100" />
+
+							<Button Classes="btn btn-primary"
+									Command="{Binding GenerateNumbersCommand}"
+									MinWidth="120">
+								<StackPanel Orientation="Horizontal" Spacing="8">
+									<PathIcon Data="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" 
+											  Width="16" 
+											  Height="16" 
+											  Foreground="White" />
+									<TextBlock Text="Generate" 
+											   VerticalAlignment="Center" />
+								</StackPanel>
+							</Button>
+						</StackPanel>
+
+						<!-- Error Message -->
+						<Border Background="#FFFFE0E0"
+                                BorderBrush="#FFFF0000"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="12"
+                                IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+							<TextBlock Text="{Binding ErrorMessage}"
+                                       Foreground="#FFCC0000"
+                                       TextWrapping="Wrap"
+                                       FontSize="12" />
+						</Border>
+					</StackPanel>
+				</Border>
+
+				<!-- Loading Indicator -->
+				<Border Classes="card" IsVisible="{Binding IsLoadingPredictions}">
+					<StackPanel HorizontalAlignment="Center" Spacing="12">
+						<ProgressBar IsIndeterminate="True" Width="200" />
+						<TextBlock Text="Finding your lucky numbers..."
+                                   TextAlignment="Center"
+                                   FontSize="14"
+                                   Foreground="Gray" />
+					</StackPanel>
+				</Border>
+
+				<!-- Results Header -->
+				<StackPanel Orientation="Horizontal"
+                            Spacing="10"
+                            IsVisible="{Binding SearchResults, Converter={x:Static ObjectConverters.IsNotNull}}">
+					<TextBlock FontSize="18" FontWeight="SemiBold">
+						<TextBlock.Text>
+							<MultiBinding StringFormat="{}{0} play result(s)">
+								<Binding Path="SearchResults.NumberOfPlays" />
+							</MultiBinding>
+						</TextBlock.Text>
+					</TextBlock>
+				</StackPanel>
+
+				<!-- Results Card -->
+				<Border Classes="card"
+                        IsVisible="{Binding SearchResults, Converter={x:Static ObjectConverters.IsNotNull}}">
+					<ScrollViewer MaxHeight="600" VerticalScrollBarVisibility="Auto">
+						<ItemsControl ItemsSource="{Binding SearchResults.Plays}">
+							<ItemsControl.ItemTemplate>
+								<DataTemplate>
+									<Border Padding="10,8"
+											Margin="0,0,0,8"
+											Background="#F5F5F5"
+											CornerRadius="6">
+										<StackPanel Spacing="6">
+											<TextBlock FontSize="11"
+													   FontWeight="SemiBold"
+													   Foreground="Gray">
+												<TextBlock.Text>
+													<MultiBinding StringFormat="Play #{0}">
+														<Binding Path="PlayNumber" />
+													</MultiBinding>
+												</TextBlock.Text>
+											</TextBlock>
+
+											<ItemsControl ItemsSource="{Binding Predictions}">
+												<ItemsControl.ItemsPanel>
+													<ItemsPanelTemplate>
+														<WrapPanel />
+													</ItemsPanelTemplate>
+												</ItemsControl.ItemsPanel>
+
+												<ItemsControl.ItemTemplate>
+													<DataTemplate>
+														<Border Width="40"
+																Height="40"
+																CornerRadius="20"
+																Background="#F5F5F5"
+																BorderThickness="1"
+																BorderBrush="#BDBDBD"
+																Margin="3">
+															<ToolTip.Tip>
+																<TextBlock>
+																	<TextBlock.Text>
+																		<MultiBinding StringFormat="Frequency: {0} | Status: {1}">
+																			<Binding Path="Frequency" />
+																			<Binding Path="Status" />
+																		</MultiBinding>
+																	</TextBlock.Text>
+																</TextBlock>
+															</ToolTip.Tip>
+															<TextBlock Text="{Binding Number}"
+																	   FontSize="16"
+																	   FontWeight="Bold"
+																	   HorizontalAlignment="Center"
+																	   VerticalAlignment="Center" />
+														</Border>
+													</DataTemplate>
+												</ItemsControl.ItemTemplate>
+											</ItemsControl>
+										</StackPanel>
+									</Border>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+						</ItemsControl>
+					</ScrollViewer>
+				</Border>
+			</StackPanel>
+
+			<!-- Right Column: Charts (2-column grid) -->
+			<Grid Grid.Column="1"
+                  ColumnDefinitions="*,*"
+                  RowDefinitions="Auto,Auto,Auto"
+                  ColumnSpacing="20"
+                  RowSpacing="20"
+                  IsVisible="{Binding ShowCharts}">
+
+				<!-- Chart 1: Trending Numbers -->
+				<Border Grid.Column="0" Grid.Row="0" Classes="card" MinHeight="280">
+					<StackPanel>
+						<TextBlock Text="Trending Numbers"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,12" />
+
+						<Border Background="#FAFAFA"
+                                CornerRadius="4"
+                                Padding="20"
+                                MinHeight="200">
+							<TextBlock Text="Chart: Trending Numbers"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Foreground="Gray"
+                                       FontStyle="Italic" />
+						</Border>
+					</StackPanel>
+				</Border>
+
+				<!-- Chart 2: Hot & Cold Numbers -->
+				<Border Grid.Column="1" Grid.Row="0" Classes="card" MinHeight="280">
+					<StackPanel>
+						<TextBlock Text="Hot &amp; Cold Numbers"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,12" />
+
+						<Border Background="#FAFAFA"
+                                CornerRadius="4"
+                                Padding="20"
+                                MinHeight="200">
+							<TextBlock Text="Chart: Hot &amp; Cold Numbers"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Foreground="Gray"
+                                       FontStyle="Italic" />
+						</Border>
+					</StackPanel>
+				</Border>
+
+				<!-- Chart 3: Number Spread Analysis -->
+				<Border Grid.Column="0" Grid.Row="1" Classes="card" MinHeight="280">
+					<StackPanel>
+						<TextBlock Text="Number Spread Analysis"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,12" />
+
+						<Border Background="#FAFAFA"
+                                CornerRadius="4"
+                                Padding="20"
+                                MinHeight="200">
+							<TextBlock Text="Chart: Number Spread Analysis"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Foreground="Gray"
+                                       FontStyle="Italic" />
+						</Border>
+					</StackPanel>
+				</Border>
+
+				<!-- Chart 4: Lucky Pair Frequency -->
+				<Border Grid.Column="1" Grid.Row="1" Classes="card" MinHeight="280">
+					<StackPanel>
+						<TextBlock Text="Lucky Pair Frequency"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,12" />
+
+						<Border Background="#FAFAFA"
+                                CornerRadius="4"
+                                Padding="20"
+                                MinHeight="200">
+							<TextBlock Text="Chart: Lucky Pair Frequency"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Foreground="Gray"
+                                       FontStyle="Italic" />
+						</Border>
+					</StackPanel>
+				</Border>
+
+				<!-- Chart 5: Placeholder -->
+				<Border Grid.Column="0" Grid.Row="2" Classes="card" MinHeight="280">
+					<StackPanel>
+						<TextBlock Text="Prediction Success Rate"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,12"
+                                   Foreground="Gray" />
+
+						<Border Background="#FAFAFA"
+                                CornerRadius="4"
+                                Padding="20"
+                                MinHeight="200">
+							<TextBlock Text="Coming Soon"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Foreground="LightGray"
+                                       FontStyle="Italic" />
+						</Border>
+					</StackPanel>
+				</Border>
+
+				<!-- Chart 6: Placeholder -->
+				<Border Grid.Column="1" Grid.Row="2" Classes="card" MinHeight="280">
+					<StackPanel>
+						<TextBlock Text="Winning Number Frequency"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,12"
+                                   Foreground="Gray" />
+
+						<Border Background="#FAFAFA"
+                                CornerRadius="4"
+                                Padding="20"
+                                MinHeight="200">
+							<TextBlock Text="Coming Soon"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Foreground="LightGray"
+                                       FontStyle="Italic" />
+						</Border>
+					</StackPanel>
+				</Border>
+			</Grid>
+		</Grid>
+	</ScrollViewer>
+</UserControl>

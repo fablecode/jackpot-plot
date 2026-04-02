@@ -99,6 +99,11 @@ public sealed partial class SidebarViewModel : ViewModelBase
             await _navigationService.NavigateToAsync<DrawHistoryViewModel, DrawHistoryNavigationRequest>(
                 new DrawHistoryNavigationRequest());
         }
+        else if (navigationKey == NavigationKeys.NumberGenerator)
+        {
+            await _navigationService.NavigateToAsync<NumberGeneratorViewModel, NumberGeneratorNavigationRequest>(
+                new NumberGeneratorNavigationRequest());
+        }
     }
 
     [RelayCommand]
